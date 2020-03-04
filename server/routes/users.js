@@ -10,7 +10,6 @@ router.get('/getUser', function(req, res, next) {
     }
     return res.json({ success: true, data: data });
   })
-  // res.send("get users");
 });
 
 module.exports = router;

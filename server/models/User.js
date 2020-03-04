@@ -12,9 +12,9 @@ var UserSchema = new Schema({
     required: true
   },
   gender: {
-    type: Number,
-    enum: [0, 1],
-    default: 0
+    type: String,
+    // enum: [0, 1],
+    // default: 0
   },
   age: {
     type: Number
@@ -25,4 +25,4 @@ var UserSchema = new Schema({
 })
 
 // 直接导出模型构造函数
-module.exports = mongoose.model('User', UserSchema)
+module.exports = mongoose.model('User', UserSchema, 'user')
