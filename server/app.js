@@ -5,26 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
 var bodyParser = require('body-parser')
-var mongoose = require('mongoose');
-// const { createProxyMiddleware } = require('http-proxy-middleware');
+
+var mongo = require('./utils/db');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var userRouter = require('./routes/user');
 var testAPIRouter = require("./routes/testAPI");
-
-var DB_URL = 'mongodb://localhost:27017/yummyfood';
-
-mongoose.connect(DB_URL, { 
-  useNewUrlParser: true,
-  useUnifiedTopology: true 
-});
-mongoose.connection.on('connected', function (err) {
-  if (err) {
-      console.log(err, "mongodb connect fail!");
-      return;
-  }
-  console.log('mongodb connect success!');
-});
 
 var app = express();
 
@@ -38,21 +24,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-// app.use(createProxyMiddleware('/api', {
-//   target: "http://localhost:9000/",
-//   changeOrigin: true
-// }))
-
-//设置跨域请求
-// app.all('*', function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
-//   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-//   res.header("X-Powered-By", ' 3.2.1')
-//   res.header("Content-Type", "application/json;charset=utf-8");
-//   next();
-// });
-
 // 把路由容器挂载到 app 服务中
 app.use(logger('dev'));
 app.use(express.json());
@@ -62,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', userRouter);
 app.use("/testAPI", testAPIRouter);
 
 // catch 404 and forward to error handler

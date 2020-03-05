@@ -22,6 +22,8 @@ var UserSchema = new Schema({
   hobbies: {
     type: String
   }
+}, {
+  versionKey:false
 })
 
 // 直接导出模型构造函数

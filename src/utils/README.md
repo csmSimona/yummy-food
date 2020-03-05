@@ -1,1 +1,1 @@
-公共组件目录，如http.js、cookie.js等
+公共文件目录，如http.js、cookie.js等

@@ -1,13 +1,18 @@
 /**
- * 数据库连接
+ * 连接数据库
  */
+var mongoose = require('mongoose');
 
-// var express = require('express');
+var DB_URL = 'mongodb://localhost:27017/yummyfood';
 
-// var mongoose = require('mongoose');
-
-// const DB_URL = 'mongodb://localhost:27017';
-// mongoose.connect(DB_URL);
-// mongoose.connection.on('connected', () => {
-//     console.log('mongodb connect success!')
-// })
+mongoose.connect(DB_URL, { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true 
+  });
+mongoose.connection.on('connected', function (err) {
+    if (err) {
+        console.log(err, "mongodb connect fail!");
+        return;
+    }
+    console.log('mongodb connect success!');
+});

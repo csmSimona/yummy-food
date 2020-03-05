@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-// import axios from 'axios';
-import { getUser } from './utils/api';
+import { getUser, addUser } from './utils/api';
 
 class App extends Component {
   constructor(props) {
@@ -9,17 +8,25 @@ class App extends Component {
   }
 
   callAPI() {
-    // fetch("http://localhost:9000/users/getUser")
-    //   .then(res => res.text())
-    //   .then(res => {
-    //     console.log('res', res)
-    //     return this.setState({ apiResponse: res })
-    //   });
-      getUser().then(res => {
-        return this.setState({ apiResponse: JSON.stringify(res.data) })
-      }).catch((err) => {
-        console.log('error', err);
-      })
+    // 增加数据
+    var user = {
+      "name": "王五",
+      "gender": "女",
+      "age": 18,
+      "hobbies": "跳舞"
+    }
+    addUser(user).then(res => {
+      console.log('addUser', res);
+    }).catch((err) => {
+      console.log('error', err);
+    })
+
+    // 查询数据
+    getUser().then(res => {
+      return this.setState({ apiResponse: JSON.stringify(res.data) })
+    }).catch((err) => {
+      console.log('error', err);
+    })
   }
 
   componentDidMount() {

@@ -7,7 +7,6 @@ import axios from 'axios';
  * 自定义实例默认值
  */
 var instance = axios.create({
-  baseURL: 'http://localhost:9000/', // 公	共接口url（如果有多个的公共接口的话，需要处理）
   timeout: 3000, // 请求超时
   // 携带凭证
   withCredentials: true,
@@ -106,11 +105,11 @@ instance.interceptors.response.use(
 class http {
   // 使用async ... await
   static async get(url, params) {
-    console.log(params)
+    console.log('getParams', params)
     return await instance.get(url, {params}) 
   }
   static async post(url, params) {
-    console.log(params)
+    console.log('postParams', params)
     return await instance.post(url, params);
   }
 }
