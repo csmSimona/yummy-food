@@ -26,7 +26,11 @@ https://segmentfault.com/a/1190000020086440
 
 4、连接数据库
 
-5、项目目录搭建，Styled-Components 与 Reset.css 的结合使用
+5、封装axios
+
+6、antd mobile   vscode cssrem插件 px转rem
+
+7、项目目录搭建，Styled-Components 与 Reset.css 的结合使用
 
 6、使用 iconfont 嵌入头部图标
 
