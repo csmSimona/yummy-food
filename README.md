@@ -6,7 +6,7 @@
 ## react项目目录结构优化
 
 |——src
-|————|common //公共组件目录，如http.js、cookie.js等
+|————|utils //公共文件目录，如http.js、cookie.js等
 |————|components //基础组件、业务组件、业务代码抽象出的一些基础类，例如每个页面可以在此目录下建立一个文件存放相关组件。
 |————|layouts //布局相关组件及其样式文件，如header.js、footer.js、menu.js等
 |————|styles //公共样式文件
