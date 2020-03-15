@@ -105,11 +105,11 @@ instance.interceptors.response.use(
 class http {
   // 使用async ... await
   static async get(url, params) {
-    console.log('getParams', params)
+    // console.log('getParams', params)
     return await instance.get(url, {params}) 
   }
   static async post(url, params) {
-    console.log('postParams', params)
+    // console.log('postParams', params)
     return await instance.post(url, params);
   }
 }

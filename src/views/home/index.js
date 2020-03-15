@@ -15,10 +15,10 @@ const TabExample = () => (
       onChange={(tab, index) => { console.log('onChange', index, tab); }}
       onTabClick={(tab, index) => { console.log('onTabClick', index, tab); }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'yellow' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'red' }}>
         Content of first tab
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'red' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'yellow' }}>
         Content of second tab
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'blue' }}>
@@ -33,12 +33,12 @@ class Home extends Component {
         super(props);
         this.state = { 
             
-         }
+        }
     }
     render() { 
         return ( 
         <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50px', backgroundColor: 'green' }}>这里要放一个搜索框</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50px', backgroundColor: 'yellow' }}>这里要放一个搜索框</div>
             <TabExample />
         </div>
         );

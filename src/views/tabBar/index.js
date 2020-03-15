@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { TabBar } from 'antd-mobile';
 import { Iconfont, IconfontSelected } from './style';
 import { themeColor, textColor } from '../../styles/color';
-import Home from '../../views/home';
-import Shop from '../../views/shop';
-import Release from '../../views/release';
-import Message from '../../views/message';
-import Center from '../../views/center';
+import Home from '../home';
+import Shop from '../shop';
+import Release from '../release';
+import Message from '../message';
+import Center from '../center';
+
 let tabBarList=[
   {
     title: "首页",
@@ -19,7 +20,7 @@ let tabBarList=[
     icon: "&#xe610;"
   },
   {
-    title: "",
+    title: "发布",
     key: "release",
     icon: "&#xe66f;"
   },
@@ -39,7 +40,7 @@ class TabBarExample extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'home'
+      selectedTab: this.props.location.selectedTab ? this.props.location.selectedTab : 'home'
     };
   }
 
@@ -53,6 +54,12 @@ class TabBarExample extends Component {
         { pageText === 'center' && <Center/> }
       </div>
     );
+  }
+
+  gotoLogin() {
+    if (this.state.selectedTab === 'message') {
+      this.props.history.replace('/login')
+    }
   }
 
   render() {
@@ -78,14 +85,12 @@ class TabBarExample extends Component {
                   onPress={() => {
                     this.setState({
                       selectedTab: item.key,
+                    }, () => {
+                      this.gotoLogin()
                     });
                   }}
                 >
-                  {/* { pathname === ( '/' + item.key ) ? children : null } */}
                   {this.renderContent(item.key)}
-                  {/* <TabPane tab="Third Tab" key="thirdTab">
-                    <Route exact path="/my/url/thirdTab" component={ThirdComponent}/>
-                  </TabPane> */}
                 </TabBar.Item>
             )
           }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class Center extends Component {
     constructor(props) {
@@ -7,9 +8,14 @@ class Center extends Component {
     }
     render() { 
         return ( 
-            <div>这是个人中心页</div>
+            <div>
+                <Link to='/personInfo'>设置</Link>
+            </div>
         );
     }
+    // componentDidMount() {
+    //     this.props.history.push('/login')
+    // }
 }
  
 export default Center;
