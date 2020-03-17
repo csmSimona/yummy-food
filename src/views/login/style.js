@@ -2,6 +2,13 @@ import styled from 'styled-components';
 import { themeColor, hintColor, textColor } from '../../styles/color';
 import border from '../../styles/border';
 
+export const SmsCheckWrapper = styled.div`{
+  position: relative;
+  .am-button::before {
+    border: none !important;
+  }
+}`
+
 export const Cancel = styled.div`{
   display: inline-block;
   margin-top: 1rem;
@@ -27,7 +34,9 @@ export const logo = {
   top: 0,
   left: 0,
   right: 0,
-  bottom: 0
+  bottom: 0,
+  width: '7.5rem',
+  height: '2.5rem'
 }
 
 export const Slogan = styled.div`{

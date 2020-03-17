@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // 创建实例时设置配置的默认值
@@ -7,7 +6,7 @@ import axios from 'axios';
  * 自定义实例默认值
  */
 var instance = axios.create({
-  timeout: 3000, // 请求超时
+  // timeout: 3000, // 请求超时
   // 携带凭证
   withCredentials: true,
   // 返回数据类型

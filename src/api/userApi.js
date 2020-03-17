@@ -8,4 +8,8 @@ export const getVerificationCode = (data) => http.post('/user/getVerificationCod
 
 export const verifyCode = (data) => http.post('/user/verifyCode', data);
 
-export const weChatLogin = () => http.get('/user/wechat_login', );
+export const weChatLogin = () => http.get('/user/wechat_login');
+
+export const get_wx_access_token = () => http.get('/user/get_wx_access_token');
+
+export const checkUser = (data) => http.post('/user/checkUser', data);

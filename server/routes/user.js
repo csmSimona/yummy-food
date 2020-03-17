@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/User');
 var SmsRequest = require('../utils/smsRequest');
+const request = require('request');
+const jwt = require('jsonwebtoken');
 
 // 网易云信
 const appKey = "1463872763e2ebb7e7040d5ba4cd1544";
@@ -12,20 +14,54 @@ var smsRequest = new SmsRequest(appKey, appSecret);
 router.get('/getUser', function(req, res, next) {
   User.find(function (err, data) {
     if (err) {
-      return res.status(500).send('Server error.')
+      console.log(err)
+      return res.status(500).send('获取用户信息失败')
     }
     return res.json({ success: true, data: data });
   })
 });
 
 router.post('/addUser', function(req, res, next) {
-  new User(req.body).save(function (err) {
+  var user = req.body
+  let content ={phone: req.body.phone}; // 要生成token的主题信息
+  let secretOrPrivateKey="csm" // 这是加密的key（密钥） 
+  let token = jwt.sign(content, secretOrPrivateKey, {
+          expiresIn: 60 * 60 * 24  // 24小时过期
+      });
+  user.token = token
+  new User(user).save(function (err) {
     if (err) {
+      console.log(err)
       return res.status(500).send('Server error.')
     }
-    return res.json({ success: true });
+    res.send({'code': 200, 'token': token, 'user_name': req.body.name}) 
   })
 });
+
+// 检测token
+router.post('/checkUser', (req, res)=>{
+  User.find({ name: req.body.user_name, token: req.body.token}, (err, data)=>{
+      if (err) {
+          console.log(err);
+          res.send(err);
+          return
+      }
+      if(data.length > 0){
+          let token = req.body.token; // 从body中获取token
+          let secretOrPrivateKey="csm"; // 这是加密的key（密钥） 
+
+          jwt.verify(token, secretOrPrivateKey, function (err, decode) {
+              if (err) {  //  时间失效的时候/ 伪造的token          
+                return res.status(500).send('token已失效')        
+              } else {
+                res.send({'code': 200}) 
+              }
+          })
+      } else{
+          return res.status(500).send('没有这个用户')                
+      }
+  })
+})
 
 router.post('/getVerificationCode', function(req, res, next) {
   console.log('req.body', req.body.mobile);
@@ -64,41 +100,22 @@ router.post('/verifyCode', function(req, res, next) {
 });
 
 
-// const oauth = new OAuth('wxf5fff2aa6e0b1af7', 'f396ab92d74c2ba72021d102aa67750b')
-// router.get('/wxAuthorize', async ctx => {
-//     const state = ctx.query.id
-//     redirectUrl = ctx.href
-//     redirectUrl = redirectUrl.replace('wxAuthorize', 'wxCallback')
-//     const scope = 'snsapi_userinfo' //授权类型
-//     const url = oauth.getAuthorizeURL(redirectUrl, state, scope)
-//     console.log('url:', url)
-//     ctx.redirect(url)
-// })
-// router.get('/wxCallback', async ctx => {
-//     const code = ctx.query.code // 授权码
-//     console.log('wxCallback.....', code)
-//     const token = await oauth.getAccessToken(code)
-//     const accessToken = token.data.access_token
-//     const openid = token.data.openid
-//     console.log('accessToken', accessToken)
-//     console.log('openid', openid)
-//     ctx.redirect('/?openid=' + openid)
-// })
 const AppID = 'wxf5fff2aa6e0b1af7';
 const AppSecret = 'f396ab92d74c2ba72021d102aa67750b';
 
 router.get('/wechat_login', function(req,res, next){
   // 第一步：用户同意授权，获取code
-  var router = 'get_wx_access_token';
+  // var router = 'get_wx_access_token';
   // 这是编码后的地址
-  var return_uri = 'https%3A%2F%2F0a78b083.ngrok.io'+router;  
+  var return_uri = encodeURIComponent('http://88841d2f.ngrok.io');  
   var scope = 'snsapi_userinfo';
   res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+AppID+'&redirect_uri='+return_uri+'&response_type=code&scope='+scope+'&state=STATE#wechat_redirect');
 });
 
 router.get('/get_wx_access_token', function(req, res, next){
   // 第二步：通过code换取网页授权access_token
-  var code = req.query.code;
+  // var code = req.query.code;
+  var code = '011jfSxE06PQSi2p30AE0LEMxE0jfSxM';
   request.get(
       {   
           url:'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+AppID+'&secret='+AppSecret+'&code='+code+'&grant_type=authorization_code',

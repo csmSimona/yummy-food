@@ -9,5 +9,5 @@ module.exports = override(
     addLessLoader({
         javascriptEnabled: true,
         modifyVars: theme
-      }),
+    })
 );

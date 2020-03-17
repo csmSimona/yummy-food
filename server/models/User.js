@@ -11,15 +11,31 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
-  gender: {
-    type: String,
-    // enum: [0, 1],
-    // default: 0
-  },
-  age: {
+  phone: {
     type: Number
   },
-  hobbies: {
+  gender: {
+    type: String
+  },
+  birthday: {
+    type: Date
+  },
+  hometown: {
+    type: Array
+  },
+  livingPlace: {
+    type: Array
+  },
+  avoidFood: {
+    type: Array
+  },
+  profile: {
+    type: String
+  },
+  img: {
+    type: Array
+  },
+  token: {
     type: String
   }
 }, {

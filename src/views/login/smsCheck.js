@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Button, InputItem, Toast } from 'antd-mobile';
-import {  phoneLogin, Tip, PhoneNumber, sendButton, inputValid, Border } from './style';
-import './antdFix.css';
+import {  phoneLogin, Tip, PhoneNumber, sendButton, inputValid, Border, SmsCheckWrapper } from './style';
 import { verifyCode, getVerificationCode } from '../../api/userApi';
 import Header from '../../components/header';
 
@@ -26,7 +25,7 @@ class smsCheck extends Component {
     }
     render() { 
       return (
-        <div style={{ position: 'relative'}}>
+        <SmsCheckWrapper>
           <Header header={header}></Header>
           <Tip>短信验证码已发送，请填写验证码</Tip>
           <PhoneNumber>{this.props.location.phone}</PhoneNumber>
@@ -36,7 +35,7 @@ class smsCheck extends Component {
             <Border></Border>
           </div>
           <Button style={phoneLogin} onClick={this.handleBtnClick} disabled={this.state.isDisabled}>完成</Button>
-        </div>
+        </SmsCheckWrapper>
       );
     }
     handleBtnClick() {
@@ -48,7 +47,7 @@ class smsCheck extends Component {
         if (res.data.code === 200) {
           this.props.history.push({
             pathname: '/personInfo',
-            phone: this.props.location.phone, // 传手机号码
+            phone: this.props.location.phone // 传手机号码
           })
         } else {
           Toast.fail('验证码错误！', 1);

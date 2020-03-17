@@ -8,14 +8,13 @@ class Center extends Component {
     }
     render() { 
         return ( 
-            <div>
-                <Link to='/personInfo'>设置</Link>
+            <div>这是个人中心页
+                {/* <Link to='/personInfo'>设置</Link> */}
             </div>
         );
     }
-    // componentDidMount() {
-    //     this.props.history.push('/login')
-    // }
+    componentDidMount() {
+    }
 }
  
 export default Center;

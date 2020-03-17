@@ -20,9 +20,11 @@ app.set('view engine', 'ejs');
 
 // 配置模板引擎和 body-parser 一定要在 app.use(router) 挂载路由之前
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 // 把路由容器挂载到 app 服务中
 app.use(logger('dev'));
@@ -52,4 +54,14 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+// //设置跨域访问  
+// app.all('*', function(req, res, next) {  
+//   res.header("Access-Control-Allow-Origin", "*");  
+//   res.header("Access-Control-Allow-Headers", "X-Requested-With");  
+//   res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
+//   res.header("X-Powered-By",' 3.2.1')  
+//   res.header("Content-Type", "application/json;charset=utf-8");  
+//   next();  
+// });  
 module.exports = app;

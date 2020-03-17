@@ -5,7 +5,7 @@ class header extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-        }
+        };
         this.leftClick = this.leftClick.bind(this);
         this.rightClick = this.rightClick.bind(this);
     }
