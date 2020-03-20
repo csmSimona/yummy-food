@@ -22,7 +22,9 @@ router.get('/getUser', function(req, res, next) {
 });
 
 router.post('/addUser', function(req, res, next) {
-  var user = req.body
+  var user = req.body;
+  var date = new Date();
+  user.createDate = date;
   let content ={phone: req.body.phone}; // 要生成token的主题信息
   let secretOrPrivateKey="csm" // 这是加密的key（密钥） 
   let token = jwt.sign(content, secretOrPrivateKey, {
@@ -84,17 +86,40 @@ router.post('/getVerificationCode', function(req, res, next) {
 
 router.post('/verifyCode', function(req, res, next) {
   console.log('req.body', req.body);
-  if (req.body.code === '1111') {
-    return res.json({ code: 200 });
-  } else {
-    return res.json({ code: 413 });
-  }
   // smsRequest.verifycode(req.body, function(err, data) {
   //   if (err) {
   //     console.log('err:', err)
   //     return res.status(500).send('Server error.')
   //   }  else {
   //     return res.json({ code: data.code, msg: data.msg });
+  
+          if (req.body.code === '1111') {
+            User.findOne({ phone: req.body.mobile }, function (err, data) {
+              if (err) {
+                console.log('find err', err)
+                return res.status(500).send('Server error.')
+              } else {
+                if (data) {
+                  let content = {phone: req.body.mobile}; // 要生成token的主题信息
+                  let secretOrPrivateKey="csm" // 这是加密的key（密钥） 
+                  var token = jwt.sign(content, secretOrPrivateKey, {
+                          expiresIn: 60 * 60 * 24  // 24小时过期
+                      });
+                  User.updateOne({phone: req.body.mobile}, {$set: {token: token}}, function (err) {
+                    if (err) {
+                      console.log('update err', err)
+                    }
+                  })
+                  return res.json({ code: 200, msg: 'find it', token: token, user_name: data.name });
+                } else {
+                  console.log('can not find')
+                  return res.json({ code: 200, msg: 'can not find' });
+                }
+              }
+            })
+          } else {
+            return res.json({ code: 413 });
+          }
   //   }
   // })
 });

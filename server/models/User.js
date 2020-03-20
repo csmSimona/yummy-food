@@ -17,8 +17,11 @@ var UserSchema = new Schema({
   gender: {
     type: String
   },
-  birthday: {
-    type: Date
+  hometown: {
+    type: Array
+  },
+  createDate: {
+    type: Array
   },
   hometown: {
     type: Array

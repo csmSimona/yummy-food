@@ -34,7 +34,7 @@ class Release extends Component {
   }
 //   cancelLogin() {
 //     this.props.history.push({
-//         pathname: '/tab/home',
+//         pathname: '/tab/home/recommend',
 //         selectedTab: 'home'
 //     })
 //   }

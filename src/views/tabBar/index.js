@@ -17,7 +17,7 @@ let tabBarList=[
     icon: "&#xe610;"
   },
   {
-    title: "发布",
+    title: "",
     key: "release",
     icon: "&#xe66f;"
   },
@@ -84,7 +84,7 @@ class TabBarExample extends Component {
 
   gotoLogin() {
     if (this.state.selectedTab === 'home') {
-      this.props.history.replace('/tab/home')
+      this.props.history.replace('/tab/home/recommend')
     }
     if (this.state.selectedTab === 'shop') {
       this.props.history.replace('/tab/shop')

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getUser, weChatLogin, get_wx_access_token } from '../../api/userApi';
+import { weChatLogin, get_wx_access_token } from '../../api/userApi';
 import { Button } from 'antd-mobile';
 import {  Cancel, wechatLogin, phoneLogin, logo, Slogan } from './style';
 
@@ -21,7 +21,6 @@ class Login extends Component {
         <Slogan>唯有美食与爱不可辜负</Slogan>
         <Button style={wechatLogin} onClick={this.handleWechatBtnClick}>使用微信登录</Button>
         <Button style={phoneLogin} onClick={this.handlePhoneBtnClick}>手机登录注册</Button>
-        {/* <p>{this.state.apiResponse}</p> */}
       </div>
     );
   }
@@ -46,26 +45,10 @@ class Login extends Component {
   
   cancelLogin() {
     this.props.history.push({
-      pathname: '/tab/home',
+      pathname: '/tab/home/recommend',
       selectedTab: 'home'
     })
-    // window.history.back(-1);
   }
-
-
-  callAPI() {
-    // 查询数据
-    getUser().then(res => {
-      return this.setState({ apiResponse: JSON.stringify(res.data) })
-    }).catch((err) => {
-      console.log('error', err);
-    })
-  }
-
-  componentDidMount() {
-    this.callAPI();
-  }
-
 }
 
 export default Login;

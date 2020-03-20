@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Header from '../../components/header';
-import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast } from 'antd-mobile';
+import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore } from './style';
-import { Input } from 'antd';
-import 'antd/dist/antd.css';
+import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder } from './style';
+// import { Input } from 'antd';
+// import 'antd/dist/antd.css';
 
 const alert = Modal.alert;
 const header = {
@@ -12,10 +12,30 @@ const header = {
     title: '创建菜谱',
     right: '存草稿'
 }
-const data = [];
-const tagList1 = ["煮", "炒", "蒸", "烧", "拌", "炖", "炸", "煎", "烤", "烘焙", "其他"];
-const tagList2 = ["咸鲜味", "家常味", "甜味", "香辣味", "酸甜味", "麻辣味", "苦香味", "五香味", "酱香味", "咖喱味", "其他"];
-const tagList3 = ["<5分钟", "<10分钟", "<15分钟", "<20分钟", "<25分钟", "<30分钟", "<60分钟", "<90分钟", "<2小时", ">2小时"];
+const stepImgs = [];
+const tagList = [
+    {
+        id: 1,
+        name: '工艺',
+        tag: ["煮", "炒", "蒸", "烧", "拌", "炖", "炸", "煎", "烤", "烘焙", "其他"]
+    },
+    {
+        id: 2,
+        name: '口味',
+        tag: ["咸鲜味", "家常味", "甜味", "香辣味", "酸甜味", "麻辣味", "苦香味", "五香味", "酱香味", "咖喱味", "其他"]
+    },
+    {
+        id: 3,
+        name: '时间',
+        tag: ["<5分钟", "<10分钟", "<15分钟", "<20分钟", "<25分钟", "<30分钟", "<60分钟", "<90分钟", "<2小时", ">2小时"]
+    },
+    {
+        id: 4,
+        name: '难度',
+        tag: ["初级", "中级", "高级"]
+    }
+]
+
 const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
 
 function closest(el, selector) {
@@ -33,26 +53,29 @@ class CreateRecipes extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            files: data,
-            modal1: false,
-            modal2: false,
-            modal3: false,
-            selected1: '请选择工艺',
-            selected2: '请选择口味',
-            selected3: '请选择时间',
+            files: [],
+            recipeTips: '',
+            modal: [false, false, false, false],
+            selected: ['请选择工艺', '请选择口味', '请选择时间', '请选择难度'],
             materialsList: [{
                 ingredients: '',
-                quantities: '',
-                order: 0
+                quantities: ''
             }],
-            recommendSelected: []
+            recommendSelected: [],
+            stepImgs: stepImgs,
+            cookStepsList: [{
+                img: [],
+                step: ''
+            }]
          };
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
         this.handleAddMoreClick = this.handleAddMoreClick.bind(this);
+        this.handleAddStepClick = this.handleAddStepClick.bind(this);
         this.onChange = this.onChange.bind(this);
-        // this.IngredientsChange = this.IngredientsChange.bind(this);
-        this.QuantitiesChange = this.QuantitiesChange.bind(this);
+        this.onStepImgChange = this.onStepImgChange.bind(this);
+        this.onWrapTouchStart = this.onWrapTouchStart.bind(this);
+        
     }
 
     render() { 
@@ -61,13 +84,15 @@ class CreateRecipes extends Component {
             <CreateRecipesWrapper>
                 <Header header={header} leftClick={this.handleBackClick} rightClick={this.handleSaveClick}></Header>
                 <Tip style={{visibility: this.state.files.length < 1 ? 'true' : 'hidden'}}>添加菜谱封面或菜谱视频</Tip>
-                <ImagePicker
-                    files={this.state.files}
-                    onChange={this.onChange}
-                    onImageClick={(index, fs) => console.log(index, fs)}
-                    selectable={this.state.files.length < 1}
-                    length="1"
-                    />
+                <NoBorder>
+                    <ImagePicker
+                        files={this.state.files}
+                        onChange={this.onChange}
+                        onImageClick={(index, fs) => console.log(index, fs)}
+                        selectable={this.state.files.length < 1}
+                        length="1"
+                        />
+                </NoBorder>
                 <form style={{marginBottom: '3rem'}}>
                     <List>
                         <InputItem
@@ -81,143 +106,190 @@ class CreateRecipes extends Component {
                             count={255}
                             placeholder="输入这道美食背后的故事"
                         />
-                        <List.Item 
-                            arrow="horizontal" 
-                            {...getFieldProps('selected1', {
-                                initialValue: this.state.selected1
-                            })}
-                            onClick={this.showModal('modal1')} 
-                            extra={this.state.selected1}
-                        >工艺</List.Item>
-                        <Modal
-                            visible={this.state.modal1}
-                            transparent
-                            onClose={this.onClose('modal1')}
-                            title="工艺"
-                            wrapProps={{ onTouchStart: this.onWrapTouchStart }}
-                        >
-                            <TagContainer>
-                                {
-                                    tagList1.map((item, index) => {
-                                        return <Tag key={index} 
-                                        selected={this.state.selected1 === item}
-                                        onChange={selected => {
-                                            if (selected) {
+                        {
+                            tagList.map((item, index) => {
+                                return (
+                                    <div key={index}>
+                                    <List.Item 
+                                        arrow="horizontal" 
+                                        {...getFieldProps(`selected${item.id}`, {
+                                            initialValue: this.state.selected[index]
+                                        })} 
+                                        onClick={
+                                            () => {
+                                                console.log('index', index)
+                                                let newModal = this.state.modal;
+                                                newModal[index] = true;
                                                 this.setState({
-                                                    selected1: item
-                                                })
-                                                this.onClose('modal1')();
+                                                    modal: newModal
+                                                });
                                             }
-                                        }}>{item}</Tag>
-                                    })
-                                }
-                            </TagContainer>
-                        </Modal>
-                        <List.Item 
-                            arrow="horizontal" 
-                            {...getFieldProps('selected2', {
-                                initialValue: this.state.selected2
-                            })}
-                            onClick={this.showModal('modal2')} 
-                            extra={this.state.selected2}
-                        >口味</List.Item>
-                        <Modal
-                            visible={this.state.modal2}
-                            transparent
-                            onClose={this.onClose('modal2')}
-                            title="口味"
-                            wrapProps={{ onTouchStart: this.onWrapTouchStart }}
-                        >
-                            <TagContainer>
-                                {
-                                    tagList2.map((item, index) => {
-                                        return <Tag key={index} 
-                                        selected={this.state.selected2 === item}
-                                        onChange={selected => {
-                                            if (selected) {
+                                        }
+                                        extra={this.state.selected[index]}
+                                    >{item.name}</List.Item>
+                                    <Modal
+                                        visible={this.state.modal[index]}
+                                        transparent
+                                        onClose={
+                                            () => {
+                                                console.log('index111', index)
+                                                let newModal = this.state.modal;
+                                                newModal[index] = false;
                                                 this.setState({
-                                                    selected2: item
-                                                })
-                                                this.onClose('modal2')();
+                                                    modal: newModal
+                                                });
                                             }
-                                        }}>{item}</Tag>
-                                    })
-                                }
-                            </TagContainer>
-                        </Modal>
-                        <List.Item 
-                            arrow="horizontal" 
-                            {...getFieldProps('selected3', {
-                                initialValue: this.state.selected3
-                            })} 
-                            onClick={this.showModal('modal3')} 
-                            extra={this.state.selected3}
-                        >时间</List.Item>
-                        <Modal
-                            visible={this.state.modal3}
-                            transparent
-                            onClose={this.onClose('modal3')}
-                            title="时间"
-                            wrapProps={{ onTouchStart: this.onWrapTouchStart }}
-                        >
-                            <TagContainer>
-                                {
-                                    tagList3.map((item, index) => {
-                                        return <Tag key={index} 
-                                        selected={this.state.selected3 === item}
-                                        onChange={selected => {
-                                            if (selected) {
-                                                this.setState({
-                                                    selected3: item
+                                        }
+                                        title={item.name}
+                                        wrapProps={{ onTouchStart: this.onWrapTouchStart }}
+                                    >
+                                        <TagContainer>
+                                            {
+                                                item.tag.map((val, i) => {
+                                                    return <Tag key={i} 
+                                                    selected={this.state.selected[index] === val}
+                                                    onChange={selected => {
+                                                        if (selected) {
+                                                            let newSelected = this.state.selected;
+                                                            let newModal = this.state.modal;
+                                                            newSelected[index] = val
+                                                            newModal[index] = false;
+                                                            this.setState({
+                                                                selected: newSelected,
+                                                                modal: newModal
+                                                            })
+                                                        }
+                                                    }}>{val}</Tag>
                                                 })
-                                                this.onClose('modal3')();
                                             }
-                                        }}>{item}</Tag>
-                                    })
-                                }
-                            </TagContainer>
-                        </Modal>
+                                        </TagContainer>
+                                    </Modal>
+                                    </div>
+                                )
+                            })
+                        }
                         <List.Item 
                             {...getFieldProps('materials', {
                                 initialValue: this.state.materialsList
                             })}
                         >用料</List.Item>
-                        {/* <Input.Group compact>
-                            <Input style={{ width: '50%' }} defaultValue="input content" />
-                            <Input style={{ width: '50%' }} />
-                        </Input.Group> */}
-                        {/* <InputItem.Group compact>
-                            <Input style={{ width: '50%' }} defaultValue="input content" />
-                            <Input style={{ width: '50%' }} />
-                        </InputItem.Group> */}
-                        
                         {
                             this.state.materialsList.map((item, index)=>{
                                 return (
                                     <MaterialsWrapper key={index}>
                                         <InputItem
                                             placeholder="食材：如鸡蛋"
-                                            className='materialsInput'
                                             style={{borderRight: '1px solid #ccc'}}
-                                            // value={item.ingredients}
-                                            onChange={this.IngredientsChange()}
+                                            value={item.ingredients}
+                                            onChange={(value) => {
+                                                let newMaterialsList = this.state.materialsList
+                                                newMaterialsList[index].ingredients = value
+                                                this.setState({
+                                                    materialsList: newMaterialsList
+                                                })
+                                            }}
                                         />
                                         <InputItem
                                             placeholder="用量：如1只"
-                                            className='materialsInput'
                                             value={item.quantities}
-                                            onChange={(event, index) => this.QuantitiesChange(event, index)}
+                                            onChange={(value) => {
+                                                let newMaterialsList = this.state.materialsList
+                                                newMaterialsList[index].quantities = value
+                                                this.setState({
+                                                    materialsList: newMaterialsList
+                                                })
+                                            }}
                                         />
+                                        <IconWrapper>
+                                            <Icon type="cross" onClick={() => {
+                                                let newMaterialsList = this.state.materialsList
+                                                if (newMaterialsList.length === 1) {
+                                                    Toast.info('用料不能少于一项！', 1)
+                                                } else {
+                                                    newMaterialsList.splice(index, 1)
+                                                    this.setState({
+                                                        materialsList: newMaterialsList
+                                                    })
+                                                }
+                                            }}/>
+                                        </IconWrapper>
                                     </MaterialsWrapper>
                                 )
                             })
                         }
                         <AddMore onClick={this.handleAddMoreClick}>再添加一种食材</AddMore>
+                        <List.Item
+                            {...getFieldProps('cookSteps', {
+                                initialValue: this.state.cookStepsList
+                            })}
+                        >烹饪步骤</List.Item>
+                        {
+                            this.state.cookStepsList.map((item, index)=>{
+                                return (
+                                    <CookStepsWrapper key={index}>
+                                        <div>第 {index + 1} 步
+                                            <IconWrapper>
+                                                <Icon type="cross" className='icon' 
+                                                    onClick={() => {
+                                                    let newCookStepsList = this.state.cookStepsList
+                                                    if (newCookStepsList.length === 2) {
+                                                        Toast.info('烹饪步骤不能少于两步！', 1)
+                                                    } else {
+                                                        newCookStepsList.splice(index, 1)
+                                                        this.setState({
+                                                            cookStepsList: newCookStepsList
+                                                        })
+                                                    }
+                                                }}/>
+                                            </IconWrapper>
+                                        </div>
+                                        <ImagePicker
+                                            key={index}
+                                            files={item.img}
+                                            onChange={(files, type) => {
+                                                console.log(files, type, index);
+                                                let newCookStepsList = this.state.cookStepsList
+                                                newCookStepsList[index].img = files
+                                                this.setState({
+                                                    cookStepsList: newCookStepsList
+                                                })
+                                            }}
+                                            onImageClick={(index, fs) => console.log(index, fs)}
+                                            selectable={item.img.length < 1}
+                                            length="1"
+                                        />
+                                        <TextareaItem
+                                            rows={3}
+                                            count={180}
+                                            placeholder="请填写步骤描述，烹饪步骤不能少于两步"
+                                            value={item.step}
+                                            onChange={(value) => {
+                                                let newCookStepsList = this.state.cookStepsList
+                                                newCookStepsList[index].step = value
+                                                this.setState({
+                                                    cookStepsList: newCookStepsList
+                                                })
+                                            }}
+                                        />
+                                    </CookStepsWrapper>
+                                )
+                            })
+                        }
+                        <AddMore onClick={this.handleAddStepClick}>再添加一步</AddMore>
+                        <List.Item
+                            {...getFieldProps('recipeTips', {
+                                initialValue: this.state.recipeTips
+                            })}
+                        >小贴士</List.Item>
                         <TextareaItem
-                            {...getFieldProps('recipeTips')}
                             rows={5}
                             count={255}
                             placeholder="分享下你做这道菜的过程中的心得和小技巧吧"
+                            onChange={(value) => {
+                                this.setState({
+                                    recipeTips: value
+                                })
+                            }}
                         />
                         <List.Item
                             {...getFieldProps('recommend', {
@@ -239,9 +311,10 @@ class CreateRecipes extends Component {
                                             } else {
                                                 var newSelect1 = this.state.recommendSelected
                                                 newSelect1.forEach((val, i) => {
-                                                    if(item === val){
+                                                    if(item === val) {
+                                                        newSelect1.splice(i, 1)
                                                         this.setState({ 
-                                                            recommendSelected: newSelect1.splice(i, 1)
+                                                            recommendSelected: newSelect1
                                                         })
                                                         i--;
                                                     } 
@@ -263,20 +336,7 @@ class CreateRecipes extends Component {
          );
     }
 
-    showModal = key => (e) => {
-        e.preventDefault(); // 修复 Android 上点击穿透
-        this.setState({
-            [key]: true,
-        });
-    }
-    onClose = key => () => {
-        this.setState({
-            [key]: false,
-        });
-    }
-
     onWrapTouchStart = (e) => {
-        // fix touch to scroll background page on iOS
         if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
             return;
         }
@@ -287,13 +347,50 @@ class CreateRecipes extends Component {
     }
 
     onSubmit = () => {
-        this.props.form.validateFields({ force: true }, (error) => {
-          if (!error) {
-            console.log(this.props.form.getFieldsValue());
-          } else {
-            alert('Validation failed');
-          }
+        let createRecipesList = this.props.form.getFieldsValue();
+        createRecipesList.selected = [createRecipesList.selected1, createRecipesList.selected2, createRecipesList.selected3, createRecipesList.selected4];
+        delete createRecipesList.selected1;
+        delete createRecipesList.selected2;
+        delete createRecipesList.selected3;
+        delete createRecipesList.selected4;
+        
+        if (this.state.files.length === 0) {
+            Toast.info('菜谱封面不能为空', 1)
+            return false
+        } else {
+            createRecipesList.album = this.state.files;
+        }
+        if (!createRecipesList.recipeName) {
+            Toast.info('菜谱标题不能为空', 1)
+            return false
+        }
+        let materialsHasEmpty = createRecipesList.materials.some(item => {
+            if (!item.ingredients || !item.quantities) {
+                return true
+            }
         });
+        if (materialsHasEmpty) {
+            Toast.info('用料中不能有空', 1)
+            return false
+        }
+        let stepsHasEmpty = createRecipesList.cookSteps.some(item => {
+            if (item.img.length === 0 || !item.step) {
+                return true
+            }
+        });
+        if (stepsHasEmpty) {
+            Toast.info('烹饪步骤中不能有空', 1)
+            return false
+        }
+        if (createRecipesList.cookSteps.length < 2) {
+            Toast.info('烹饪步骤不能少于两步', 1)
+            return false
+        }
+        if (createRecipesList.recommend.length === 0) {
+            Toast.info('请选择分类', 1)
+            return false
+        }
+        console.log('createRecipesList', createRecipesList);
     }
 
     onReset = () => {
@@ -330,12 +427,25 @@ class CreateRecipes extends Component {
     onChange = (files, type, index) => {
         console.log(files, type, index);
         this.setState({
-            files,
+            files
         });
     }
 
+    onStepImgChange = (files, type, index) => {
+        console.log(files, type, index);
+
+        let newCookStepsList = this.state.cookStepsList
+        newCookStepsList[index].img = files
+        this.setState({
+            cookStepsList: newCookStepsList
+        })
+
+        // this.setState({
+        //     stepImgs: files
+        // });
+    }
+
     handleAddMoreClick() {
-        console.log('addMore')
         var add = {
             ingredients: '',
             quantities: ''
@@ -345,24 +455,17 @@ class CreateRecipes extends Component {
             materialsList: newMaterialsList
         })
     }
-
-    IngredientsChange(index, value) {
-        console.log('index', index);
-        console.log('value', value);
-        // console.log(index, event)
-        // let newMaterialsList = this.state.materialsList
-        // newMaterialsList[0].ingredients = value
-        // this.setState({
-        //     materialsList: newMaterialsList
-        // }, console.log(this.state.materialsList))
-    }
-    QuantitiesChange(event, index) {
-        console.log('index', index)
-        // let newMaterialsList = this.state.materialsList
-        // newMaterialsList[index].quantities = value
-        // this.setState({
-        //     materialsList: newMaterialsList
-        // })
+    
+    handleAddStepClick() {
+        console.log('addmore')
+        var add = {
+            img: [],
+            step: ''
+        }
+        let newCookStepsList = [...this.state.cookStepsList, add]
+        this.setState({
+            cookStepsList: newCookStepsList
+        })
     }
 }
 

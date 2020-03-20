@@ -1,47 +1,55 @@
 import React, { Component } from 'react';
-
-import { Tabs } from 'antd-mobile';
+import { IconFont, HeaderFix, Border, HomeWrapper, PageWrapper } from './style';
+import { SearchBar, Tabs } from 'antd-mobile';
+import { renderRoutes } from 'react-router-config';
 
 const tabs = [
-  { title: '关注' },
-  { title: '推荐' },
-  { title: '发现' },
+  {
+    title: '关注',
+    path: '/tab/home/concern'
+  },
+  { 
+    title: '推荐',
+    path: '/tab/home/recommend'
+  },
+  { 
+    title: '发现',
+    path: '/tab/home/find'
+  },
 ];
-
-const TabExample = () => (
-  <div>
-    <Tabs tabs={tabs}
-      initialPage={1}
-      onChange={(tab, index) => { console.log('onChange', index, tab); }}
-      onTabClick={(tab, index) => { console.log('onTabClick', index, tab); }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'red' }}>
-        Content of first tab
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'yellow' }}>
-        Content of second tab
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px', backgroundColor: 'blue' }}>
-        Content of third tab
-      </div>
-    </Tabs>
-  </div>
-);
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            
-        }
+          route: props.route
+        };
+        this.onMenuClick = this.onMenuClick.bind(this);
     }
     render() { 
         return ( 
-        <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50px', backgroundColor: 'yellow' }}>这里要放一个搜索框</div>
-            <TabExample />
-        </div>
+        <HomeWrapper>
+            <HeaderFix>
+              <IconFont className="iconfont" onClick={this.onMenuClick}>&#xe62f;</IconFont>
+              <SearchBar placeholder="搜索菜谱、食材"/>
+            </HeaderFix>
+            <Border></Border>
+            <Tabs tabs={tabs}
+              initialPage={1}
+              style={{fontWeight: 'bold'}}
+              onTabClick={tab => { 
+                // console.log('onTabClick', index, tab);
+                this.props.history.replace(tab.path)
+              }}
+            />
+            <PageWrapper>
+              {renderRoutes(this.state.route.children)}
+            </PageWrapper>
+        </HomeWrapper>
         );
+    }
+    onMenuClick() {
+        this.props.history.replace('/menuClass')
     }
 }
  

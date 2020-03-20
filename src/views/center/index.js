@@ -8,8 +8,9 @@ class Center extends Component {
     }
     render() { 
         return ( 
-            <div>这是个人中心页
+            <div>个人中心页
                 {/* <Link to='/personInfo'>设置</Link> */}
+                <div>{localStorage.getItem('user_name')}</div>
             </div>
         );
     }

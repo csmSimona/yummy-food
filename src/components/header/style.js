@@ -10,7 +10,7 @@ export const Border = border({
     width: '0 0 1px 0',
     style: 'solid',
     radius: '0px'
-  })
+  });
   
 export const Header = styled.div`{
   position: fixed;
@@ -42,4 +42,4 @@ export const Header = styled.div`{
     right: 1rem;
     color: ${themeColor};
   }
-}`
+}`;

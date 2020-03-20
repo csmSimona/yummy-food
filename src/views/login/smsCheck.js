@@ -45,10 +45,20 @@ class smsCheck extends Component {
       }
       verifyCode(verifyParam).then(res => {
         if (res.data.code === 200) {
-          this.props.history.push({
-            pathname: '/personInfo',
-            phone: this.props.location.phone // 传手机号码
-          })
+          if (res.data.msg === 'can not find') {
+            this.props.history.push({
+              pathname: '/personInfo',
+              phone: this.props.location.phone // 传手机号码
+            })
+          } else {
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('user_name', res.data.user_name);
+            
+            this.props.history.push({
+              pathname: '/tab/home/recommend',
+              phone: this.props.location.phone // 传手机号码
+            })
+          }
         } else {
           Toast.fail('验证码错误！', 1);
         }
@@ -107,6 +117,12 @@ class smsCheck extends Component {
           reSend: false
         })
       })   
+    }
+    componentWillUnmount(){
+        // 卸载异步操作设置状态
+        this.setState = (state, callback) => {
+            return;
+        }
     }
 }
  

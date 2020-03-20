@@ -10,17 +10,36 @@ import SmsCheck from './views/login/smsCheck';
 import PersonInfo from './views/center/personInfo';
 import CreateRecipes from './views/release/createRecipes';
 import CreateDynamic from './views/release/createDynamic';
+import Recommend from './views/home/pages/recommendPage/recommend';
+import Find from './views/home/pages/findPage/find';
+import Concern from './views/home/pages/concernPage/concern';
+import MenuClass from './views/home/menuClass';
 
 const routes = [
     {
         path: '/tab',
         component: TabBar,
-        redirect: '/tab/home',
+        // redirect: '/tab/home',
         // exact: true,
         children: [
             {
                 path: '/tab/home',
-                component: Home
+                component: Home,
+                // redirect: '/tab/home/recommend',
+                children: [
+                    {
+                        path: '/tab/home/recommend',
+                        component: Recommend
+                    },
+                    {
+                        path: '/tab/home/find',
+                        component: Find
+                    },
+                    {
+                        path: '/tab/home/concern',
+                        component: Concern
+                    }
+                ]
             },
             {
                 path: '/tab/shop',
@@ -63,6 +82,10 @@ const routes = [
     {
         path: '/createDynamic',
         component: CreateDynamic
+    },
+    {
+        path: '/menuClass',
+        component: MenuClass
     },
 ];
  

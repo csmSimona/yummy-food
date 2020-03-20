@@ -250,6 +250,13 @@ class personInfo extends Component {
             console.log('selectedList', newSelect1);
         }
     }
+
+    componentDidMount() {
+        console.log('this.props.location.phone', this.props.location.phone);
+        if (this.props.location.phone === undefined) {
+            this.props.history.replace('/tab/home/recommend');
+        }
+    }
 }
  
 const personInfoWrapper = createForm()(personInfo);

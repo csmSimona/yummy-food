@@ -13,7 +13,7 @@ class header extends Component {
       return (
         <div>
             <Header>
-                <div className='left' onClick={this.leftClick}>{this.props.header.left}</div>
+                <div className='left' onClick={this.leftClick} dangerouslySetInnerHTML={{__html: this.props.header.left}}></div>
                 <span className='title'>{this.props.header.title}</span>
                 <div className='right' onClick={this.rightClick}>{this.props.header.right}</div>
                 {/* <div className='save' onClick={this.cancelLogin}>保存</div> */}
