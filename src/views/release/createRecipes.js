@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Header from '../../components/header';
+import Header from '@/components/header';
 import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder } from './style';
-// import { Input } from 'antd';
-// import 'antd/dist/antd.css';
+import { connect } from 'react-redux';
+import { createRecipes, saveRecipesDraft } from '@/api/recipesApi';
 
 const alert = Modal.alert;
 const header = {
@@ -368,6 +368,7 @@ class CreateRecipes extends Component {
             if (!item.ingredients || !item.quantities) {
                 return true
             }
+            return false
         });
         if (materialsHasEmpty) {
             Toast.info('用料中不能有空', 1)
@@ -377,6 +378,7 @@ class CreateRecipes extends Component {
             if (item.img.length === 0 || !item.step) {
                 return true
             }
+            return false
         });
         if (stepsHasEmpty) {
             Toast.info('烹饪步骤中不能有空', 1)
@@ -390,7 +392,22 @@ class CreateRecipes extends Component {
             Toast.info('请选择分类', 1)
             return false
         }
+        
+        createRecipesList.userId = this.props.userList._id;
         console.log('createRecipesList', createRecipesList);
+
+        createRecipes(createRecipesList).then(res => {
+            if (res.data.code === 200) {
+                console.log('res.data', res.data);
+                Toast.success('创建成功！', 1)
+                // 还差  跳转到 创建成功的显示菜谱页面
+                this.props.history.push({
+                    pathname: '/tab/release'
+                })
+            }
+        }).catch((err) => {
+            console.log('error', err);
+        })
     }
 
     onReset = () => {
@@ -398,7 +415,6 @@ class CreateRecipes extends Component {
     }
 
     handleBackClick() {
-        console.log('handleBackClick')
         const alertInstance = alert('', '是否保存到草稿箱', [
             { text: '否', onPress: () => {
                 this.props.history.push({
@@ -411,17 +427,34 @@ class CreateRecipes extends Component {
             } },
           ]);
           setTimeout(() => {
-            console.log('auto close');
             alertInstance.close();
           }, 500000);
     }
 
     handleSaveClick() {
-        console.log('保存草稿，并跳转到上一页');
-        // this.props.history.push({
-        //     pathname: '/tab/release',
-        //     selectedTab: 'release'
-        // })
+        let createRecipesList = this.props.form.getFieldsValue();
+        createRecipesList.selected = [createRecipesList.selected1, createRecipesList.selected2, createRecipesList.selected3, createRecipesList.selected4];
+        delete createRecipesList.selected1;
+        delete createRecipesList.selected2;
+        delete createRecipesList.selected3;
+        delete createRecipesList.selected4;
+        
+        createRecipesList.album = this.state.files;
+        createRecipesList.userId = this.props.userList._id;
+
+        console.log('createRecipesList', createRecipesList);
+
+        saveRecipesDraft(createRecipesList).then(res => {
+            if (res.data.code === 200) {
+                console.log('res.data', res.data);
+                Toast.success('保存成功！', 1)
+                this.props.history.push({
+                    pathname: '/tab/release'
+                })
+            }
+        }).catch((err) => {
+            console.log('error', err);
+        })
     }
 
     onChange = (files, type, index) => {
@@ -432,17 +465,11 @@ class CreateRecipes extends Component {
     }
 
     onStepImgChange = (files, type, index) => {
-        console.log(files, type, index);
-
         let newCookStepsList = this.state.cookStepsList
         newCookStepsList[index].img = files
         this.setState({
             cookStepsList: newCookStepsList
         })
-
-        // this.setState({
-        //     stepImgs: files
-        // });
     }
 
     handleAddMoreClick() {
@@ -457,7 +484,6 @@ class CreateRecipes extends Component {
     }
     
     handleAddStepClick() {
-        console.log('addmore')
         var add = {
             img: [],
             step: ''
@@ -471,4 +497,15 @@ class CreateRecipes extends Component {
 
 const RecipesWrapper = createForm()(CreateRecipes);
  
-export default RecipesWrapper;
+const mapStateToProps = (state) => {
+    return {
+        userList: state.getIn(['center', 'userList'])
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecipesWrapper);

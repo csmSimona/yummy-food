@@ -1,20 +1,10 @@
-// import { combineReducers } from 'redux-immutable';
-// import {reducer as headerReducer} from '../common/header/store';
-// import {reducer as homeReducer} from '../pages/home/store';
-// import {reducer as detailReducer} from '../pages/detail/store';
-// import {reducer as loginReducer} from '../pages/login/store';
+import { combineReducers } from 'redux-immutable';
+import {reducer as loginReducer} from '../views/login/store';
+import {reducer as centerReducer} from '../views/center/store';
 
-// const reducer = combineReducers({
-//   header: headerReducer,
-//   home: homeReducer,
-//   detail: detailReducer,
-//   login: loginReducer
-// });
+const reducer = combineReducers({
+  login: loginReducer,
+  center: centerReducer
+});
 
-// export default reducer;
-
-const defaultState = {};
-
-export default (state = defaultState, action) => {
-    return state;
-}
+export default reducer;

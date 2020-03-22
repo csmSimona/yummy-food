@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
-import Header from '../../components/header';
+import Header from '@/components/header';
 import { List, InputItem, ImagePicker, Picker, DatePicker, TextareaItem, Tag, Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { TagContainer, PersonInfoWrapper } from './style';
-import { addUser} from '../../api/userApi';
+import { addUser} from '@/api/userApi';
+import { connect } from 'react-redux';
+import { actionCreators } from './store';
 
 const header = {
     left: '下次再说',
     title: '编辑个人资料',
     right: '保存'
 }
-
-const data = [{
-    url: 'https://zos.alipayobjects.com/rmsportal/PZUUCKTRIHWiZSY.jpeg',
-    id: '2121'
-}];
 
 const gender = [
     [
@@ -36,7 +33,7 @@ const gender = [
 const tagList = ["海鲜", "辛辣", "内脏", "肉类", "酸涩", "蛋类", "酒类", "生冷", "油腻", "腥膻", "香菜", "甜食", "味精", "烧烤", "腌制品", "其他"];
 
 let antdDistrict =[];
-let districtData = require('../../utils/location');
+let districtData = require('@/utils/location');
 Object.keys(districtData).forEach((index)=>{
     let itemLevel1 ={};
     let itemLevel2 ={};
@@ -67,8 +64,11 @@ class personInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            files: data,
-            value: 1,
+            files: [{
+                url: 'https://zos.alipayobjects.com/rmsportal/PZUUCKTRIHWiZSY.jpeg',
+                id: '2121'
+            }],
+            // value: 1,
             tagSelected: true,
             selectedList: ['无']
         };
@@ -216,6 +216,10 @@ class personInfo extends Component {
             if (res.data.code === 200) {
                 localStorage.setItem('token', res.data.token);
                 localStorage.setItem('user_name', res.data.user_name);
+                localStorage.setItem('userId', res.data.userId);
+                information.token = res.data.token;
+                information.userId = res.data.userId;
+                this.props.saveUserList(information);
             }
             this.props.history.push({
                 pathname: '/tab/center',
@@ -261,4 +265,23 @@ class personInfo extends Component {
  
 const personInfoWrapper = createForm()(personInfo);
 
-export default personInfoWrapper;
+const mapStateToProps = (state) => {
+    return {
+        // files: state.getIn(['center', 'files']),
+        // value: state.getIn(['center', 'value']),
+        // tagSelected: state.getIn(['center', 'tagSelected']),
+        // selectedList: state.getIn(['center', 'selectedList']),
+        userList: state.getIn(['center', 'userList'])
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        saveUserList(information) {
+            console.log(information);
+            dispatch(actionCreators.saveUserList(information));
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(personInfoWrapper);

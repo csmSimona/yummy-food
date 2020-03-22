@@ -1,15 +1,14 @@
 /**
- * recipes 表结构
+ * recipesDraft 表结构
  **/
 
 var mongoose = require('mongoose')
 
 var Schema = mongoose.Schema
 
-var RecipesSchema = new Schema({
+var RecipesDraftSchema = new Schema({
   album: {
-    type: Array,
-    required: true
+    type: Array
   },
   cookSteps: {
     type: Array
@@ -37,16 +36,10 @@ var RecipesSchema = new Schema({
   },
   userId: {
     type: String
-  },
-  collectionNumber:{
-    type: Number
-  },
-  followNumber:{
-    type: Number
   }
 }, {
   versionKey:false
 })
 
 // 直接导出模型构造函数
-module.exports = mongoose.model('Recipes', RecipesSchema, 'recipes')
+module.exports = mongoose.model('RecipesDraft', RecipesDraftSchema, 'recipesDraft')

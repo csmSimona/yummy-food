@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { themeColor, hintColor, textColor } from '../../styles/color';
+import { themeColor, hintColor, textColor } from '@/styles/color';
 
 export const CreateRecipesWrapper = styled.div`{
   .am-modal-alert-content, .am-modal-propmt-content {
@@ -55,6 +55,9 @@ export const ButtonWrapper = styled.div`{
   .am-button::before, .button {
     flex: 1;
     border-radius: 0 !important;
+  }
+  .am-button-active {
+    background: ${themeColor};
   }
 }`
 

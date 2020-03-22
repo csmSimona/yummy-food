@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { weChatLogin, get_wx_access_token } from '../../api/userApi';
+import { weChatLogin, get_wx_access_token } from '@/api/userApi';
 import { Button } from 'antd-mobile';
 import {  Cancel, wechatLogin, phoneLogin, logo, Slogan } from './style';
 
@@ -17,7 +17,7 @@ class Login extends Component {
     return (
       <div style={{ position: 'relative'}}>
         <Cancel onClick={this.cancelLogin}>取消</Cancel>
-        <img src={require('../../statics/img/title.png')} style={logo} alt="头像" ></img>
+        <img src={require('@/statics/img/title.png')} style={logo} alt="头像" ></img>
         <Slogan>唯有美食与爱不可辜负</Slogan>
         <Button style={wechatLogin} onClick={this.handleWechatBtnClick}>使用微信登录</Button>
         <Button style={phoneLogin} onClick={this.handlePhoneBtnClick}>手机登录注册</Button>

@@ -9,8 +9,9 @@ var bodyParser = require('body-parser')
 var mongo = require('./utils/db');
 
 var indexRouter = require('./routes/index');
-var userRouter = require('./routes/user');
-var testAPIRouter = require("./routes/testAPI");
+var userRouter = require('./routes/userAPI');
+var recipesRouter = require('./routes/recipesAPI');
+var dynamicRouter = require('./routes/dynamicAPI');
 
 var app = express();
 
@@ -36,7 +37,8 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/user', userRouter);
-app.use("/testAPI", testAPIRouter);
+app.use('/recipes', recipesRouter);
+app.use('/dynamic', dynamicRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

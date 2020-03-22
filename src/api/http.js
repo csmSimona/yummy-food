@@ -1,3 +1,4 @@
+import React from 'react';
 import axios from 'axios';
 
 // 创建实例时设置配置的默认值
@@ -27,9 +28,9 @@ instance.interceptors.request.use(
     // 在发送请求之前做些什么（... 这里写你的展示loading的逻辑代码 ）
     // isShowLoading(true);
     // 获取token，配置请求头
-    // const TOKEN = localStorage.getItem('Token')
+    const TOKEN = localStorage.getItem('token')
     // 演示的token（注意配置请求头，需要后端做cros跨域处理，我这里自己前端配的跨域）
-    const TOKEN = '1fd399bdd9774831baf555ae5979c66b'
+    // const TOKEN = '1fd399bdd9774831baf555ae5979c66b'
     if(TOKEN){
       // 配置请求头 token
       config.headers['Content-Type'] = 'application/json;charset=UTF-8';
@@ -84,17 +85,16 @@ instance.interceptors.response.use(
 
 // 如果与你配合的ui中，有loading组件的话，你直接用它的就可以了
 
-// // to do...
-// /**
-//  * 是否开启loading
-//  * @param {*} payload { type:Boolean }
-//  */
+// to do...
+/**
+ * 是否开启loading
+ * @param {*} payload { type:Boolean }
+ */
 
 // function isShowLoading(payload) {
-// // 获取dom节点
-//  const loading = document.getElementById('loading');
-//  payload ? loading.style.display = 'block' : loading.style.display = 'none';
-
+//   // 获取dom节点
+//   const loading = document.getElementById('loading');
+//   payload ? loading.style.display = 'block' : loading.style.display = 'none';
 // }
 
 /**

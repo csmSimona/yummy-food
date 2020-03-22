@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { themeColor, hintColor } from '../../styles/color';
-import border from '../../styles/border';
+import { themeColor, hintColor } from '@/styles/color';
+import border from '@/styles/border';
 
 export const Border = border({
     component: styled.div`{

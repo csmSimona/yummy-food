@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { TabBar } from 'antd-mobile';
 import { Iconfont, IconfontSelected, TabBarWrapper } from './style';
-import { themeColor, textColor } from '../../styles/color';
-import { checkUser } from '../../api/userApi';
+import { themeColor, textColor } from '@/styles/color';
+import { checkUser } from '@/api/userApi';
 import { renderRoutes } from 'react-router-config';
+import { connect } from 'react-redux';
+import { actionCreators as centerActionCreators } from '../center/store';
 
 let tabBarList=[
   {
@@ -44,7 +46,7 @@ class TabBarExample extends Component {
   render() {
     return (
       <TabBarWrapper>
-        <div style={{ position: 'fixed', height: 'calc(100% - 3.125rem)', width: '100%', top: 0, marginBottom: '3.125rem' }}>
+        <div style={{ height: 'calc(100% - 3.125rem)', width: '100%', marginBottom: '3.125rem' }}>
           {renderRoutes(this.state.route.children)}
         </div>
         <div style={{ position: 'fixed', height: '3.125rem', width: '100%', bottom: 0 }}>
@@ -99,6 +101,7 @@ class TabBarExample extends Component {
       checkUser({token, user_name})
         .then(res => {
             console.log('checkUser', res)
+            this.props.saveUserList(res.data.userList[0]);
             this.props.history.replace('/tab/' + this.state.selectedTab)
         }).catch((err) => {
           console.log('error', err);
@@ -108,4 +111,19 @@ class TabBarExample extends Component {
   }
 }
 
-export default TabBarExample;
+const mapStateToProps = (state) => {
+  return {
+      userList: state.getIn(['center', 'userList'])
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      saveUserList(userList) {
+          console.log('userList', userList);
+          dispatch(centerActionCreators.saveUserList(userList));
+      }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabBarExample);

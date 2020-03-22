@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { Button, InputItem, Toast } from 'antd-mobile';
 import {  phoneLogin, Tip, PhoneNumber, sendButton, inputValid, Border, SmsCheckWrapper } from './style';
-import { verifyCode, getVerificationCode } from '../../api/userApi';
-import Header from '../../components/header';
+import { verifyCode, getVerificationCode } from '@/api/userApi';
+import Header from '@/components/header';
+
+import { connect } from 'react-redux';
+import { actionCreators as centerActionCreators } from '../center/store';
 
 const header = {
   left: '取消',
@@ -51,9 +54,12 @@ class smsCheck extends Component {
               phone: this.props.location.phone // 传手机号码
             })
           } else {
+            console.log('登录之后的data', res.data)
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user_name', res.data.user_name);
             
+            this.props.saveUserList(res.data.userList);
+
             this.props.history.push({
               pathname: '/tab/home/recommend',
               phone: this.props.location.phone // 传手机号码
@@ -86,9 +92,6 @@ class smsCheck extends Component {
       }).catch((err) => {
         console.log('error', err);
       })
-    }
-    componentDidMount() {
-      this.cutDown()
     }
     cutDown() {
       var seconds = 60;
@@ -124,6 +127,27 @@ class smsCheck extends Component {
             return;
         }
     }
+    
+    componentDidMount() {
+      this.cutDown();
+      if (this.props.location.phone === undefined) {
+          this.props.history.replace('/phoneRegister');
+      }
+    }
 }
  
-export default smsCheck;
+const mapStateToProps = (state) => {
+  return {
+      userList: state.getIn(['center', 'userList'])
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      saveUserList(userList) {
+          dispatch(centerActionCreators.saveUserList(userList));
+      }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(smsCheck);

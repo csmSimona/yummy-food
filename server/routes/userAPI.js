@@ -10,15 +10,14 @@ const appKey = "1463872763e2ebb7e7040d5ba4cd1544";
 const appSecret = "a9abe64af57c";
 var smsRequest = new SmsRequest(appKey, appSecret);
 
-/* GET user listing. */
 router.get('/getUser', function(req, res, next) {
   User.find(function (err, data) {
     if (err) {
-      console.log(err)
-      return res.status(500).send('获取用户信息失败')
+      console.log(err);
+      return res.status(500).send('获取用户信息失败');
     }
-    return res.json({ success: true, data: data });
-  })
+    return res.json({ code: 200, data: data });
+  });
 });
 
 router.post('/addUser', function(req, res, next) {
@@ -26,18 +25,18 @@ router.post('/addUser', function(req, res, next) {
   var date = new Date();
   user.createDate = date;
   let content ={phone: req.body.phone}; // 要生成token的主题信息
-  let secretOrPrivateKey="csm" // 这是加密的key（密钥） 
+  let secretOrPrivateKey="csm"; // 这是加密的key（密钥） 
   let token = jwt.sign(content, secretOrPrivateKey, {
           expiresIn: 60 * 60 * 24  // 24小时过期
       });
-  user.token = token
-  new User(user).save(function (err) {
+  user.token = token;
+  new User(user).save(function (err, data) {
     if (err) {
-      console.log(err)
-      return res.status(500).send('Server error.')
+      console.log(err);
+      return res.status(500).send('Server error.');
     }
-    res.send({'code': 200, 'token': token, 'user_name': req.body.name}) 
-  })
+    res.send({'code': 200, 'token': token, 'user_name': req.body.name, 'userId': data._id});
+  });
 });
 
 // 检测token
@@ -54,15 +53,15 @@ router.post('/checkUser', (req, res)=>{
 
           jwt.verify(token, secretOrPrivateKey, function (err, decode) {
               if (err) {  //  时间失效的时候/ 伪造的token          
-                return res.status(500).send('token已失效')        
+                return res.status(500).send('token已失效');  
               } else {
-                res.send({'code': 200}) 
+                res.send({code: 200, userList: data });
               }
-          })
+          });
       } else{
-          return res.status(500).send('没有这个用户')                
+          return res.status(500).send('没有这个用户');              
       }
-  })
+  });
 })
 
 router.post('/getVerificationCode', function(req, res, next) {
@@ -110,7 +109,7 @@ router.post('/verifyCode', function(req, res, next) {
                       console.log('update err', err)
                     }
                   })
-                  return res.json({ code: 200, msg: 'find it', token: token, user_name: data.name });
+                  return res.json({ code: 200, msg: 'find it', token: token, user_name: data.name, userList: data });
                 } else {
                   console.log('can not find')
                   return res.json({ code: 200, msg: 'can not find' });
@@ -179,6 +178,18 @@ router.get('/get_wx_access_token', function(req, res, next){
           }
       }
     )
+});
+
+router.post('/getUserInfo', function(req, res, next) {
+  console.log('req.body', req.body);
+  User.find({ _id: req.body.userId}, (err, data)=>{
+    if (err) {
+      console.log(err);
+      return res.status(500).send('获取用户信息失败');
+    }
+    console.log('data', data);
+    return res.json({ code: 200, data: data });
+  });
 });
 
 module.exports = router;

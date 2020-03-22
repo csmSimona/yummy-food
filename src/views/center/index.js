@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { actionCreators } from './store';
 
 class Center extends Component {
     constructor(props) {
@@ -11,6 +13,7 @@ class Center extends Component {
             <div>个人中心页
                 {/* <Link to='/personInfo'>设置</Link> */}
                 <div>{localStorage.getItem('user_name')}</div>
+                <div>{console.log('userList', this.props.userList)}</div>
             </div>
         );
     }
@@ -18,4 +21,15 @@ class Center extends Component {
     }
 }
  
-export default Center;
+const mapStateToProps = (state) => {
+    return {
+        userList: state.getIn(['center', 'userList'])
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Center);

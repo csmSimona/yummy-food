@@ -14,6 +14,8 @@ import Recommend from './views/home/pages/recommendPage/recommend';
 import Find from './views/home/pages/findPage/find';
 import Concern from './views/home/pages/concernPage/concern';
 import MenuClass from './views/home/menuClass';
+import RecipesDetail from './views/home/pages/recommendPage/recipesDetail';
+import DynamicDetail from './views/home/pages/findPage/dynamicDetail';
 
 const routes = [
     {
@@ -87,6 +89,14 @@ const routes = [
         path: '/menuClass',
         component: MenuClass
     },
+    {
+        path: '/recipesDetail',
+        component: RecipesDetail
+    },
+    {
+        path: '/dynamicDetail',
+        component: DynamicDetail
+    }
 ];
  
 export {routes}

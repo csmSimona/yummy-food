@@ -29,19 +29,20 @@ class Home extends Component {
     render() { 
         return ( 
         <HomeWrapper>
-            <HeaderFix>
-              <IconFont className="iconfont" onClick={this.onMenuClick}>&#xe62f;</IconFont>
-              <SearchBar placeholder="搜索菜谱、食材"/>
-            </HeaderFix>
-            <Border></Border>
-            <Tabs tabs={tabs}
-              initialPage={1}
-              style={{fontWeight: 'bold'}}
-              onTabClick={tab => { 
-                // console.log('onTabClick', index, tab);
-                this.props.history.replace(tab.path)
-              }}
-            />
+            <div style={{position: 'fixed', top: '0', width: '100%', zIndex: '999'}}>
+              <HeaderFix>
+                <IconFont className="iconfont" onClick={this.onMenuClick}>&#xe62f;</IconFont>
+                <SearchBar placeholder="搜索菜谱、食材"/>
+              </HeaderFix>
+              <Border></Border>
+              <Tabs tabs={tabs}
+                initialPage={1}
+                style={{fontWeight: 'bold'}}
+                onTabClick={tab => { 
+                  this.props.history.replace(tab.path)
+                }}
+              />
+            </div>
             <PageWrapper>
               {renderRoutes(this.state.route.children)}
             </PageWrapper>

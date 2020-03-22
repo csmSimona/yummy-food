@@ -40,6 +40,9 @@ var UserSchema = new Schema({
   },
   token: {
     type: String
+  },
+  collectRecipes: {
+    type: Array
   }
 }, {
   versionKey:false

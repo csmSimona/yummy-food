@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Header from '../../components/header';
-import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon } from 'antd-mobile';
+import Header from '@/components/header';
+import { List, InputItem, ImagePicker, TextareaItem, Tag, Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper } from './style';
+import { TagContainer } from './style';
+import { connect } from 'react-redux';
+import { createDynamic } from '@/api/dynamicApi';
 
-const alert = Modal.alert;
-const data = [];
 
 const header = {
     left: '取消',
@@ -20,7 +20,14 @@ class CreateDynamic extends Component {
         super(props);
         this.state = { 
             recommendSelected: [],
-            files: data,
+            files: [{
+                url: 'http://img.juhe.cn/cookbook/t/0/45_854851.jpg',
+                id: '1'
+            },
+            {
+                url: 'http://img.juhe.cn/cookbook/s/1/45_0824e37faf00b71e.jpg',
+                id: '1'
+            }],
          }
         
         this.handleBackClick = this.handleBackClick.bind(this);
@@ -37,6 +44,7 @@ class CreateDynamic extends Component {
                     onImageClick={(index, fs) => console.log(index, fs)}
                     selectable={this.state.files.length < 9}
                     length="3"
+                    capture="camera"
                     />
                 <form style={{marginBottom: '3rem'}}>
                     <List>
@@ -71,9 +79,10 @@ class CreateDynamic extends Component {
                                             } else {
                                                 var newSelect1 = this.state.recommendSelected
                                                 newSelect1.forEach((val, i) => {
-                                                    if(item === val){
+                                                    if(item === val) {
+                                                        newSelect1.splice(i, 1)
                                                         this.setState({ 
-                                                            recommendSelected: newSelect1.splice(i, 1)
+                                                            recommendSelected: newSelect1
                                                         })
                                                         i--;
                                                     } 
@@ -102,21 +111,10 @@ class CreateDynamic extends Component {
 
     handleBackClick() {
         console.log('handleBackClick')
-        const alertInstance = alert('', '是否保存到草稿箱', [
-            { text: '否', onPress: () => {
-                this.props.history.push({
-                    pathname: '/tab/release',
-                    selectedTab: 'release'
-                })
-            }, style: 'default' },
-            { text: '是', onPress: () => {
-                console.log('保存草稿，并跳转到上一页');
-            } },
-          ]);
-          setTimeout(() => {
-            console.log('auto close');
-            alertInstance.close();
-          }, 500000);
+        this.props.history.push({
+            pathname: '/tab/release',
+            selectedTab: 'release'
+        })
     }
 
     handleReleaseClick() {
@@ -135,11 +133,19 @@ class CreateDynamic extends Component {
             Toast.info('说点什么吧', 1)
             return false
         }
-        console.log(createDynamicList);
-        // this.props.history.push({
-        //     pathname: '/tab/release',
-        //     selectedTab: 'release'
-        // })
+        createDynamicList.userId = this.props.userList._id;
+        console.log('createDynamicList', createDynamicList);
+        createDynamic(createDynamicList).then(res => {
+            if (res.data.code === 200) {
+                console.log('res.data', res.data);
+                Toast.success('发布成功！', 1)
+                this.props.history.push({
+                    pathname: '/tab/release'
+                })
+            }
+        }).catch((err) => {
+            console.log('error', err);
+        })
     }
     
     onChange = (files, type, index) => {
@@ -152,4 +158,15 @@ class CreateDynamic extends Component {
  
 const CreateDynamicWrapper = createForm()(CreateDynamic);
  
-export default CreateDynamicWrapper;
+const mapStateToProps = (state) => {
+    return {
+        userList: state.getIn(['center', 'userList'])
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateDynamicWrapper);

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, InputItem, Toast } from 'antd-mobile';
 import {  phoneLogin } from './style';
-import { getVerificationCode } from '../../api/userApi';
-import Header from '../../components/header';
+import { getVerificationCode } from '@/api/userApi';
+import Header from '@/components/header';
 
 const header = {
   left: '取消',

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { themeColor, hintColor, textColor } from '../../styles/color';
-import border from '../../styles/border';
+import { themeColor, hintColor, textColor } from '@/styles/color';
+import border from '@/styles/border';
 
 export const SmsCheckWrapper = styled.div`{
   position: relative;
