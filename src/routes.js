@@ -90,11 +90,11 @@ const routes = [
         component: MenuClass
     },
     {
-        path: '/recipesDetail',
+        path: '/recipesDetail/:id',
         component: RecipesDetail
     },
     {
-        path: '/dynamicDetail',
+        path: '/dynamicDetail/:id',
         component: DynamicDetail
     }
 ];

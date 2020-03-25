@@ -6,15 +6,18 @@ import { renderRoutes } from 'react-router-config';
 const tabs = [
   {
     title: '关注',
-    path: '/tab/home/concern'
+    path: '/tab/home/concern',
+    id: 0
   },
   { 
     title: '推荐',
-    path: '/tab/home/recommend'
+    path: '/tab/home/recommend',
+    id: 1
   },
   { 
     title: '发现',
-    path: '/tab/home/find'
+    path: '/tab/home/find',
+    id: 2
   },
 ];
 
@@ -22,7 +25,8 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-          route: props.route
+          route: props.route,
+          homeTab: 1
         };
         this.onMenuClick = this.onMenuClick.bind(this);
     }
@@ -35,13 +39,18 @@ class Home extends Component {
                 <SearchBar placeholder="搜索菜谱、食材"/>
               </HeaderFix>
               <Border></Border>
-              <Tabs tabs={tabs}
-                initialPage={1}
+              <Tabs 
+                tabs={tabs}
+                // initialPage={1}
+                page={this.state.homeTab}
                 style={{fontWeight: 'bold'}}
                 onTabClick={tab => { 
+                  this.setState({
+                    homeTab: tab.id
+                  })
                   this.props.history.replace(tab.path)
                 }}
-              />
+              ></Tabs>
             </div>
             <PageWrapper>
               {renderRoutes(this.state.route.children)}
@@ -51,6 +60,13 @@ class Home extends Component {
     }
     onMenuClick() {
         this.props.history.replace('/menuClass')
+    }
+    componentDidMount() {
+      if (this.props.location.homeTab) {
+        this.setState({
+          homeTab: this.props.location.homeTab
+        })
+      }
     }
 }
  

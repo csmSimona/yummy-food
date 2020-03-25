@@ -19,7 +19,8 @@ export const Header = styled.div`{
   right: 0;
   z-index: 999;
   background: #FFFFFF;
-  height: 3rem;
+  overflow: hidden;
+  height: 3.4rem;
   text-align: center;
   vertical-align：middle;
   .left {
@@ -30,10 +31,15 @@ export const Header = styled.div`{
     color: ${themeColor};
   }
   .title {
-    margin-top: 0.9rem;
+    margin-top: 1rem;
     display: inline-block;
     font-weight: bold;
+    line-height: 1.25rem;
     font-size: 1.125rem;
+    width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .right {
     display: inline-block;

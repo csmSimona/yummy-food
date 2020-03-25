@@ -3,23 +3,28 @@ import * as actionTypes from './actionTypes';
 
 const defaultState = fromJS({
 	recipesList: [],
-	leftData: [],//左边的数据
-	rightData: [],//右边的数据
+	leftData: [], //左边的数据
+	rightData: [], //右边的数据
+	dynamicList: [],
+	leftDynamic: [],
+	rightDynamic: [],
 });
 
 export default (state = defaultState, action) => {
 	switch(action.type) {
 		case actionTypes.SAVE_RECIPES_LIST:
-			console.log('redux recipesList', action.recipesList);
-			return state.set('recipesList', action.recipesList);
+			return state.set('recipesList', action.information);
 		case actionTypes.SAVE_LEFT_DATA:
-			console.log('redux leftData', action.leftData);
-			return state.set('leftData', action.leftData);
+			return state.set('leftData', action.information);
 		case actionTypes.SAVE_RIGHT_DATA:
-			console.log('redux rightData', action.rightData);
-			return state.set('rightData', action.rightData);
+			return state.set('rightData', action.information);
+		case actionTypes.SAVE_DYNAMIC_LIST:
+			return state.set('dynamicList', action.information);
+		case actionTypes.SAVE_LEFT_DYNAMIC:
+			return state.set('leftDynamic', action.information);
+		case actionTypes.SAVE_RIGHT_DYNAMIC:
+			return state.set('rightDynamic', action.information);
 		default:
-			console.log('no')
 			return state;
 	}
 };

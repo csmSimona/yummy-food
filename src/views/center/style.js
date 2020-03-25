@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { descColor } from '@/styles/color';
 
 export const TagContainer = styled.div`{
     display: flex;
@@ -27,7 +28,7 @@ export const PersonInfoWrapper = styled.div`{
   }
 
   input::-webkit-input-placeholder {
-      color: #888 !important;
+      color: ${descColor} !important;
       font-size: 16px !important;
       line-height: 1.5 !important;
   }

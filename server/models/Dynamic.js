@@ -27,6 +27,9 @@ var DynamicSchema = new Schema({
   },
   relatedMenu: {
     type: String
+  },
+  likeNumber: {
+    type: Number
   }
 }, {
   versionKey: false

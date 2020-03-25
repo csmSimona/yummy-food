@@ -1,4 +1,3 @@
-import React from 'react';
 import axios from 'axios';
 
 // 创建实例时设置配置的默认值

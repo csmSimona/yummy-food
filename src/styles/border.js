@@ -14,7 +14,7 @@ const border = ({
     &::after {
       pointer-events: none;
       position: absolute;
-      z-index: 999;
+      z-index: 99;
       top: 0;
       left: 0;
       content: "";

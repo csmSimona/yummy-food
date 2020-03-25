@@ -43,6 +43,15 @@ var UserSchema = new Schema({
   },
   collectRecipes: {
     type: Array
+  },
+  likeDynamic: {
+    type: Array
+  },
+  concernList: {
+    type: Array
+  },
+  fanList: {
+    type: Array
   }
 }, {
   versionKey:false

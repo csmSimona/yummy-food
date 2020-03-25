@@ -4,6 +4,7 @@ var User = require('../models/User');
 var SmsRequest = require('../utils/smsRequest');
 const request = require('request');
 const jwt = require('jsonwebtoken');
+var pWriteFile = require('../utils/pWriteFile');
 
 // 网易云信
 const appKey = "1463872763e2ebb7e7040d5ba4cd1544";
@@ -20,6 +21,7 @@ router.get('/getUser', function(req, res, next) {
   });
 });
 
+// 图片存本地
 router.post('/addUser', function(req, res, next) {
   var user = req.body;
   var date = new Date();
@@ -30,18 +32,40 @@ router.post('/addUser', function(req, res, next) {
           expiresIn: 60 * 60 * 24  // 24小时过期
       });
   user.token = token;
-  new User(user).save(function (err, data) {
-    if (err) {
-      console.log(err);
-      return res.status(500).send('Server error.');
-    }
-    res.send({'code': 200, 'token': token, 'user_name': req.body.name, 'userId': data._id});
-  });
+
+  console.log('add img');
+  const data = user.img[0].url;
+  var filePath = '../src/statics/images/avatar/'+ Date.now() +'.png';
+
+  // 从app.js级开始找--在我的项目工程里是这样的
+  var base64 = data.replace(/^data:image\/\w+;base64,/, "");
+  // 去掉图片base64码前面部分data:image/png;base64
+  var dataBuffer = new Buffer(base64, 'base64'); // 把base64码转成buffer对象
+  console.log('dataBuffer是否是Buffer对象：' + Buffer.isBuffer(dataBuffer));
+
+  pWriteFile(filePath, dataBuffer)
+  .then(() => {
+      console.log('写入成功！');
+
+      user.img[0].url = filePath.replace('../src/', '')
+
+      new User(user).save(function (err, data) {
+        if (err) {
+          console.log(err);
+          return res.status(500).send('Server error.');
+        }
+        res.send({'code': 200, 'token': token, 'user_name': req.body.name, 'userId': data._id});
+      });
+
+    }, (err) => {
+      console.log('err:', err);
+    })
+
 });
 
 // 检测token
 router.post('/checkUser', (req, res)=>{
-  User.find({ name: req.body.user_name, token: req.body.token}, (err, data)=>{
+  User.find({ token: req.body.token }, (err, data)=>{
       if (err) {
           console.log(err);
           res.send(err);
@@ -50,14 +74,29 @@ router.post('/checkUser', (req, res)=>{
       if(data.length > 0){
           let token = req.body.token; // 从body中获取token
           let secretOrPrivateKey="csm"; // 这是加密的key（密钥） 
-
+          let verifySuccess = true;
           jwt.verify(token, secretOrPrivateKey, function (err, decode) {
-              if (err) {  //  时间失效的时候/ 伪造的token          
+              if (err) {  //  时间失效的时候/ 伪造的token  
+                verifySuccess = false;        
                 return res.status(500).send('token已失效');  
               } else {
-                res.send({code: 200, userList: data });
+                verifySuccess = true;
               }
           });
+          
+          if (verifySuccess) {
+            let content = {phone: data.phone}; // 要生成token的主题信息
+            var newToken = jwt.sign(content, secretOrPrivateKey, {
+                    expiresIn: 60 * 60 * 24  // 24小时过期
+                    // expiresIn: 60  // 60s过期
+                });
+            User.updateOne({phone: data.phone}, {$set: {token: newToken}}, function (err) {
+              if (err) {
+                console.log('update err', err)
+              }
+            })
+            res.send({code: 200, userList: data, token: token });
+          }
       } else{
           return res.status(500).send('没有这个用户');              
       }
@@ -123,7 +162,7 @@ router.post('/verifyCode', function(req, res, next) {
   // })
 });
 
-
+// 微信授权登录
 const AppID = 'wxf5fff2aa6e0b1af7';
 const AppSecret = 'f396ab92d74c2ba72021d102aa67750b';
 
@@ -162,12 +201,12 @@ router.get('/get_wx_access_token', function(req, res, next){
                           console.log('获取微信信息成功！');
                           //其实，到这就写完了，你应该拿到微信信息以后去干该干的事情，比如对比数据库该用户有没有关联过你们的数据库，如果没有就让用户关联....等等等...
                           // 小测试，实际应用中，可以由此创建一个帐户
-                          res.send("\
-                              <h1>"+userinfo.nickname+" 的个人信息</h1>\
-                              <p><img src='"+userinfo.headimgurl+"' /></p>\
-                              <p>"+userinfo.city+"，"+userinfo.province+"，"+userinfo.country+"</p>\
-                              <p>openid: "+userinfo.openid+"</p>\
-                          ");
+                          // res.send("\
+                          //     <h1>"+userinfo.nickname+" 的个人信息</h1>\
+                          //     <p><img src='"+userinfo.headimgurl+"' /></p>\
+                          //     <p>"+userinfo.city+"，"+userinfo.province+"，"+userinfo.country+"</p>\
+                          //     <p>openid: "+userinfo.openid+"</p>\
+                          // ");
                       }else{
                           console.log(response.statusCode);
                       }
@@ -181,15 +220,37 @@ router.get('/get_wx_access_token', function(req, res, next){
 });
 
 router.post('/getUserInfo', function(req, res, next) {
-  console.log('req.body', req.body);
+  // console.log('req.body', req.body);
   User.find({ _id: req.body.userId}, (err, data)=>{
     if (err) {
       console.log(err);
       return res.status(500).send('获取用户信息失败');
     }
-    console.log('data', data);
+    // console.log('data', data);
     return res.json({ code: 200, data: data });
   });
+});
+
+// 加关注
+router.post('/addConcernUser', function(req, res, next) {
+  // console.log('req.body', req.body);
+  var writerId = req.body.writerId;
+  var userId = req.body.userId;
+  var concernList = req.body.concernList;
+  var fanList = req.body.fanList;
+
+  User.updateOne({_id: writerId}, {$set: {fanList: fanList}}, function (err) {
+    if (err) {
+      return res.status(500).send('关注失败');
+    }
+  })
+
+  User.updateOne({_id: userId}, {$set: {concernList: concernList}}, function (err) {
+    if (err) {
+      return res.status(500).send('关注失败');
+    }
+  })
+  return res.json({ code: 200 });
 });
 
 module.exports = router;

@@ -54,10 +54,8 @@ class smsCheck extends Component {
               phone: this.props.location.phone // 传手机号码
             })
           } else {
-            console.log('登录之后的data', res.data)
+            // console.log('登录之后的data', res.data)
             localStorage.setItem('token', res.data.token);
-            localStorage.setItem('user_name', res.data.user_name);
-            
             this.props.saveUserList(res.data.userList);
 
             this.props.history.push({

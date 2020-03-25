@@ -12,21 +12,6 @@ export const saveUserList = (information) => ({
 	information
 });
 
-export const saveRecipesList = (recipesList) => ({
-	type: actionTypes.SAVE_RECIPES_LIST,
-	recipesList
-});
-
-export const saveLeftData = (leftData) => ({
-	type: actionTypes.SAVE_LEFT_DATA,
-	leftData
-});
-
-export const saveRightData = (rightData) => ({
-	type: actionTypes.SAVE_RIGHT_DATA,
-	rightData
-});
-
 // export const logout = () => ({
 // 	type: actionTypes.LOGOUT,
 // 	value: false

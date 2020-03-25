@@ -16,9 +16,9 @@ class App extends Component {
         <Provider store={store}>
           <Router>
             {/* 先关了，不然刷新就跑首页，难受 */}
-            {/* <Redirect path="/" to="/tab/home/recommend" />
+            <Redirect path="/" to="/tab/home/recommend" />
             <Redirect path="/tab" to="/tab/home/recommend" />
-            <Redirect path="/tab/home" to="/tab/home/recommend" /> */}
+            <Redirect path="/tab/home" to="/tab/home/recommend" />
             {renderRoutes(routes)}
           </Router>
         </Provider>

@@ -34,6 +34,9 @@ let tabBarList=[
     icon: "&#xe612;"
   }
 ];
+
+var token = localStorage.getItem('token');
+
 class TabBarExample extends Component {
   constructor(props) {
     super(props);
@@ -84,31 +87,42 @@ class TabBarExample extends Component {
     );
   }
 
-  gotoLogin() {
-    if (this.state.selectedTab === 'home') {
-      this.props.history.replace('/tab/home/recommend')
-    }
-    if (this.state.selectedTab === 'shop') {
-      this.props.history.replace('/tab/shop')
-    }
-    if (this.state.selectedTab === 'message') {
-      this.props.history.replace('/login')
-    }
-    if (this.state.selectedTab === 'center' || this.state.selectedTab === 'release') {
-      var token = localStorage.getItem('token');
-      var user_name = localStorage.getItem('user_name');
+    gotoLogin() {
+      // this.checkUser();
 
-      checkUser({token, user_name})
+      if (this.state.selectedTab === 'home') {
+        this.props.history.replace('/tab/home/recommend')
+      }
+      if (this.state.selectedTab === 'shop') {
+        this.props.history.replace('/tab/shop')
+      }
+      if (this.state.selectedTab === 'message') {
+        this.props.history.replace('/login')
+      }
+      if (this.state.selectedTab === 'center') {
+        this.props.history.replace('/tab/center')
+      }
+      if (this.state.selectedTab === 'release') {
+        this.props.history.replace('/tab/release')
+      }
+    }
+
+    checkUser() {
+      checkUser({token})
         .then(res => {
-            console.log('checkUser', res)
+            localStorage.setItem('token', res.data.token);
+            // console.log('checkUser', res)
             this.props.saveUserList(res.data.userList[0]);
-            this.props.history.replace('/tab/' + this.state.selectedTab)
         }).catch((err) => {
           console.log('error', err);
           this.props.history.push('/login');
         })
     }
-  }
+
+    componentDidMount() {
+      this.checkUser();
+    }
+
 }
 
 const mapStateToProps = (state) => {

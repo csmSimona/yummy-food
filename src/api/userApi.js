@@ -15,3 +15,6 @@ export const get_wx_access_token = () => http.get('/user/get_wx_access_token');
 export const checkUser = (data) => http.post('/user/checkUser', data);
 
 export const getUserInfo = (userId) => http.post('/user/getUserInfo', userId);
+
+export const addConcernUser = (data) => http.post('/user/addConcernUser', data);
+

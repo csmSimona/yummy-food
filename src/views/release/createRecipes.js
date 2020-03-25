@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import Header from '@/components/header';
-import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon } from 'antd-mobile';
+import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder } from './style';
 import { connect } from 'react-redux';
 import { createRecipes, saveRecipesDraft } from '@/api/recipesApi';
+import CropperModal from '@/components/CropperModal/CropperModal';
+import { uploadVideo } from '@/api/recipesApi';
+import { startLoading, finishLoading } from '@/utils/loading';
+
+// import { Player, ControlBar, ReplayControl,
+//   ForwardControl, CurrentTimeDisplay,
+//   TimeDivider, PlaybackRateMenuButton, VolumeMenuButton } from 'video-react';
+// import "video-react/dist/video-react.css";
 
 const alert = Modal.alert;
 const header = {
@@ -38,6 +46,14 @@ const tagList = [
 
 const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
+
+function blobToBase64(blob, callback) {
+    let a = new FileReader();
+    a.onload = function (e) { callback(e.target.result); }
+    a.readAsDataURL(blob);
+}
+
 function closest(el, selector) {
     const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
     while (el) {
@@ -66,7 +82,14 @@ class CreateRecipes extends Component {
             cookStepsList: [{
                 img: [],
                 step: ''
-            }]
+            }],
+            classModalVisible: false,
+            classModalFile: null,
+            classResultImgUrl: null,
+            showBigModal: false,
+            showBigUrl: '',
+            videoUrl: '',
+            animating: false
          };
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
@@ -75,7 +98,8 @@ class CreateRecipes extends Component {
         this.onChange = this.onChange.bind(this);
         this.onStepImgChange = this.onStepImgChange.bind(this);
         this.onWrapTouchStart = this.onWrapTouchStart.bind(this);
-        
+        this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this);
+        // this.onStepChange = this.onStepChange.bind(this);
     }
 
     render() { 
@@ -85,13 +109,48 @@ class CreateRecipes extends Component {
                 <Header header={header} leftClick={this.handleBackClick} rightClick={this.handleSaveClick}></Header>
                 <Tip style={{visibility: this.state.files.length < 1 ? 'true' : 'hidden'}}>添加菜谱封面或菜谱视频</Tip>
                 <NoBorder>
-                    <ImagePicker
+                    {/* <ImagePicker
                         files={this.state.files}
                         onChange={this.onChange}
                         onImageClick={(index, fs) => console.log(index, fs)}
                         selectable={this.state.files.length < 1}
                         length="1"
-                        />
+                        /> */}
+                    <ImagePicker
+                        accept='*'
+                        files={this.state.files}
+                        onChange={this.onChange}
+                        onImageClick={(index, fs) => {
+                            console.log(index, fs);
+                            this.setState({
+                                showBigModal: true,
+                                showBigUrl: fs[index].url
+                            })
+                        }}
+                        length="1"
+                        selectable={this.state.files.length < 1}
+                    />
+                    {this.state.classModalVisible && (
+                    <CropperModal
+                        uploadedImageFile={this.state.classModalFile}
+                        onClose={() => {
+                        this.setState({ classModalVisible: false })
+                        }}
+                        onSubmit={this.handleGetResultImgUrl}
+                        classModalVisible={this.state.classModalVisible}
+                    />
+                    )}
+                    <Modal
+                        visible={this.state.showBigModal}
+                        transparent
+                        maskClosable={true}
+                        onClose={this.onClose('showBigModal')}
+                        title="查看图片"
+                        footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
+                        wrapProps={{ onTouchStart: this.onWrapTouchStart }}
+                    >
+                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
+                    </Modal>
                 </NoBorder>
                 <form style={{marginBottom: '3rem'}}>
                     <List>
@@ -232,7 +291,7 @@ class CreateRecipes extends Component {
                                                 <Icon type="cross" className='icon' 
                                                     onClick={() => {
                                                     let newCookStepsList = this.state.cookStepsList
-                                                    if (newCookStepsList.length === 2) {
+                                                    if (newCookStepsList.length < 3) {
                                                         Toast.info('烹饪步骤不能少于两步！', 1)
                                                     } else {
                                                         newCookStepsList.splice(index, 1)
@@ -254,7 +313,13 @@ class CreateRecipes extends Component {
                                                     cookStepsList: newCookStepsList
                                                 })
                                             }}
-                                            onImageClick={(index, fs) => console.log(index, fs)}
+                                            onImageClick={(index, fs) => {
+                                                console.log(index, fs);
+                                                this.setState({
+                                                    showBigModal: true,
+                                                    showBigUrl: fs[index].url
+                                                })
+                                            }}
                                             selectable={item.img.length < 1}
                                             length="1"
                                         />
@@ -332,8 +397,87 @@ class CreateRecipes extends Component {
                     <Button className='button' onClick={this.onReset}>重置</Button>
                     <Button type="primary" className='button' onClick={this.onSubmit}>发布</Button>
                 </ButtonWrapper>
+                <ActivityIndicator
+                    toast
+                    text="Loading..."
+                    animating={this.state.animating}
+                />
             </CreateRecipesWrapper>
          );
+    }
+
+    showModal = key => (e) => {
+        e.preventDefault(); // 修复 Android 上点击穿透
+        this.setState({
+          [key]: true,
+        });
+      }
+
+    onClose = key => () => {
+        this.setState({
+            [key]: false,
+        });
+    }
+    
+    onChange = (files, type, index) => {
+        let file;
+
+        if (files.length) {
+            file = files[files.length - 1].file;
+            var uploadType = files[0].url.split('/')[0];
+        }
+        console.log(files, type, index)
+        
+        if (type === 'add') {
+          if (uploadType === 'data:video') {
+            uploadVideo({
+              video: files[0].url
+            }).then(res => {
+              this.setState({
+                // files: [{url: res.data.videoUrl}],
+                videoUrl: res.data.videoUrl
+              })
+              // res.data.videoUrl statics/video/1585055722129.mp4
+              console.log('res.data.videoUrl', res.data.videoUrl);
+            }).catch((err) => {
+              console.log('error', err);
+            })
+          } else {
+            if (file.size <= MAX_FILE_SIZE) {
+              this.setState(
+                {
+                  classModalFile: file // 先把上传的文件暂存在state中
+                },
+                () => {
+                  this.setState({
+                    classModalVisible: true // 然后弹出modal
+                  })
+                }
+              )
+            } else {
+              console.log('文件过大')
+            }
+          }
+        } else {
+          this.setState({
+            files: files // 然后弹出modal
+          })
+        }
+
+    }
+    
+    handleGetResultImgUrl = blob => {
+        // blob转base64
+        blobToBase64(blob, (str) => {
+            var newFile = this.state.files
+            newFile.push({
+                url: str
+            })
+            this.setState({
+                classResultImgUrl: str,
+                files: newFile
+            })
+        })
     }
 
     onWrapTouchStart = (e) => {
@@ -396,13 +540,15 @@ class CreateRecipes extends Component {
         createRecipesList.userId = this.props.userList._id;
         console.log('createRecipesList', createRecipesList);
 
+        startLoading(this)
         createRecipes(createRecipesList).then(res => {
+            finishLoading(this)
             if (res.data.code === 200) {
                 console.log('res.data', res.data);
+                var recipeId = res.data.data._id;
                 Toast.success('创建成功！', 1)
-                // 还差  跳转到 创建成功的显示菜谱页面
                 this.props.history.push({
-                    pathname: '/tab/release'
+                    pathname: '/recipesDetail/' + recipeId
                 })
             }
         }).catch((err) => {
@@ -412,6 +558,29 @@ class CreateRecipes extends Component {
 
     onReset = () => {
         this.props.form.resetFields();
+        this.setState({ 
+            files: [],
+            recipeTips: '',
+            modal: [false, false, false, false],
+            selected: ['请选择工艺', '请选择口味', '请选择时间', '请选择难度'],
+            materialsList: [{
+                ingredients: '',
+                quantities: ''
+            }],
+            recommendSelected: [],
+            stepImgs: stepImgs,
+            cookStepsList: [{
+                img: [],
+                step: ''
+            }],
+            classModalVisible: false,
+            classModalFile: null,
+            classResultImgUrl: null,
+            showBigModal: false,
+            showBigUrl: '',
+            videoUrl: '',
+            animating: false
+         })
     }
 
     handleBackClick() {
@@ -426,9 +595,9 @@ class CreateRecipes extends Component {
                 this.handleSaveClick()
             } },
           ]);
-          setTimeout(() => {
+        setTimeout(() => {
             alertInstance.close();
-          }, 500000);
+        }, 500000);
     }
 
     handleSaveClick() {
@@ -444,7 +613,9 @@ class CreateRecipes extends Component {
 
         console.log('createRecipesList', createRecipesList);
 
+        startLoading(this)
         saveRecipesDraft(createRecipesList).then(res => {
+            finishLoading(this)
             if (res.data.code === 200) {
                 console.log('res.data', res.data);
                 Toast.success('保存成功！', 1)
@@ -455,13 +626,6 @@ class CreateRecipes extends Component {
         }).catch((err) => {
             console.log('error', err);
         })
-    }
-
-    onChange = (files, type, index) => {
-        console.log(files, type, index);
-        this.setState({
-            files
-        });
     }
 
     onStepImgChange = (files, type, index) => {

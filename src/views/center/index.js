@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actionCreators } from './store';
+import formatDate from '@/utils/formatDate';
 
 class Center extends Component {
     constructor(props) {
@@ -9,15 +10,21 @@ class Center extends Component {
         this.state = {  }
     }
     render() { 
+        let {userList} = this.props;
         return ( 
-            <div>个人中心页
+            <div>
                 {/* <Link to='/personInfo'>设置</Link> */}
-                <div>{localStorage.getItem('user_name')}</div>
-                <div>{console.log('userList', this.props.userList)}</div>
+                {/* <img src={this.props.userList ? require('@/' + this.props.userList.img[0].url) : require('@/statics/img/title.png')} /> */}
+                <img src={this.props.userList.img ? this.props.userList.img[0].url : require('@/statics/img/title.png')} width='200px' alt='头像' />
+                {userList.name}
+                {formatDate(userList.createDate)}加入
+                关注 {userList.concernList}
+                粉丝 {userList.fanList} 
             </div>
         );
     }
     componentDidMount() {
+        console.log(this.props.userList)
     }
 }
  
@@ -29,6 +36,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        saveUserList(information) {
+            dispatch(actionCreators.saveUserList(information));
+        }
     }
 }
 
