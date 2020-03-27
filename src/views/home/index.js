@@ -50,7 +50,7 @@ class Home extends Component {
                   })
                   this.props.history.replace(tab.path)
                 }}
-              ></Tabs>
+              />
             </div>
             <PageWrapper>
               {renderRoutes(this.state.route.children)}
@@ -62,9 +62,20 @@ class Home extends Component {
         this.props.history.replace('/menuClass')
     }
     componentDidMount() {
-      if (this.props.location.homeTab) {
+      var pathname = this.props.location.pathname
+      if (pathname === '/tab/home/concern') {
         this.setState({
-          homeTab: this.props.location.homeTab
+          homeTab: 0
+        })
+      }
+      if (pathname === '/tab/home/recommend') {
+        this.setState({
+          homeTab: 1
+        })
+      }
+      if (pathname === '/tab/home/find') {
+        this.setState({
+          homeTab: 2
         })
       }
     }

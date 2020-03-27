@@ -16,13 +16,16 @@ import Concern from './views/home/pages/concernPage/concern';
 import MenuClass from './views/home/menuClass';
 import RecipesDetail from './views/home/pages/recommendPage/recipesDetail';
 import DynamicDetail from './views/home/pages/findPage/dynamicDetail';
+import MyRecipes from './views/center/pages/myRecipesPage/myRcipes';
+import MyDynamic from './views/center/pages/myDynamicPage/myDynamic';
+import MyCollect from './views/center/pages/myCollectPage/myCollect';
+import MyLike from './views/center/pages/myLikePage/myLike';
+import Setting from './views/center/setting';
 
 const routes = [
     {
         path: '/tab',
         component: TabBar,
-        // redirect: '/tab/home',
-        // exact: true,
         children: [
             {
                 path: '/tab/home',
@@ -57,7 +60,26 @@ const routes = [
             },
             {
                 path: '/tab/center',
-                component: Center
+                component: Center,
+                // redirect: '/tab/center/myRecipes',
+                children: [
+                    {
+                        path: '/tab/center/myRecipes',
+                        component: MyRecipes
+                    },
+                    {
+                        path: '/tab/center/myDynamic',
+                        component: MyDynamic
+                    },
+                    {
+                        path: '/tab/center/myCollect',
+                        component: MyCollect
+                    },
+                    {
+                        path: '/tab/center/myLike',
+                        component: MyLike
+                    }
+                ]
             }
         ]
     },
@@ -96,6 +118,10 @@ const routes = [
     {
         path: '/dynamicDetail/:id',
         component: DynamicDetail
+    },
+    {
+        path: '/setting',
+        component: Setting
     }
 ];
  

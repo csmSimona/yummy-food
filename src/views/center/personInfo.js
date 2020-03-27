@@ -27,11 +27,17 @@ function closest(el, selector) {
     return null;
 }
 
-const header = {
+const header1 = {
     left: '下次再说',
     title: '编辑个人资料',
     right: '保存'
 }
+
+const header2 = {
+    left: "<span class='iconfont back'>&#xe61f;</span>",
+    title: '编辑个人资料',
+    right: '保存'
+};
 
 const gender = [
     [
@@ -89,16 +95,11 @@ class personInfo extends Component {
             classResultImgUrl: null,
             showBigModal: false,
             showBigUrl: '',
-            files: [
-                // {
-                //     url: require('@/statics/img/avatar.jpeg'),
-                //     id: '1'
-                // }
-            ],
-            // value: 1,
+            files: [],
             tagSelected: true,
-            selectedList: ['无']
+            selectedList: ['无'],
         };
+        this.back = this.back.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
         this.handleSelectedClick = this.handleSelectedClick.bind(this);
         this.onChange = this.onChange.bind(this)
@@ -107,10 +108,10 @@ class personInfo extends Component {
 
     render() { 
         const { getFieldProps, getFieldError } = this.props.form;
-
+        let { userList } = this.props;
         return ( 
             <PersonInfoWrapper>
-                <Header header={header} leftClick={this.handleSaveClick} rightClick={this.handleSaveClick}></Header>
+                <Header header={userList ? header2 : header1} leftClick={userList ? this.back : this.handleSaveClick} rightClick={this.handleSaveClick}></Header>
                 <ImagePicker
                     files={this.state.files}
                     onChange={this.onChange}
@@ -138,11 +139,11 @@ class personInfo extends Component {
                     transparent
                     maskClosable={true}
                     onClose={this.onClose('showBigModal')}
-                    title="查看图片"
+                    title="查看头像"
                     footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
-                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
+                    <img src={require('@/' + this.state.showBigUrl)} alt="查看图片" width="100%" height="100%" />
                 </Modal>
                 <form>
                     <List
@@ -150,7 +151,7 @@ class personInfo extends Component {
                     >
                         <InputItem
                             {...getFieldProps('name', {
-                                initialValue: '用户' + this.props.location.phone,
+                                initialValue: userList.name ? userList.name : '用户' + this.props.location.phone,
                               })}
                             placeholder="请输入用户名"
                         >用户名</InputItem>
@@ -174,7 +175,9 @@ class personInfo extends Component {
                         <DatePicker
                             mode="date"
                             title="出生日期"
-                            {...getFieldProps('birthday')}
+                            {...getFieldProps('birthday', {
+                                initialValue: userList.birthday ? new Date(userList.birthday) : ''
+                              })}
                             extra="请选择出生日期"
                             minDate={new Date(1900, 1, 1, 0, 0, 0)}
                             maxDate={new Date()}
@@ -184,28 +187,42 @@ class personInfo extends Component {
                         <Picker extra="请选择家乡"
                             data={antdDistrict}
                             title="家乡"
-                            {...getFieldProps('hometown')}
+                            {...getFieldProps('hometown', {
+                                initialValue: userList.hometown ? userList.hometown : ''
+                              })}
                             >
                             <List.Item>家乡</List.Item>
                         </Picker>
                         <Picker extra="请选择现居地"
                             data={antdDistrict}
                             title="现居地"
-                            {...getFieldProps('livingPlace')}
+                            {...getFieldProps('livingPlace', {
+                                initialValue: userList.livingPlace ? userList.livingPlace : '',
+                              })}
                             >
                             <List.Item>现居地</List.Item>
                         </Picker>
                         <List.Item
                             {...getFieldProps('avoidFood', {
-                                initialValue: this.state.selectedList,
+                                initialValue: this.state.selectedList
                               })}
                         >忌口
                             <TagContainer>
-                                <Tag selected
-                                    onChange={this.handleSelectedClick}>无</Tag>
+                                <Tag 
+                                    selected={this.state.tagSelected}
+                                    onChange={this.handleSelectedClick}
+                                >无</Tag>
+                                {console.log('this.state.selectedList',this.state.selectedList)}
                                 {
                                     tagList.map((item, index) => {
                                         return <Tag disabled={this.state.tagSelected} key={index}
+                                        selected={
+                                            this.state.selectedList.some((val, i) => {
+                                                if(item === val){
+                                                    return true
+                                                } 
+                                            })
+                                        }
                                         onChange={selected => {
                                             if (selected) {
                                                 var newSelect = this.state.selectedList
@@ -231,7 +248,9 @@ class personInfo extends Component {
                             </TagContainer>
                         </List.Item>
                         <TextareaItem
-                            {...getFieldProps('profile')}
+                            {...getFieldProps('profile', {
+                                initialValue: userList.profile ? userList.profile : '',
+                              })}
                             rows={5}
                             count={100}
                             placeholder="添加个人简介，让厨友更了解你"
@@ -242,7 +261,10 @@ class personInfo extends Component {
         )
     }
 
-    
+    back() {
+        window.history.back(-1)
+    }
+
     showModal = key => (e) => {
         e.preventDefault(); // 修复 Android 上点击穿透
         this.setState({
@@ -312,19 +334,14 @@ class personInfo extends Component {
 
     handleSaveClick() {
         var information = this.props.form.getFieldsValue()
-        information.img = this.state.files
-        information.gender = information.gender ? information.gender[0] : '未知'
-        // information.phone = information.phone.replace(/\s*/g,"")
-        // var phone = /^[1][3,4,5,7,8][0-9]{9}$/
+        information.img = this.state.files;
+        console.log(information)
+        // information.gender = information.gender ? information.gender[0] : '未知';
 
         if (!information.name) {
             Toast.info('用户名不能为空', 1)
             return false
         }
-        // if (phone.test(information.phone) === false) {
-        //     Toast.info('请输入正确的手机号码', 1);
-        //     return false;
-        // }
         if (information.avoidFood[0] === '无') {
             information.avoidFood = ['无']
         }
@@ -338,14 +355,11 @@ class personInfo extends Component {
             console.log('addUser', res);
             if (res.data.code === 200) {
                 localStorage.setItem('token', res.data.token);
-                information.token = res.data.token;
-                information.userId = res.data.userId;
-                this.props.saveUserList(information);
+                localStorage.setItem('userPhone', res.data.data.phone);
+                localStorage.setItem('userId', res.data.data._id);
+                this.props.saveUserList(res.data.data);
             }
-            this.props.history.push({
-                pathname: '/tab/center',
-                selectedTab: 'center'
-            })
+            this.props.history.replace('/tab/center/myRecipes');
         }).catch((err) => {
           console.log('error', err);
         })
@@ -370,9 +384,22 @@ class personInfo extends Component {
     }
 
     componentDidMount() {
-        console.log('this.props.location.phone', this.props.location.phone);
+        let userList = this.props.userList;
+        console.log('userList', userList)
         if (this.props.location.phone === undefined) {
             this.props.history.replace('/tab/home/recommend');
+        }
+        if (userList) {
+            // if (userList instanceof Array) {
+            let tabSelected, url;
+            userList.avoidFood && (tabSelected = userList.avoidFood[0] === '无' ? true : false);
+            userList.img && (url = require('@/' + userList.img[0].url))
+            this.setState({
+                files: [{url: url}],
+                selectedList: userList.avoidFood,
+                tagSelected: tabSelected
+            })
+        // }
         }
     }
 }
@@ -381,10 +408,6 @@ const personInfoWrapper = createForm()(personInfo);
 
 const mapStateToProps = (state) => {
     return {
-        // files: state.getIn(['center', 'files']),
-        // value: state.getIn(['center', 'value']),
-        // tagSelected: state.getIn(['center', 'tagSelected']),
-        // selectedList: state.getIn(['center', 'selectedList']),
         userList: state.getIn(['center', 'userList'])
     }
 }

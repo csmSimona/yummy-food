@@ -4,7 +4,7 @@ import { getRecipesDetail, addCollectRecipes } from '@/api/recipesApi';
 import { getUserInfo, addConcernUser } from '@/api/userApi';
 import { RecipesDetailWrapper, Border, SelectIcon } from './style';
 import formatDate from '@/utils/formatDate';
-import { Toast, Button, InputItem } from 'antd-mobile';
+import { Toast, Button } from 'antd-mobile';
 // import LazyLoad from 'react-lazyload';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
@@ -46,8 +46,7 @@ class RecipesDetail extends Component {
                         {recipesDetail.followNumber !== 0 ? ` · ${recipesDetail.followNumber} 跟做` : ''}
                     </p>
                     <div className='writer'>
-                        {/* <img className='avatar' src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/title.png')} alt=""/> */}
-                        <img className='avatar' src={writer.img ? writer.img[0].url : require('@/statics/img/title.png')} alt=""/>
+                        <img className='avatar' src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/title.png')} alt=""/>
                         <div className='writerName'>
                             <p>{writer.name}</p>
                             <p>{writer.profile}</p>
@@ -64,7 +63,7 @@ class RecipesDetail extends Component {
                         {
                             recipesDetail.selected && recipesDetail.selected.map((item, index) => {
                                 if (item.substring(0, 1) === '请') {
-                                    return
+                                    return ''
                                 } else {
                                     return (
                                         <div key={index} className='icon'>

@@ -6,8 +6,6 @@ class Release extends Component {
   constructor(props) {
     super(props);
     this.state = { apiResponse: "" };
-
-    // this.cancelLogin = this.cancelLogin.bind(this);
   }
 
   render() {
@@ -28,16 +26,9 @@ class Release extends Component {
               <div>晒美食</div>
             </div>
           </ReleaseMenu>
-        {/* <Cancel onClick={this.cancelLogin}>取消</Cancel> */}
       </div>
     );
   }
-//   cancelLogin() {
-//     this.props.history.push({
-//         pathname: '/tab/home/recommend',
-//         selectedTab: 'home'
-//     })
-//   }
 }
 
 export default Release;

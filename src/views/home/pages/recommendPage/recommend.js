@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { TitleWrapper, RecipesListWrapper, CollectionIcon } from './style';
 import { Carousel, Toast, ActivityIndicator } from 'antd-mobile';
 import { getRecipes, addCollectRecipes } from '@/api/recipesApi';
-import { getUserInfo, checkUser } from '@/api/userApi';
+import { getUserInfo } from '@/api/userApi';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
 import { actionCreators } from '../../store';
@@ -71,13 +71,13 @@ class Recommend extends Component {
                             {
                                 leftData && leftData.map((item, index) => {
                                     return (
-                                        <div key={index}>
+                                        <div key={index} className='contentBox'>
                                             <img src={item.album[0].url} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/>
                                             {/* <img src={require('@/' + item.album[0].url)} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/> */}
                                             <div className='title' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={item.avatar} className='avatar' alt=""/>
+                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
                                                     <span className='userName'>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>
@@ -101,13 +101,13 @@ class Recommend extends Component {
                             {
                                 rightData && rightData.map((item, index) => {
                                     return (
-                                        <div key={index}>
+                                        <div key={index} className='contentBox'>
                                             {/* <img src={require('@/' + item.album[0].url)} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/> */}
-                                            <img src={item.album[0].url} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} />
+                                            <img src={item.album[0].url} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/>
                                             <div className='title' onClick={this.getRecipesDetail(item._id)} alt="">{item.recipeName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={item.avatar} className='avatar' alt=""/>
+                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
                                                     <span className='userName'>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>
@@ -261,7 +261,7 @@ class Recommend extends Component {
                 this.setState({
                     recipesList: this.props.recipesList,
                     leftData: this.props.leftData,
-                    rightData: this.props.leftData
+                    rightData: this.props.rightData
                 })
                 finishLoading(this)
             } else {

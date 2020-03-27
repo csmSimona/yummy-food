@@ -24,6 +24,8 @@ export default (state = defaultState, action) => {
 			return state.set('leftDynamic', action.information);
 		case actionTypes.SAVE_RIGHT_DYNAMIC:
 			return state.set('rightDynamic', action.information);
+		case actionTypes.CLEAR_HOME_REDUX_DATA:
+			return defaultState;
 		default:
 			return state;
 	}

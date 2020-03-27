@@ -16,7 +16,7 @@ class Login extends Component {
   render() {
     return (
       <div style={{ position: 'relative'}}>
-        <Cancel onClick={this.cancelLogin}>取消</Cancel>
+        <Cancel onClick={this.cancelLogin}></Cancel>
         <img src={require('@/statics/img/title.png')} style={logo} alt="头像" ></img>
         <Slogan>唯有美食与爱不可辜负</Slogan>
         <Button style={wechatLogin} onClick={this.handleWechatBtnClick}>使用微信登录</Button>
@@ -45,8 +45,7 @@ class Login extends Component {
   
   cancelLogin() {
     this.props.history.push({
-      pathname: '/tab/home/recommend',
-      selectedTab: 'home'
+      pathname: '/tab/home/recommend'
     })
   }
 }

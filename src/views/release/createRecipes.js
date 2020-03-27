@@ -587,8 +587,7 @@ class CreateRecipes extends Component {
         const alertInstance = alert('', '是否保存到草稿箱', [
             { text: '否', onPress: () => {
                 this.props.history.push({
-                    pathname: '/tab/release',
-                    selectedTab: 'release'
+                    pathname: '/tab/release'
                 })
             }, style: 'default' },
             { text: '是', onPress: () => {

@@ -18,3 +18,5 @@ export const getUserInfo = (userId) => http.post('/user/getUserInfo', userId);
 
 export const addConcernUser = (data) => http.post('/user/addConcernUser', data);
 
+export const updateUserInfo = (data) => http.post('/user/updateUserInfo', data);
+

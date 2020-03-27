@@ -1,5 +1,16 @@
 import styled from 'styled-components';
-import { descColor } from '@/styles/color';
+import { descColor, themeColor, hintColor, bgColor } from '@/styles/color';
+import border from '@/styles/border';
+
+export const Border = border({
+    component: styled.div`{
+      margin: 1rem 0;
+    }`,
+    color: `${hintColor}`,
+    width: '0 0 1px 0',
+    style: 'solid',
+    radius: '0px'
+  });
 
 export const TagContainer = styled.div`{
     display: flex;
@@ -43,4 +54,102 @@ export const PersonInfoWrapper = styled.div`{
       flex: 1;
   }
 
+}`;
+
+
+export const CenterWrapper = styled.div`{
+    margin: 1rem;
+    .topHeader {
+        overflow: hidden;
+        .editWrapper {
+            display: flex;
+            // margin: 0 1rem;
+            .avatar {
+                width: 5rem;
+                height: 5rem;
+                border-radius: 50%;
+                text-align: center;
+            }
+            .editContent {
+                width: 100%;
+                text-align: center;
+                padding: 0 1rem 1rem 1rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                .userName {
+                    padding: .5rem;
+                    font-size: 1.25rem;
+                    font-weight: bold;
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .editButton {
+                    display: inline-block;
+                    flex: 5;
+                    padding: .5rem;
+                    font-size: .75rem;
+                    color: ${themeColor};
+                    border-radius: 3rem;
+                    border: 1px solid ${themeColor};
+                }
+            }
+        }
+        .userDesc {
+            margin: 0 1rem 1rem 1rem;
+            .descContent {
+                color: ${descColor},
+                font-size: .75rem
+            }
+        }
+        .userData {
+            margin: 0 1rem;
+            display: flex;
+            .dataItem {
+                flex: 1;
+                text-align: center;
+                font-size: .75rem;
+                .dataNumber {
+                    margin-bottom: .5rem;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}`;
+
+
+export const SettingIcon = styled.i`{
+    font-size: 1.45rem !important;
+    display: inline-block;
+    flex: 1;
+    padding-left: 1rem;
+    color: ${descColor};
+}`;
+
+export const SettingWrapper = styled.div`{
+    background-color: ${bgColor};
+    height: ${props => props.height}px;
+    .text {
+        margin-bottom: .1rem; 
+        padding: 1rem;
+        background: #fff;
+        font-weight: bold;
+        vertical-align: middle;
+    }
+    .logout {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #fff;
+        color: ${themeColor};
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .blank {
+        background: ${bgColor};
+        padding: 1rem;
+    }
 }`;

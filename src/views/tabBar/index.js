@@ -35,14 +35,12 @@ let tabBarList=[
   }
 ];
 
-var token = localStorage.getItem('token');
-
 class TabBarExample extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: this.props.location.selectedTab ? this.props.location.selectedTab : 'home',
-      route: props.route
+      route: props.route,
+      selectedTab: 'home'
     };
   }
 
@@ -97,10 +95,10 @@ class TabBarExample extends Component {
         this.props.history.replace('/tab/shop')
       }
       if (this.state.selectedTab === 'message') {
-        this.props.history.replace('/login')
+        this.props.history.replace('/tab/message')
       }
       if (this.state.selectedTab === 'center') {
-        this.props.history.replace('/tab/center')
+        this.props.history.replace('/tab/center/myRecipes')
       }
       if (this.state.selectedTab === 'release') {
         this.props.history.replace('/tab/release')
@@ -108,10 +106,14 @@ class TabBarExample extends Component {
     }
 
     checkUser() {
-      checkUser({token})
+      var token = localStorage.getItem('token');
+      var userPhone = localStorage.getItem('userPhone');
+      var userId = localStorage.getItem('userId');
+      checkUser({token, userPhone, userId})
         .then(res => {
             localStorage.setItem('token', res.data.token);
-            // console.log('checkUser', res)
+            localStorage.setItem('userPhone', res.data.userList[0].phone);
+            localStorage.setItem('userId', res.data.userList[0]._id);
             this.props.saveUserList(res.data.userList[0]);
         }).catch((err) => {
           console.log('error', err);
@@ -119,7 +121,30 @@ class TabBarExample extends Component {
         })
     }
 
+    
+
     componentDidMount() {
+      var pathname = this.props.location.pathname
+      if (pathname === '/tab/shop') {
+          this.setState({
+              selectedTab: 'shop'
+          })
+      }
+      if (pathname === '/tab/release') {
+          this.setState({
+              selectedTab: 'release'
+          })
+      }
+      if (pathname === '/tab/message') {
+        this.setState({
+            selectedTab: 'message'
+        })
+      }
+      if (pathname.substring(0, 11) === '/tab/center') {
+          this.setState({
+              selectedTab: 'center'
+          })
+      }
       this.checkUser();
     }
 
@@ -134,7 +159,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
       saveUserList(userList) {
-          console.log('userList', userList);
           dispatch(centerActionCreators.saveUserList(userList));
       }
   }

@@ -134,4 +134,23 @@ router.post('/getRecipesDetail', function(req, res, next) {
     });
 });
 
+
+// 查找属于用户的菜谱
+router.post('/findRecipesByUseId', function(req, res) {
+    Recipes.find({userId: req.body.userId}, {
+            _id: 1,
+            album: 1,
+            collectionNumber: 1,
+            recipeName: 1,
+            userId: 1
+        }, function (err, data) {
+        if (err) {
+            return res.status(500).send('查询失败');
+        } else {
+            console.log('recipes data', data)
+            return res.json({ code: 200, data: data });
+        }
+    })
+});
+
 module.exports = router;

@@ -21,7 +21,6 @@ class DynamicDetail extends Component {
         }
         this.handleLikeClick = this.handleLikeClick.bind(this);
         this.handleConcernClick = this.handleConcernClick.bind(this);
-        this.handleBackClick = this.handleBackClick.bind(this);
     }
 
     render() {
@@ -34,7 +33,7 @@ class DynamicDetail extends Component {
         return (
           <RecipesDetailWrapper>
               <div className='recipesDetailContent'>
-                <Header header={header} leftClick={this.handleBackClick} ></Header>
+                <Header header={header}></Header>
                 <Carousel
                     style={{touchAction: 'none'}}
                     autoplay
@@ -62,7 +61,7 @@ class DynamicDetail extends Component {
                     {dynamicDetail.likeNumber ? ` · ${dynamicDetail.likeNumber} 点赞` : ''}
                 </p>
                 <div className='writer'>
-                    <img className='avatar' src={writer.img ? writer.img[0].url : require('@/statics/img/title.png')} alt=""/>
+                    <img className='avatar' src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/title.png')} alt=""/>
                     <div className='writerName'>
                         <p>{writer.name}</p>
                         <p>{writer.profile}</p>
@@ -106,13 +105,6 @@ class DynamicDetail extends Component {
             </div>
           </RecipesDetailWrapper>
         )
-    }
-
-    handleBackClick() {
-        this.props.history.push({
-            pathname: '/tab/home/find',
-            homeTab: 2
-        })
     }
 
     handleConcernClick() {

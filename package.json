@@ -12,6 +12,7 @@
     "antd-mobile": "^2.3.1",
     "antd-mobile-demo-data": "^0.3.0",
     "axios": "^0.19.2",
+    "browser-cookies": "^1.2.0",
     "cors": "^2.8.5",
     "fastclick": "^1.0.6",
     "history": "^4.10.1",

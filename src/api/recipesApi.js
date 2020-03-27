@@ -12,3 +12,4 @@ export const getRecipesDetail = (id) => http.post('/recipes/getRecipesDetail', i
 
 export const uploadVideo = (video) => http.post('/recipes/uploadVideo', video);
 
+export const findRecipesByUseId = (userId) => http.post('/recipes/findRecipesByUseId', userId);

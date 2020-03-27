@@ -29,3 +29,7 @@ export const saveRightDynamic = (information) => ({
 	type: actionTypes.SAVE_RIGHT_DYNAMIC,
 	information
 });
+
+export const clearHomeReduxData = () => ({
+	type: actionTypes.CLEAR_HOME_REDUX_DATA
+});

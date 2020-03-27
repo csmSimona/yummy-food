@@ -35,6 +35,13 @@ export default function getHW(data, list, that){
             console.log('failed')
         })
         that.setState({ leftData, rightData });
+        if (list === 'recipesList') {
+            that.props.saveLeftData(leftData);
+            that.props.saveRightData(rightData);
+        } else {
+            that.props.saveLeftDynamic(leftData);
+            that.props.saveRightDynamic(rightData);
+        }
     }
     data.forEach(item => {
         test(item);

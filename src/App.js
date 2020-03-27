@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+// import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import { routes } from './routes';
 import { renderRoutes } from 'react-router-config';
 import { GrobalStyle } from './styles/style';
@@ -15,10 +16,10 @@ class App extends Component {
         <GrobalIconStyle />
         <Provider store={store}>
           <Router>
-            {/* 先关了，不然刷新就跑首页，难受 */}
-            <Redirect path="/" to="/tab/home/recommend" />
-            <Redirect path="/tab" to="/tab/home/recommend" />
-            <Redirect path="/tab/home" to="/tab/home/recommend" />
+            {/* <Redirect path="/" to="/tab/home/recommend" /> */}
+            {/* <Redirect path="/tab" to="/tab/home/recommend" /> */}
+            {/* <Redirect path="/tab/home" to="/tab/home/recommend" /> */}
+            {/* <Redirect path="/tab/center" to="/tab/center/myRecipes" /> */}
             {renderRoutes(routes)}
           </Router>
         </Provider>

@@ -3,7 +3,7 @@ import { Toast, ActivityIndicator } from 'antd-mobile';
 import { getDynamic, addLikeDynamic } from '@/api/dynamicApi';
 import { finishLoading } from '@/utils/loading';
 import getHW from '@/utils/getHW';
-import { getUserInfo, checkUser } from '@/api/userApi';
+import { getUserInfo } from '@/api/userApi';
 import { RecipesListWrapper, CollectionIcon } from '../recommendPage/style';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
 import { actionCreators } from '../../store';
@@ -36,12 +36,12 @@ class Find extends Component {
                         {
                             leftData && leftData.map((item, index) => {
                                 return (
-                                    <div key={index}>
+                                    <div key={index} className='contentBox'>
                                         <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
                                         <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                         <div className='otherInfo'>
                                             <div className='user'>
-                                                <img src={item.avatar} className='avatar' alt=""/>
+                                                <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
                                                 <span className='userName'>{item.userName}</span>
                                             </div>
                                             <div className='collection'>
@@ -65,12 +65,12 @@ class Find extends Component {
                     {
                         rightData && rightData.map((item, index) => {
                             return (
-                                <div key={index}>
+                                <div key={index} className='contentBox'>
                                     <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
                                     <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                     <div className='otherInfo'>
                                         <div className='user'>
-                                            <img src={item.avatar} className='avatar' alt=""/>
+                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
                                             <span className='userName'>{item.userName}</span>
                                         </div>
                                         <div className='collection'>

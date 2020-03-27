@@ -88,4 +88,16 @@ router.post('/getDynamicDetail', function(req, res, next) {
     });
 });
 
+// 查找属于用户的动态
+router.post('/findDynamicByUseId', function(req, res) {
+    Dynamic.find({userId: req.body.userId}, function (err, data) {
+      if (err) {
+        return res.status(500).send('查询失败');
+      } else {
+          console.log('dynamic data', data)
+        return res.json({ code: 200, data: data });
+      }
+    })
+});
+
 module.exports = router;

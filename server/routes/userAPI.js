@@ -54,7 +54,7 @@ router.post('/addUser', function(req, res, next) {
           console.log(err);
           return res.status(500).send('Server error.');
         }
-        res.send({'code': 200, 'token': token, 'user_name': req.body.name, 'userId': data._id});
+        res.send({'code': 200, 'token': token, 'data': data});
       });
 
     }, (err) => {
@@ -65,7 +65,7 @@ router.post('/addUser', function(req, res, next) {
 
 // 检测token
 router.post('/checkUser', (req, res)=>{
-  User.find({ token: req.body.token }, (err, data)=>{
+  User.find({ token: req.body.token, phone: req.body.userPhone, _id: req.body.userId }, (err, data)=>{
       if (err) {
           console.log(err);
           res.send(err);
@@ -138,17 +138,18 @@ router.post('/verifyCode', function(req, res, next) {
                 return res.status(500).send('Server error.')
               } else {
                 if (data) {
-                  let content = {phone: req.body.mobile}; // 要生成token的主题信息
-                  let secretOrPrivateKey="csm" // 这是加密的key（密钥） 
-                  var token = jwt.sign(content, secretOrPrivateKey, {
-                          expiresIn: 60 * 60 * 24  // 24小时过期
-                      });
-                  User.updateOne({phone: req.body.mobile}, {$set: {token: token}}, function (err) {
-                    if (err) {
-                      console.log('update err', err)
-                    }
-                  })
-                  return res.json({ code: 200, msg: 'find it', token: token, user_name: data.name, userList: data });
+                  // let content = {phone: req.body.mobile}; // 要生成token的主题信息
+                  // let secretOrPrivateKey="csm" // 这是加密的key（密钥） 
+                  // var token = jwt.sign(content, secretOrPrivateKey, {
+                  //         expiresIn: 60 * 60 * 24  // 24小时过期
+                  //     });
+                  // User.updateOne({phone: req.body.mobile}, {$set: {token: token}}, function (err) {
+                  //   if (err) {
+                  //     console.log('update err', err)
+                  //   }
+                  // })
+                  // return res.json({ code: 200, msg: 'find it', token: token, user_name: data.name, userList: data });
+                  return res.json({ code: 200, msg: 'find it', userList: data });
                 } else {
                   console.log('can not find')
                   return res.json({ code: 200, msg: 'can not find' });
@@ -252,5 +253,49 @@ router.post('/addConcernUser', function(req, res, next) {
   })
   return res.json({ code: 200 });
 });
+
+// 更新用户个人信息
+router.post('/updateUserInfo', function(req, res, next) {
+  console.log('req.body', req.body);
+  
+  const data = user.img[0].url;
+
+
+  var filePath = '../src/statics/images/avatar/'+ Date.now() +'.png';
+
+  // 从app.js级开始找--在我的项目工程里是这样的
+  var base64 = data.replace(/^data:image\/\w+;base64,/, "");
+  // 去掉图片base64码前面部分data:image/png;base64
+  var dataBuffer = new Buffer(base64, 'base64'); // 把base64码转成buffer对象
+  console.log('dataBuffer是否是Buffer对象：' + Buffer.isBuffer(dataBuffer));
+
+  pWriteFile(filePath, dataBuffer)
+  .then(() => {
+      console.log('写入成功！');
+
+      user.img[0].url = filePath.replace('../src/', '')
+
+      // new User(user).save(function (err, data) {
+      //   if (err) {
+      //     console.log(err);
+      //     return res.status(500).send('Server error.');
+      //   }
+      //   res.send({'code': 200, 'token': token, 'data': data});
+      // });
+      
+        // User.updateOne({_id: userId}, {$set: {concernList: concernList}}, function (err) {
+        //   if (err) {
+        //     return res.status(500).send('关注失败');
+        //   }
+        //   return res.json({ code: 200 });
+        // })
+
+    }, (err) => {
+      console.log('err:', err);
+    })
+
+
+});
+
 
 module.exports = router;

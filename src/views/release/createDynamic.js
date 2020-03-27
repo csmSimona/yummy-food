@@ -175,8 +175,7 @@ class CreateDynamic extends Component {
     handleBackClick() {
         console.log('handleBackClick')
         this.props.history.push({
-            pathname: '/tab/release',
-            selectedTab: 'release'
+            pathname: '/tab/release'
         })
     }
 

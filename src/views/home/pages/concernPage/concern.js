@@ -3,9 +3,10 @@ import { ImagePicker, Modal } from 'antd-mobile';
 import CropperModal from '@/components/CropperModal/CropperModal';
 import { uploadVideo } from '@/api/recipesApi';
 
-import { Player, ControlBar, ReplayControl,
-  ForwardControl, CurrentTimeDisplay,
-  TimeDivider, PlaybackRateMenuButton, VolumeMenuButton } from 'video-react';
+// import { Player, ControlBar, ReplayControl,
+//   ForwardControl, CurrentTimeDisplay,
+//   TimeDivider, PlaybackRateMenuButton, VolumeMenuButton } from 'video-react';
+import { Player } from 'video-react';
 import "video-react/dist/video-react.css";
 
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { themeColor, hintColor, textColor, descColor } from '@/styles/color';
+import { hintColor, descColor } from '@/styles/color';
 import border from '@/styles/border';
 
 export const Border = border({

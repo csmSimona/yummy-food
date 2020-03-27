@@ -35,6 +35,9 @@ export const RecipesListWrapper = styled.div`{
         width: 49%;
         margin: 1rem 0 1rem 0;
     }
+    .contentBox {
+        margin-bottom: 1rem;
+    }
     .title {
         margin: 0.5rem 0;
         overflow: hidden;
