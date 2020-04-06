@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { themeColor, hintColor, descColor, textColor } from '@/styles/color';
+import { themeColor, hintColor, descColor, textColor, bgColor } from '@/styles/color';
 import border from '@/styles/border';
 
 export const Border = border({
@@ -14,10 +14,11 @@ export const Border = border({
 
 export const TitleWrapper = styled.div`{
     position: relative;
+    padding: 1rem;
     font-weight: bold;
     .classify {
         position: absolute;
-        right: 0;
+        right: 1rem;
         color: ${descColor};
     }
 }`;
@@ -40,10 +41,6 @@ export const RecipesListWrapper = styled.div`{
     }
     .title {
         margin: 0.5rem 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: #000;
         font-weight: bold;
     }
     .otherInfo {
@@ -185,6 +182,15 @@ export const RecipesDetailWrapper = styled.div`{
     .story {
         padding: 1rem 1rem 0 1rem;
         line-height: 1.25rem;
+    }
+    .followRecipes {
+        margin: 1rem 1rem 0 1rem;
+        padding: .5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        background: ${bgColor};
+        // color: #000;
     }
     .materials {
         margin: 1rem;

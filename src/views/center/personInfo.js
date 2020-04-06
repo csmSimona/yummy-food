@@ -3,10 +3,12 @@ import Header from '@/components/header';
 import { List, InputItem, ImagePicker, Picker, DatePicker, TextareaItem, Tag, Toast, Modal } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { TagContainer, PersonInfoWrapper } from './style';
-import { addUser} from '@/api/userApi';
+import { addUser, updateUserInfo} from '@/api/userApi';
 import { connect } from 'react-redux';
 import { actionCreators } from './store';
+import { actionCreators as tabActionCreators} from '@/views/tabBar/store';
 import CropperModal from '@/components/CropperModal/CropperModal';
+import antdDistrict from '@/utils/antdDistrict';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
 
@@ -40,51 +42,21 @@ const header2 = {
 };
 
 const gender = [
-    [
-      {
+    {
         label: '未知',
         value: '未知',
-      },
-      {
+    },
+    {
         label: '男',
         value: '男',
-      },
-      {
+    },
+    {
         label: '女',
         value: '女',
-      }
-    ],
+    }
 ];
 
 const tagList = ["海鲜", "辛辣", "内脏", "肉类", "酸涩", "蛋类", "酒类", "生冷", "油腻", "腥膻", "香菜", "甜食", "味精", "烧烤", "腌制品", "其他"];
-
-let antdDistrict =[];
-let districtData = require('@/utils/location');
-Object.keys(districtData).forEach((index)=>{
-    let itemLevel1 ={};
-    let itemLevel2 ={};
-    itemLevel1.value = districtData[index].code;
-    itemLevel1.label = districtData[index].name;
-    itemLevel1.children = [];
-    let data = districtData[index].cities;
-    Object.keys(data).forEach((index)=>{
-        itemLevel2.value = data[index].code;
-        itemLevel2.label = data[index].name;
-        itemLevel2.children = [];
-        let data2 = data[index].districts;
-        let itemLevel3 ={};
-        itemLevel3.children = [];
-        Object.keys(data2).forEach((index)=>{
-            itemLevel3.value = index;
-            itemLevel3.label = data2[index];
-            itemLevel2.children.push(itemLevel3);
-            itemLevel3 ={};
-        });
-        itemLevel1.children.push(itemLevel2);
-        itemLevel2 ={};
-    });
-    antdDistrict.push(itemLevel1)
-});
 
 class personInfo extends Component {
     constructor(props) {
@@ -143,7 +115,7 @@ class personInfo extends Component {
                     footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
-                    <img src={require('@/' + this.state.showBigUrl)} alt="查看图片" width="100%" height="100%" />
+                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
                 </Modal>
                 <form>
                     <List
@@ -166,8 +138,10 @@ class personInfo extends Component {
                         <Picker
                             data={gender}
                             title="性别"
-                            {...getFieldProps('gender')}
-                            cascade={false}
+                            cols={1}
+                            {...getFieldProps('gender', {
+                                initialValue: userList.gender ? userList.gender : ''
+                            })}
                             extra="请选择性别"
                             >
                             <List.Item>性别</List.Item>
@@ -212,7 +186,6 @@ class personInfo extends Component {
                                     selected={this.state.tagSelected}
                                     onChange={this.handleSelectedClick}
                                 >无</Tag>
-                                {console.log('this.state.selectedList',this.state.selectedList)}
                                 {
                                     tagList.map((item, index) => {
                                         return <Tag disabled={this.state.tagSelected} key={index}
@@ -335,8 +308,7 @@ class personInfo extends Component {
     handleSaveClick() {
         var information = this.props.form.getFieldsValue()
         information.img = this.state.files;
-        console.log(information)
-        // information.gender = information.gender ? information.gender[0] : '未知';
+        information.gender = information.gender ? information.gender[0] : '未知';
 
         if (!information.name) {
             Toast.info('用户名不能为空', 1)
@@ -349,20 +321,37 @@ class personInfo extends Component {
             Toast.info('请上传头像', 1);
             return false;
         }
-        console.log(information);
-        
-        addUser(information).then(res => {
-            console.log('addUser', res);
-            if (res.data.code === 200) {
-                localStorage.setItem('token', res.data.token);
-                localStorage.setItem('userPhone', res.data.data.phone);
-                localStorage.setItem('userId', res.data.data._id);
-                this.props.saveUserList(res.data.data);
+        console.log(information, this.props.userList);
+
+        if (this.props.userList.size !== 0) {
+            information._id = this.props.userList._id;
+            if (information.img[0].url.substring(0, 4) !== 'data') {
+                information.img[0].url = this.props.userList.img[0].url;
             }
-            this.props.history.replace('/tab/center/myRecipes');
-        }).catch((err) => {
-          console.log('error', err);
-        })
+            updateUserInfo(information).then(res => {
+                if (res.data.code === 200) {
+                    Toast.success('编辑成功！', 1);
+                    this.props.history.replace('/tab/center/myRecipes');
+                }
+            }).catch((err) => {
+                console.log('error', err);
+            })
+        } else {
+            addUser(information).then(res => {
+                console.log('addUser', res);
+                if (res.data.code === 200) {
+                    localStorage.setItem('token', res.data.token);
+                    localStorage.setItem('userPhone', res.data.data.phone);
+                    localStorage.setItem('userId', res.data.data._id);
+                    this.props.saveUserList(res.data.data);
+                }
+            Toast.success('注册成功！', 1);
+                this.props.history.replace('/tab/center/myRecipes');
+            }).catch((err) => {
+                console.log('error', err);
+            })
+        }
+        
     }
 
     handleSelectedClick(selected) {
@@ -385,12 +374,13 @@ class personInfo extends Component {
 
     componentDidMount() {
         let userList = this.props.userList;
-        console.log('userList', userList)
+        console.log('userList', userList);
+
         if (this.props.location.phone === undefined) {
             this.props.history.replace('/tab/home/recommend');
+            this.props.saveSelectedTab('home')
         }
-        if (userList) {
-            // if (userList instanceof Array) {
+        if (userList.size !== 0) {
             let tabSelected, url;
             userList.avoidFood && (tabSelected = userList.avoidFood[0] === '无' ? true : false);
             userList.img && (url = require('@/' + userList.img[0].url))
@@ -399,7 +389,6 @@ class personInfo extends Component {
                 selectedList: userList.avoidFood,
                 tagSelected: tabSelected
             })
-        // }
         }
     }
 }
@@ -417,6 +406,9 @@ const mapDispatchToProps = (dispatch) => {
         saveUserList(information) {
             console.log(information);
             dispatch(actionCreators.saveUserList(information));
+        },
+        saveSelectedTab(selectedTab) {
+            dispatch(tabActionCreators.saveSelectedTab(selectedTab));
         }
     }
 }

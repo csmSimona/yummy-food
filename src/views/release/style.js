@@ -1,6 +1,18 @@
 import styled from 'styled-components';
-import { themeColor, hintColor, textColor } from '@/styles/color';
+import { themeColor, hintColor, textColor, descColor } from '@/styles/color';
+import border from '@/styles/border';
+import {Icon} from 'antd-mobile';
 
+export const Border = border({
+    component: styled.div`{
+      // margin: 1rem 0;
+    }`,
+    color: `${hintColor}`,
+    width: '0 0 1px 0',
+    style: 'solid',
+    radius: '0px'
+  });
+  
 export const CreateRecipesWrapper = styled.div`{
   .am-modal-alert-content, .am-modal-propmt-content {
     font-size: 1.125rem;
@@ -79,7 +91,6 @@ export const Tip = styled.div`{
   z-index: 99;
   // color: ${hintColor};
   color: #989896;
-
 }`
 
 export const TagContainer = styled.div`{
@@ -133,4 +144,31 @@ export const NoBorder = styled.div`{
     background-color: #EFEFED;
     color: #989896;
   }
+}`
+
+export const Desc = styled.div`{
+  margin: 2rem;
+  line-height: 1.5rem;
+  p {
+    color: ${descColor};
+  }
+}`;
+
+export const DeleteDynamic = styled.div`{
+  color: ${themeColor};
+  font-size: 1.25rem;
+  margin: 1rem;
+  text-align: center;
+}`;
+
+export const VideoWrapper = styled.div`{
+  position: relative;
+}`;
+
+export const DeleteIcon = styled(Icon)`{
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    color: #fff;
+    z-index: 99;
 }`

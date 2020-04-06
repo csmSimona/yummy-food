@@ -58,6 +58,10 @@ export const GrobalStyle = createGlobalStyle`
         background:transparent;
     }
 
+    a:link{color:black;}
+
+    a:visited{color:black;}
+
     ins {
         background-color:#ff9;
         color:#000;

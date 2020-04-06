@@ -30,6 +30,12 @@ var DynamicSchema = new Schema({
   },
   likeNumber: {
     type: Number
+  },
+  likeList: {
+    type: Array
+  },
+  followRecipes: {
+    type: Object
   }
 }, {
   versionKey: false

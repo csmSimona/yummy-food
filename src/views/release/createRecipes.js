@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import Header from '@/components/header';
 import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder } from './style';
+import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder, VideoWrapper, DeleteIcon } from './style';
 import { connect } from 'react-redux';
-import { createRecipes, saveRecipesDraft } from '@/api/recipesApi';
+import { createRecipes, saveRecipesDraft, getRecipesDetail, deleteRecipes, updateRecipes, deleteRecipesDraft } from '@/api/recipesApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
 import { uploadVideo } from '@/api/recipesApi';
 import { startLoading, finishLoading } from '@/utils/loading';
@@ -15,11 +15,17 @@ import { startLoading, finishLoading } from '@/utils/loading';
 // import "video-react/dist/video-react.css";
 
 const alert = Modal.alert;
-const header = {
+const header1 = {
     left: '取消',
     title: '创建菜谱',
     right: '存草稿'
 }
+const header2 = {
+    left: '取消',
+    title: '编辑菜谱',
+    right: ''
+}
+
 const stepImgs = [];
 const tagList = [
     {
@@ -89,7 +95,9 @@ class CreateRecipes extends Component {
             showBigModal: false,
             showBigUrl: '',
             videoUrl: '',
-            animating: false
+            animating: false,
+            recipesDetail: {},
+            visible: true
          };
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
@@ -99,29 +107,32 @@ class CreateRecipes extends Component {
         this.onStepImgChange = this.onStepImgChange.bind(this);
         this.onWrapTouchStart = this.onWrapTouchStart.bind(this);
         this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this);
-        // this.onStepChange = this.onStepChange.bind(this);
+        this.deleteRecipes = this.deleteRecipes.bind(this);
+        this.deleteVideo = this.deleteVideo.bind(this);
     }
 
     render() { 
         const { getFieldProps } = this.props.form;
+        const type = this.props.location.type;
+        const recipeId = this.props.location.recipeId;
+        const recipesDetail = this.state.recipesDetail;
         return ( 
             <CreateRecipesWrapper>
-                <Header header={header} leftClick={this.handleBackClick} rightClick={this.handleSaveClick}></Header>
-                <Tip style={{visibility: this.state.files.length < 1 ? 'true' : 'hidden'}}>添加菜谱封面或菜谱视频</Tip>
+                <Header header={recipeId ? header2 : header1} leftClick={this.handleBackClick} rightClick={this.handleSaveClick}></Header>
+                <Tip style={{visibility: this.state.files.length < 1 ? 'visible' : 'hidden'}}>添加菜谱封面或菜谱视频</Tip>
                 <NoBorder>
-                    {/* <ImagePicker
-                        files={this.state.files}
-                        onChange={this.onChange}
-                        onImageClick={(index, fs) => console.log(index, fs)}
-                        selectable={this.state.files.length < 1}
-                        length="1"
-                        /> */}
+                    <VideoWrapper style={{display: this.state.videoUrl ? 'block' : 'none'}}>
+                        <DeleteIcon type='cross-circle' onClick={this.deleteVideo}></DeleteIcon>
+                        <video src={this.state.videoUrl} controls="controls" width='100%'>
+                            您的浏览器不支持 video 标签。
+                        </video>
+                    </VideoWrapper>
                     <ImagePicker
                         accept='*'
+                        style={{display: this.state.visible ? 'block' : 'none'}}
                         files={this.state.files}
                         onChange={this.onChange}
                         onImageClick={(index, fs) => {
-                            console.log(index, fs);
                             this.setState({
                                 showBigModal: true,
                                 showBigUrl: fs[index].url
@@ -155,12 +166,16 @@ class CreateRecipes extends Component {
                 <form style={{marginBottom: '3rem'}}>
                     <List>
                         <InputItem
-                            {...getFieldProps('recipeName')}
+                            {...getFieldProps('recipeName', {
+                                initialValue: this.props.location.recipeName ? this.props.location.recipeName : recipesDetail.recipeName
+                            })}
                             style={recipeTitle}
                             placeholder="写下你的菜谱名吧"
                         />
                         <TextareaItem
-                            {...getFieldProps('recipeStory')}
+                            {...getFieldProps('recipeStory', {
+                                initialValue: recipeId || type ? recipesDetail.recipeStory : ''
+                            })}
                             rows={5}
                             count={255}
                             placeholder="输入这道美食背后的故事"
@@ -176,7 +191,6 @@ class CreateRecipes extends Component {
                                         })} 
                                         onClick={
                                             () => {
-                                                console.log('index', index)
                                                 let newModal = this.state.modal;
                                                 newModal[index] = true;
                                                 this.setState({
@@ -191,7 +205,6 @@ class CreateRecipes extends Component {
                                         transparent
                                         onClose={
                                             () => {
-                                                console.log('index111', index)
                                                 let newModal = this.state.modal;
                                                 newModal[index] = false;
                                                 this.setState({
@@ -306,7 +319,6 @@ class CreateRecipes extends Component {
                                             key={index}
                                             files={item.img}
                                             onChange={(files, type) => {
-                                                console.log(files, type, index);
                                                 let newCookStepsList = this.state.cookStepsList
                                                 newCookStepsList[index].img = files
                                                 this.setState({
@@ -314,7 +326,6 @@ class CreateRecipes extends Component {
                                                 })
                                             }}
                                             onImageClick={(index, fs) => {
-                                                console.log(index, fs);
                                                 this.setState({
                                                     showBigModal: true,
                                                     showBigUrl: fs[index].url
@@ -349,6 +360,7 @@ class CreateRecipes extends Component {
                         <TextareaItem
                             rows={5}
                             count={255}
+                            value={this.state.recipeTips}
                             placeholder="分享下你做这道菜的过程中的心得和小技巧吧"
                             onChange={(value) => {
                                 this.setState({
@@ -365,6 +377,13 @@ class CreateRecipes extends Component {
                                 {
                                     recommendList.map((item, index) => {
                                         return <Tag key={index}
+                                        selected={
+                                            this.state.recommendSelected.some((val, i) => {
+                                                if(item === val){
+                                                    return true
+                                                } 
+                                            })
+                                        }
                                         onChange={selected => {
                                             if (selected) {
                                                 var newSelect = this.state.recommendSelected
@@ -372,7 +391,6 @@ class CreateRecipes extends Component {
                                                 this.setState({ 
                                                     recommendSelected: newSelect
                                                 })
-                                                console.log('recommendSelected', newSelect);
                                             } else {
                                                 var newSelect1 = this.state.recommendSelected
                                                 newSelect1.forEach((val, i) => {
@@ -384,7 +402,6 @@ class CreateRecipes extends Component {
                                                         i--;
                                                     } 
                                                 })
-                                                console.log('recommendSelected', newSelect1);
                                             }
                                         }}>{item}</Tag>
                                     })
@@ -394,7 +411,7 @@ class CreateRecipes extends Component {
                     </List>
                 </form>
                 <ButtonWrapper>
-                    <Button className='button' onClick={this.onReset}>重置</Button>
+                    {recipeId || type ? <Button className='button' onClick={this.deleteRecipes}>删除</Button> : <Button className='button' onClick={this.onReset}>重置</Button>}
                     <Button type="primary" className='button' onClick={this.onSubmit}>发布</Button>
                 </ButtonWrapper>
                 <ActivityIndicator
@@ -418,6 +435,14 @@ class CreateRecipes extends Component {
             [key]: false,
         });
     }
+
+    deleteVideo() {
+        this.setState({
+            files: [],
+            videoUrl: '',
+            visible: true
+        })
+    }
     
     onChange = (files, type, index) => {
         let file;
@@ -426,21 +451,13 @@ class CreateRecipes extends Component {
             file = files[files.length - 1].file;
             var uploadType = files[0].url.split('/')[0];
         }
-        console.log(files, type, index)
         
         if (type === 'add') {
           if (uploadType === 'data:video') {
-            uploadVideo({
-              video: files[0].url
-            }).then(res => {
-              this.setState({
-                // files: [{url: res.data.videoUrl}],
-                videoUrl: res.data.videoUrl
-              })
-              // res.data.videoUrl statics/video/1585055722129.mp4
-              console.log('res.data.videoUrl', res.data.videoUrl);
-            }).catch((err) => {
-              console.log('error', err);
+            this.setState({
+                files: files,
+                videoUrl: files[0].url,
+                visible: false
             })
           } else {
             if (file.size <= MAX_FILE_SIZE) {
@@ -538,22 +555,93 @@ class CreateRecipes extends Component {
         }
         
         createRecipesList.userId = this.props.userList._id;
-        console.log('createRecipesList', createRecipesList);
+        // console.log('createRecipesList', createRecipesList);
 
-        startLoading(this)
-        createRecipes(createRecipesList).then(res => {
-            finishLoading(this)
-            if (res.data.code === 200) {
-                console.log('res.data', res.data);
-                var recipeId = res.data.data._id;
-                Toast.success('创建成功！', 1)
-                this.props.history.push({
-                    pathname: '/recipesDetail/' + recipeId
-                })
+        startLoading(this);
+        // 更新菜谱
+        if (this.props.location.recipeId) {
+            createRecipesList.recipeId = this.props.location.recipeId;
+            if (createRecipesList.album[0].url.substring(0, 4) !== 'data') {
+                createRecipesList.album[0].url = this.state.recipesDetail.album[0].url;
             }
-        }).catch((err) => {
-            console.log('error', err);
-        })
+            let recipesDetail = this.state.recipesDetail;
+            createRecipesList.cookSteps.forEach((item, index) => {
+                if (item.img[0].url.substring(0, 4) !== 'data') {
+                    item.img[0].url = recipesDetail.cookSteps[index].img[0].url;
+                }
+            })
+            // console.log('createRecipesList', createRecipesList)
+            updateRecipes(createRecipesList).then(res => {
+                finishLoading(this);
+                if (res.data.code === 200) {
+                    // console.log('res.data', res.data);
+                    // var recipeId = res.data.data._id;
+                    Toast.success('更新成功！', 1);
+                    this.props.history.replace('/tab/center/myRecipes');
+                    window.location.reload();
+                }
+            }).catch((err) => {
+                console.log('error', err);
+            })
+        } else {
+            // 创建菜谱
+            if (this.props.location.type) {
+                createRecipesList.recipesDraftId = this.state.recipesDetail._id;
+            }
+            console.log('createRecipesList', createRecipesList)
+            createRecipes(createRecipesList).then(res => {
+                finishLoading(this);
+                if (res.data.code === 200) {
+                    // console.log('res.data', res.data);
+                    var recipeId = res.data.data._id;
+                    Toast.success('创建成功！', 1)
+                    this.props.history.push({
+                        pathname: '/recipesDetail/' + recipeId,
+                        type: 'create'
+                    })
+                }
+            }).catch((err) => {
+                console.log('error', err);
+            })
+        }
+    }
+
+    deleteRecipes() {
+        if (this.props.location.recipeId) {
+            alert('', '是否删除该菜谱', [
+                { text: '否', onPress: () => {
+                    // this.props.history.replace('/tab/center/myRecipes');
+                }, style: 'default' },
+                { text: '是', onPress: () => {
+                    deleteRecipes({recipeId: this.props.location.recipeId}).then(res => {
+                        if (res.data.code === 200) {
+                            Toast.success('删除成功！', 1);
+                            this.props.history.replace('/tab/center/myRecipes');
+                            window.location.reload();
+                        }
+                    }).catch((err) => {
+                        console.log('error', err);
+                    })
+                } },
+            ]);
+        } else if (this.props.location.type) {
+            alert('', '是否删除该草稿', [
+                { text: '否', onPress: () => {
+                    // this.props.history.replace('/tab/center/myRecipes');
+                }, style: 'default' },
+                { text: '是', onPress: () => {
+                    deleteRecipesDraft({recipeDraftId: this.state.recipesDetail._id}).then(res => {
+                        if (res.data.code === 200) {
+                            Toast.success('删除成功！', 1);
+                            this.props.history.replace('/tab/center/myRecipes');
+                            window.location.reload();
+                        }
+                    }).catch((err) => {
+                        console.log('error', err);
+                    })
+                } },
+            ]);
+        }
     }
 
     onReset = () => {
@@ -584,19 +672,27 @@ class CreateRecipes extends Component {
     }
 
     handleBackClick() {
-        const alertInstance = alert('', '是否保存到草稿箱', [
-            { text: '否', onPress: () => {
-                this.props.history.push({
-                    pathname: '/tab/release'
-                })
-            }, style: 'default' },
-            { text: '是', onPress: () => {
-                this.handleSaveClick()
-            } },
-          ]);
-        setTimeout(() => {
-            alertInstance.close();
-        }, 500000);
+        if (this.props.location.recipeId) {
+            alert('', '是否保存编辑', [
+                { text: '否', onPress: () => {
+                    this.props.history.replace('/tab/center/myRecipes');
+                }, style: 'default' },
+                { text: '是', onPress: () => {
+                    this.onSubmit()
+                } },
+            ]);
+        } else {
+            alert('', '是否保存到草稿箱', [
+                { text: '否', onPress: () => {
+                    this.props.history.push({
+                        pathname: '/tab/release'
+                    })
+                }, style: 'default' },
+                { text: '是', onPress: () => {
+                    this.handleSaveClick()
+                } },
+            ]);
+        }
     }
 
     handleSaveClick() {
@@ -610,21 +706,21 @@ class CreateRecipes extends Component {
         createRecipesList.album = this.state.files;
         createRecipesList.userId = this.props.userList._id;
 
-        console.log('createRecipesList', createRecipesList);
-
-        startLoading(this)
+        if (this.props.location.type) {
+            createRecipesList.recipesDraftId = this.state.recipesDetail._id;
+        }
+        startLoading(this);
         saveRecipesDraft(createRecipesList).then(res => {
-            finishLoading(this)
+            finishLoading(this);
             if (res.data.code === 200) {
-                console.log('res.data', res.data);
-                Toast.success('保存成功！', 1)
-                this.props.history.push({
+                Toast.success('保存成功！', 1);
+                this.props.history.replace({
                     pathname: '/tab/release'
                 })
             }
         }).catch((err) => {
             console.log('error', err);
-        })
+        });
     }
 
     onStepImgChange = (files, type, index) => {
@@ -655,6 +751,57 @@ class CreateRecipes extends Component {
         this.setState({
             cookStepsList: newCookStepsList
         })
+    }
+
+    getRecipesDetail() {
+        getRecipesDetail({
+            id: this.props.location.recipeId
+        }).then(res => {
+            if (res.data.code === 200) {
+                let recipesDetail = res.data.data;
+                let url = require('@/' + recipesDetail.album[0].url);
+                if (recipesDetail.album[0].url.substring(0, 13) === 'statics/video') {
+                    recipesDetail.videoUrl = require('@/' + recipesDetail.album[0].url)
+                }
+                let cookSteps = JSON.parse(JSON.stringify(recipesDetail.cookSteps)); 
+                cookSteps.forEach(item => {
+                    item.img[0].url = require('@/' + item.img[0].url)
+                })
+                this.setState({
+                    recipesDetail,
+                    files: [{url: url}],
+                    cookStepsList: cookSteps,
+                    materialsList: recipesDetail.materials,
+                    recommendSelected: recipesDetail.recommend,
+                    selected: recipesDetail.selected,
+                    recipeTips: recipesDetail.recipeTips,
+                    visible: recipesDetail.videoUrl ? false : true,
+                    videoUrl: recipesDetail.videoUrl ? recipesDetail.videoUrl : ''
+                })
+                // console.log('recipesDetail', recipesDetail)
+            }
+        }).catch((err) => {
+            console.log('error：', err);
+        })
+    }
+
+    componentDidMount() {
+        if (this.props.location.recipeId) {
+            this.getRecipesDetail();
+        }
+        if (this.props.location.type === 'recipeDraft') {
+            let recipesDetail = this.props.location.recipeDraft
+            this.setState({
+                recipesDetail,
+                files: recipesDetail.album,
+                cookStepsList: recipesDetail.cookSteps,
+                materialsList: recipesDetail.materials,
+                recommendSelected: recipesDetail.recommend,
+                selected: recipesDetail.selected,
+                recipeTips: recipesDetail.recipeTips
+            })
+            // console.log('recipeDraft', recipesDetail)
+        }
     }
 }
 

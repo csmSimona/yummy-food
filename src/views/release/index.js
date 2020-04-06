@@ -14,7 +14,7 @@ class Release extends Component {
           <Slogan>分享的人是厨房里的天使</Slogan>
           <ReleaseMenu>
             <div className='releaseButton'>
-              <Link to='/createRecipes'>
+              <Link to='/createName'>
                 <img src={require('@/statics/img/创建菜谱.png')} style={create} alt="创建菜谱" ></img>
               </Link>
               <div>传菜谱</div>

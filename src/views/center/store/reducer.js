@@ -4,11 +4,15 @@ import * as actionTypes from './actionTypes';
 const defaultState = fromJS({
 	userList: {},
 	recipesList: [],
-	dynamicList: [],
 	leftData: [], //左边的数据
 	rightData: [], //右边的数据
+	dynamicList: [],
 	leftDynamic: [],
 	rightDynamic: [],
+	likeDynamicList: [],
+	likeLeftDynamic: [],
+	likeRightDynamic: [],
+	collectRecipesList: []
 });
 
 export default (state = defaultState, action) => {
@@ -27,6 +31,14 @@ export default (state = defaultState, action) => {
 			return state.set('leftDynamic', action.information);
 		case actionTypes.SAVE_RIGHT_DYNAMIC:
 			return state.set('rightDynamic', action.information);
+		case actionTypes.SAVE_LIKE_DYNAMIC_LIST:
+			return state.set('likeDynamicList', action.information);
+		case actionTypes.SAVE_LIKE_LEFT_DYNAMIC:
+			return state.set('likeLeftDynamic', action.information);
+		case actionTypes.SAVE_LIKE_RIGHT_DYNAMIC:
+			return state.set('likeRightDynamic', action.information);
+		case actionTypes.SAVE_COLLECT_RECIPES_LIST:
+			return state.set('collectRecipesList', action.information);
 		case actionTypes.LOGOUT:
 			return defaultState;
 		default:

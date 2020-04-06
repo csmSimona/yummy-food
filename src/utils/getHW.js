@@ -5,19 +5,46 @@ export default function getHW(data, list, that){
 
     function loadImg(item) {
         const promise = new Promise(function(resolve, reject) {
-            var img = new Image();
-            if (list === 'recipesList') {
-                img.src = item.album[0].url;
+            if (item.videoUrl) {
+                var video = document.createElement('video')
+                // document.body.appendChild(video);
+                video.src = require('@/' + item.album[0].url);
+                video.oncanplay = function () {
+                    resolve({width: this.offsetWidth, height: this.offsetHeight});
+                    // this.src = 'about:blank';
+                    // document.body.removeChild(video);
+                }
+                video.onerror = function() {
+                    reject();
+                }
             } else {
-                img.src = require('@/' + item.imgs[0].url)
-            }
-            img.onload = function() {
-                resolve(img)
-            }
-            img.onerror = function() {
-                reject()
+                var img = new Image();
+                if (list === 'recipesList') {
+                    img.src = require('@/' + item.album[0].url);
+                } else {
+                    img.src = require('@/' + item.imgs[0].url);
+                }
+                img.onload = function() {
+                    resolve(img);
+                }
+                img.onerror = function() {
+                    reject();
+                }
             }
         })
+
+        // return new Promise((resolve, reject) => {
+        //     var video = document.createElement('video')
+        //     video.oncanplay = function () {
+        //       resolve({width: this.offsetWidth, height: this.offsetHeight})
+        //       this.src = 'about:blank'
+        //       document.body.removeChild(video)
+        //     }
+    
+        //     document.body.appendChild(video)
+        //     video.src = url
+        //   })
+          
         return promise
     }
     async function test(item) {
@@ -35,13 +62,16 @@ export default function getHW(data, list, that){
             console.log('failed')
         })
         that.setState({ leftData, rightData });
-        if (list === 'recipesList') {
-            that.props.saveLeftData(leftData);
-            that.props.saveRightData(rightData);
-        } else {
-            that.props.saveLeftDynamic(leftData);
-            that.props.saveRightDynamic(rightData);
-        }
+        // if (list === 'recipesList') {
+        //     that.props.saveLeftData(leftData);
+        //     that.props.saveRightData(rightData);
+        // } else if (list === 'dynamicList'){
+        //     that.props.saveLeftDynamic(leftData);
+        //     that.props.saveRightDynamic(rightData);
+        // } else if (list === 'likeDynamicList'){
+        //     that.props.saveLikeLeftDynamic(leftData);
+        //     that.props.saveLikeRightDynamic(rightData);
+        // }
     }
     data.forEach(item => {
         test(item);

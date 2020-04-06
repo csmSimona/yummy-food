@@ -3,9 +3,9 @@ import { Button, InputItem, Toast } from 'antd-mobile';
 import {  phoneLogin, Tip, PhoneNumber, sendButton, inputValid, Border, SmsCheckWrapper } from './style';
 import { verifyCode, getVerificationCode } from '@/api/userApi';
 import Header from '@/components/header';
-
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '../center/store';
+import { actionCreators as tabActionCreators} from '@/views/tabBar/store';
 
 const header = {
   left: '取消',
@@ -64,6 +64,7 @@ class smsCheck extends Component {
               pathname: '/tab/home/recommend',
               phone: this.props.location.phone // 传手机号码
             })
+            this.props.saveSelectedTab('home');
           }
         } else {
           Toast.fail('验证码错误！', 1);
@@ -146,6 +147,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
       saveUserList(userList) {
           dispatch(centerActionCreators.saveUserList(userList));
+      },
+      saveSelectedTab(selectedTab) {
+          dispatch(tabActionCreators.saveSelectedTab(selectedTab));
       }
   }
 }

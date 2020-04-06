@@ -27,7 +27,7 @@ class Find extends Component {
     render() { 
         let {leftData, rightData} = this.state;
         return ( 
-            <div>
+            <div style={{margin: '1rem'}}>
                 <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'300px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
                 </div>
@@ -41,8 +41,8 @@ class Find extends Component {
                                         <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                         <div className='otherInfo'>
                                             <div className='user'>
-                                                <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
-                                                <span className='userName'>{item.userName}</span>
+                                                <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                             </div>
                                             <div className='collection'>
                                                 <CollectionIcon 
@@ -70,8 +70,8 @@ class Find extends Component {
                                     <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                     <div className='otherInfo'>
                                         <div className='user'>
-                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
-                                            <span className='userName'>{item.userName}</span>
+                                            <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                            <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                         </div>
                                         <div className='collection'>
                                             <CollectionIcon 
@@ -95,6 +95,13 @@ class Find extends Component {
          );
     }
 
+    gotoUserDetail(userData) {
+        this.props.history.replace({
+          pathname: '/tab/center/myRecipes',
+          userDetail: userData
+        })
+    }
+
     getDynamicDetail = (recipeId) => () => {
         this.props.history.push({
             pathname: '/dynamicDetail/' + recipeId
@@ -103,15 +110,18 @@ class Find extends Component {
     
     handleLikeClick = (dynamicId, index, choose, like) => () => {
         var userInfo = this.props.userList;
-        var newLikeNumber;
+        var newLikeNumber, newLikeList;
         
         if (choose === 'left') {
             newLikeNumber = this.state.leftData[index].likeNumber;
+            newLikeList = this.state.leftData[index].likeList;
         } else {
             newLikeNumber = this.state.rightData[index].likeNumber;
+            newLikeList = this.state.rightData[index].likeList;
         }
         if (like === UNLIKE) {
             newLikeNumber++;
+            newLikeList.push(userInfo._id);
             if (userInfo.likeDynamic) {
                 userInfo.likeDynamic.push(dynamicId);
             } else {
@@ -119,6 +129,12 @@ class Find extends Component {
             }
         } else {
             newLikeNumber--;
+            newLikeList.forEach((item, i) => {
+                if (item === userInfo._id) {
+                    newLikeList.splice(i, 1);
+                    i--;
+                }
+            })
             userInfo.likeDynamic.forEach((item, i) => {
                 if (item === dynamicId) {
                     userInfo.likeDynamic.splice(i, 1);
@@ -133,12 +149,14 @@ class Find extends Component {
             userId: userInfo._id,
             dynamicId: dynamicId,
             likeDynamic: userInfo.likeDynamic,
-            likeNumber: newLikeNumber
+            likeNumber: newLikeNumber,
+            likeList: newLikeList
         }).then(res => {
             var newData = []
             if (choose === 'left') {
                 newData = this.state.leftData;
                 newData[index].likeNumber = newLikeNumber;
+                newData[index].likeList = newLikeList;
                 newData[index].like = like === UNLIKE ? LIKE : UNLIKE;
                 this.setState({
                     leftData: newData
@@ -146,6 +164,7 @@ class Find extends Component {
             } else {
                 newData = this.state.rightData;
                 newData[index].likeNumber = newLikeNumber;
+                newData[index].likeList = newLikeList;
                 newData[index].like = like === UNLIKE ? LIKE : UNLIKE;
                 this.setState({
                     rightData: newData
@@ -163,16 +182,22 @@ class Find extends Component {
                     if (!item.likeNumber) {
                         item.likeNumber = 0;
                     }
+                    if (!item.likeList) {
+                        item.likeList = [];
+                    }
 
                     if (this.props.userList.likeDynamic instanceof Array) {
                         if (this.props.userList.likeDynamic.length !== 0) {
-                            this.props.userList.likeDynamic.forEach(val => {
+                            var liked = this.props.userList.likeDynamic.some(val => {
                                 if (val === item._id) {
-                                    item.like = LIKE
-                                } else {
-                                    item.like = UNLIKE
+                                    return true
                                 }
                             })
+                            if (liked) {
+                                item.like = LIKE
+                            } else {
+                                item.like = UNLIKE
+                            }
                         } else {
                             item.like = UNLIKE
                         }
@@ -186,6 +211,7 @@ class Find extends Component {
                 Promise.all(actionArr).then(function (res) {
                     for (var i = 0; i < res.length; i++) {
                         var userData = res[i].data.data[0];
+                        dynamicList[i].writer = userData;
                         dynamicList[i].userName = userData.name;
                         dynamicList[i].avatar = userData.img[0].url;
                     }
@@ -228,7 +254,6 @@ class Find extends Component {
             this.getDynamicList();
         }
     }
-
     
     componentWillUnmount() {
         let dynamicList = this.state.dynamicList;

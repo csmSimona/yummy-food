@@ -10,3 +10,10 @@ export const getDynamicDetail = (id) => http.post('/dynamic/getDynamicDetail', i
 
 export const findDynamicByUseId = (userId) => http.post('/dynamic/findDynamicByUseId', userId);
 
+export const getLikeDynamicList = (data) => http.post('/dynamic/getLikeDynamicList', data);
+
+export const editDynamic = (data) => http.post('/dynamic/editDynamic', data);
+
+export const deleteDynamic = (id) => http.post('/dynamic/deleteDynamic', id);
+
+export const getDynamicDetailByUserId = (id) => http.post('/dynamic/getDynamicDetailByUserId', id);

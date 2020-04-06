@@ -1,6 +1,6 @@
 import TabBar from './views/tabBar';
 import Home from './views/home';
-import Shop from './views/shop';
+import Information from './views/information';
 import Release from './views/release';
 import Message from './views/message';
 import Center from './views/center';
@@ -8,6 +8,7 @@ import Login from './views/login';
 import PhoneRegister from './views/login/phoneRegister';
 import SmsCheck from './views/login/smsCheck';
 import PersonInfo from './views/center/personInfo';
+import CreateName from './views/release/createName';
 import CreateRecipes from './views/release/createRecipes';
 import CreateDynamic from './views/release/createDynamic';
 import Recommend from './views/home/pages/recommendPage/recommend';
@@ -21,6 +22,15 @@ import MyDynamic from './views/center/pages/myDynamicPage/myDynamic';
 import MyCollect from './views/center/pages/myCollectPage/myCollect';
 import MyLike from './views/center/pages/myLikePage/myLike';
 import Setting from './views/center/setting';
+import UserList from './views/center/userList';
+import EditRecipesDraft from './views/release/editRecipesDraft';
+import Search from './views/home/pages/searchPage';
+import SearchDetail from './views/home/pages/searchPage/searchDetail';
+import Inform from './views/message/inform';
+import NewFanList from './views/message/newFanList';
+import NewLikeList from './views/message/newLikeList';
+import NewCollectList from './views/message/newCollectList';
+import NewCommentList from './views/message/newCommentList';
 
 const routes = [
     {
@@ -47,8 +57,8 @@ const routes = [
                 ]
             },
             {
-                path: '/tab/shop',
-                component: Shop
+                path: '/tab/information',
+                component: Information
             },
             {
                 path: '/tab/release',
@@ -100,6 +110,9 @@ const routes = [
         component: PersonInfo
     },
     {
+        path: '/createName',
+        component: CreateName
+    },{
         path: '/createRecipes',
         component: CreateRecipes
     },
@@ -122,6 +135,42 @@ const routes = [
     {
         path: '/setting',
         component: Setting
+    },
+    {
+        path: '/userList',
+        component: UserList
+    },
+    {
+        path: '/editRecipesDraft',
+        component: EditRecipesDraft
+    },
+    {
+        path: '/search',
+        component: Search
+    },
+    {
+        path: '/searchDetail',
+        component: SearchDetail
+    },
+    {
+        path: '/inform',
+        component: Inform
+    },
+    {
+        path: '/newFanList',
+        component: NewFanList
+    },
+    {
+        path: '/newLikeList',
+        component: NewLikeList
+    },
+    {
+        path: '/newCollectList',
+        component: NewCollectList
+    },
+    {
+        path: '/newCommentList',
+        component: NewCommentList
     }
 ];
  

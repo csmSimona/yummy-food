@@ -36,7 +36,9 @@ class Home extends Component {
             <div style={{position: 'fixed', top: '0', width: '100%', zIndex: '999'}}>
               <HeaderFix>
                 <IconFont className="iconfont" onClick={this.onMenuClick}>&#xe62f;</IconFont>
-                <SearchBar placeholder="搜索菜谱、食材"/>
+                <SearchBar placeholder="搜索菜谱、食材" onFocus={() => {
+                  this.props.history.replace('/search')
+                }}/>
               </HeaderFix>
               <Border></Border>
               <Tabs 

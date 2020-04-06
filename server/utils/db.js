@@ -12,7 +12,7 @@ mongoose.connect(DB_URL, {
 mongoose.connection.on('connected', function (err) {
     if (err) {
         console.log(err, "mongodb connect fail!");
-        return;
+        return
     }
     console.log('mongodb connect success!');
 });

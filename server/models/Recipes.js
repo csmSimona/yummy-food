@@ -43,6 +43,12 @@ var RecipesSchema = new Schema({
   },
   followNumber:{
     type: Number
+  },
+  collectionList:{
+    type: Array
+  },
+  followList:{
+    type: Array
   }
 }, {
   versionKey:false

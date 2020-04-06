@@ -6,6 +6,7 @@ import { checkUser } from '@/api/userApi';
 import { renderRoutes } from 'react-router-config';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '../center/store';
+import { actionCreators } from './store';
 
 let tabBarList=[
   {
@@ -14,9 +15,9 @@ let tabBarList=[
     icon: "&#xe60e;"
   },
   {
-    title: "市集",
-    key: "shop",
-    icon: "&#xe610;"
+    title: "资讯",
+    key: "information",
+    icon: "&#xe619;"
   },
   {
     title: "",
@@ -24,7 +25,7 @@ let tabBarList=[
     icon: "&#xe66f;"
   },
   {
-    title: "消息",
+    title: "通知",
     key: "message",
     icon: "&#xe6a5;"
   },
@@ -50,7 +51,7 @@ class TabBarExample extends Component {
         <div style={{ height: 'calc(100% - 3.125rem)', width: '100%', marginBottom: '3.125rem' }}>
           {renderRoutes(this.state.route.children)}
         </div>
-        <div style={{ position: 'fixed', height: '3.125rem', width: '100%', bottom: 0 }}>
+        <div style={{ position: 'fixed', height: '3.125rem', width: '100%', bottom: 0, zIndex: '999'}}>
           <TabBar
             unselectedTintColor="black"
             tintColor={themeColor}
@@ -67,13 +68,17 @@ class TabBarExample extends Component {
                     selectedIcon={
                       <IconfontSelected className="iconfont" dangerouslySetInnerHTML={{__html: item.icon}}></IconfontSelected>
                     }
-                    selected={this.state.selectedTab === item.key}
+                    selected={this.props.selectedTab === item.key}
                     onPress={() => {
-                      this.setState({
-                        selectedTab: item.key,
-                      }, () => {
-                        this.gotoLogin()
-                      });
+                      // this.setState({
+                      //   selectedTab: item.key,
+                      // }, () => {
+                      //   this.gotoLogin()
+                      // });
+                      this.props.saveSelectedTab(item.key);
+                      setTimeout(() => {
+                        this.gotoLogin();
+                      })
                     }}
                   >
                   </TabBar.Item>
@@ -87,20 +92,21 @@ class TabBarExample extends Component {
 
     gotoLogin() {
       // this.checkUser();
+      let tab = this.props.selectedTab
 
-      if (this.state.selectedTab === 'home') {
+      if (tab === 'home') {
         this.props.history.replace('/tab/home/recommend')
       }
-      if (this.state.selectedTab === 'shop') {
-        this.props.history.replace('/tab/shop')
+      if (tab === 'information') {
+        this.props.history.replace('/tab/information')
       }
-      if (this.state.selectedTab === 'message') {
+      if (tab === 'message') {
         this.props.history.replace('/tab/message')
       }
-      if (this.state.selectedTab === 'center') {
+      if (tab === 'center') {
         this.props.history.replace('/tab/center/myRecipes')
       }
-      if (this.state.selectedTab === 'release') {
+      if (tab === 'release') {
         this.props.history.replace('/tab/release')
       }
     }
@@ -121,29 +127,19 @@ class TabBarExample extends Component {
         })
     }
 
-    
-
     componentDidMount() {
-      var pathname = this.props.location.pathname
-      if (pathname === '/tab/shop') {
-          this.setState({
-              selectedTab: 'shop'
-          })
+      var pathname = this.props.location.pathname;
+      if (pathname === '/tab/information') {
+        this.props.saveSelectedTab('information');
       }
       if (pathname === '/tab/release') {
-          this.setState({
-              selectedTab: 'release'
-          })
+        this.props.saveSelectedTab('release');
       }
       if (pathname === '/tab/message') {
-        this.setState({
-            selectedTab: 'message'
-        })
+        this.props.saveSelectedTab('message');
       }
       if (pathname.substring(0, 11) === '/tab/center') {
-          this.setState({
-              selectedTab: 'center'
-          })
+        this.props.saveSelectedTab('center');
       }
       this.checkUser();
     }
@@ -152,7 +148,8 @@ class TabBarExample extends Component {
 
 const mapStateToProps = (state) => {
   return {
-      userList: state.getIn(['center', 'userList'])
+      userList: state.getIn(['center', 'userList']),
+      selectedTab: state.getIn(['tab', 'selectedTab'])
   }
 }
 
@@ -160,6 +157,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
       saveUserList(userList) {
           dispatch(centerActionCreators.saveUserList(userList));
+      },
+      saveSelectedTab(selectedTab) {
+        dispatch(actionCreators.saveSelectedTab(selectedTab));
       }
   }
 }

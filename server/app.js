@@ -12,6 +12,7 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/userAPI');
 var recipesRouter = require('./routes/recipesAPI');
 var dynamicRouter = require('./routes/dynamicAPI');
+var searchRouter = require('./routes/searchAPI');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/recipes', recipesRouter);
 app.use('/dynamic', dynamicRouter);
+app.use('/search', searchRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

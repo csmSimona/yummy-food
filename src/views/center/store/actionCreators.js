@@ -11,11 +11,6 @@ export const saveRecipesList = (information) => ({
 	information
 });
 
-export const saveDynamicList = (information) => ({
-	type: actionTypes.SAVE_DYNAMIC_LIST,
-	information
-});
-
 export const saveLeftData = (information) => ({
 	type: actionTypes.SAVE_LEFT_DATA,
 	information
@@ -26,6 +21,10 @@ export const saveRightData = (information) => ({
 	information
 });
 
+export const saveDynamicList = (information) => ({
+	type: actionTypes.SAVE_DYNAMIC_LIST,
+	information
+});
 
 export const saveLeftDynamic = (information) => ({
 	type: actionTypes.SAVE_LEFT_DYNAMIC,
@@ -40,6 +39,27 @@ export const saveRightDynamic = (information) => ({
 export const logout = () => ({
 	type: actionTypes.LOGOUT
 });
+
+export const saveLikeDynamicList = (information) => ({
+	type: actionTypes.SAVE_LIKE_DYNAMIC_LIST,
+	information
+});
+
+export const saveLikeLeftDynamic = (information) => ({
+	type: actionTypes.SAVE_LIKE_LEFT_DYNAMIC,
+	information
+});
+
+export const saveLikeRightDynamic = (information) => ({
+	type: actionTypes.SAVE_LIKE_RIGHT_DYNAMIC,
+	information
+});
+
+export const saveCollectRecipesList = (information) => ({
+	type: actionTypes.SAVE_COLLECT_RECIPES_LIST,
+	information
+});
+
 
 // export const logout = () => ({
 // 	type: actionTypes.LOGOUT,

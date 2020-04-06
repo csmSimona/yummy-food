@@ -56,7 +56,6 @@ export const PersonInfoWrapper = styled.div`{
 
 }`;
 
-
 export const CenterWrapper = styled.div`{
     margin: 1rem;
     .topHeader {
@@ -96,12 +95,36 @@ export const CenterWrapper = styled.div`{
                     border: 1px solid ${themeColor};
                 }
             }
+            .userName {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                font-weight: bold;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
         .userDesc {
-            margin: 0 1rem 1rem 1rem;
-            .descContent {
-                color: ${descColor},
-                font-size: .75rem
+            margin: 1rem;
+            line-height: 1.75rem;
+            .am-list-item {
+                padding: 0;
+                overflow: visible;
+                color: #000;
+                min-height: 1rem;
+                height: 1.75rem;
+            }
+            .am-list-item .am-list-line .am-list-extra {
+                padding: 0;
+                overflow: visible;
+                color: #000;
+            }
+            .place {
+                display: flex;
+                align-items: center;
             }
         }
         .userData {
@@ -152,4 +175,52 @@ export const SettingWrapper = styled.div`{
         background: ${bgColor};
         padding: 1rem;
     }
+}`;
+
+export const BlankWrapper = styled.div`{
+    margin-top: 30%;
+    font-weight: normal;
+    text-align: center;
+    p {
+        padding: 1rem;
+    }
+    .create {
+        color: ${themeColor}
+    }
+}`;
+
+export const UserListWrapper = styled.div`{
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+    .am-button-active {
+        background: ${themeColor};
+    }
+    .avatar {
+        margin-right: 1rem;
+        border-radius: 50%;
+        width: 3rem;
+        height: 3rem;
+    }
+    .desc {
+        flex: 1;
+        font-weight: bold;
+    }
+    .button {
+        width: 6rem;
+    }
+}`;
+
+export const EditIcon = styled.i`{
+    padding: .25rem;
+    position: absolute;
+    font-size: 1.25rem !important;
+    top: .25rem;
+    right: .25rem;
+    color: #fff;
+    background: #797574;
+    border-radius: 50%;
+    opacity: .7;
+    border: 1px solid #fff;
+    z-index: 99;
 }`;

@@ -15,8 +15,7 @@ class header extends Component {
             <Header>
                 <div className='left' onClick={this.leftClick} dangerouslySetInnerHTML={{__html: this.props.header.left}}></div>
                 <span className='title'>{this.props.header.title}</span>
-                <div className='right' onClick={this.rightClick}>{this.props.header.right}</div>
-                {/* <div className='save' onClick={this.cancelLogin}>保存</div> */}
+                <div className='right' onClick={this.rightClick}style={{color: this.props.click ? '#FAD1CB' : '#FB6650'}}>{this.props.header.right}</div>
                 <Border></Border>
             </Header>
             <div style={{height: '3.5rem'}}></div>

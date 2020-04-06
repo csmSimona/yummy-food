@@ -2,18 +2,24 @@ import React, { Component } from 'react';
 import Header from '@/components/header';
 import { List, InputItem, ImagePicker, TextareaItem, Tag, Toast, Modal, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { TagContainer } from './style';
+import { TagContainer, DeleteDynamic } from './style';
 import { connect } from 'react-redux';
-import { createDynamic } from '@/api/dynamicApi';
+import { createDynamic, getDynamicDetail, editDynamic, deleteDynamic } from '@/api/dynamicApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
 import { startLoading, finishLoading } from '@/utils/loading';
+import { addFollowRecipes } from '@/api/recipesApi';
 
-const header = {
+const alert = Modal.alert;
+const header1 = {
     left: '取消',
-    title: '动态',
+    title: '发布动态',
     right: '发布'
 }
-
+const header2 = {
+    left: '取消',
+    title: '编辑动态',
+    right: '保存'
+}
 const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
 
 
@@ -47,26 +53,23 @@ class CreateDynamic extends Component {
             classResultImgUrl: null,
             showBigModal: false,
             showBigUrl: '',
-            animating: false
+            animating: false,
+            followRecipes: {},
+            dynamicDetail: {}
          }
         
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleReleaseClick = this.handleReleaseClick.bind(this);
-        this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this)
+        this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this);
+        this.deleteDynamic = this.deleteDynamic.bind(this);
     }
     render() { 
         const { getFieldProps } = this.props.form;
+        const dynamicId = this.props.location.dynamicId;
+        const dynamicDetail = this.state.dynamicDetail;
         return ( 
             <div>
-                <Header header={header} leftClick={this.handleBackClick} rightClick={this.handleReleaseClick}></Header>
-                {/* <ImagePicker
-                    files={this.state.files}
-                    onChange={this.onChange}
-                    onImageClick={(index, fs) => console.log(index, fs)}
-                    selectable={this.state.files.length < 9}
-                    length="3"
-                    capture="camera"
-                    /> */}
+                <Header header={dynamicId ? header2 : header1} leftClick={this.handleBackClick} rightClick={this.handleReleaseClick}></Header>
                 <ImagePicker
                     accept='*'
                     files={this.state.files}
@@ -107,12 +110,16 @@ class CreateDynamic extends Component {
                 <form style={{marginBottom: '3rem'}}>
                     <List>
                         <InputItem
-                            {...getFieldProps('dynamicName')}
+                            {...getFieldProps('dynamicName', {
+                                initialValue: dynamicId ? dynamicDetail.dynamicName : ''
+                              })}
                             // style={recipeTitle}
                             placeholder="添加标题"
                         />
                         <TextareaItem
-                            {...getFieldProps('dynamicStory')}
+                            {...getFieldProps('dynamicStory', {
+                                initialValue: dynamicId ? dynamicDetail.dynamicStory : ''
+                              })}
                             rows={5}
                             count={255}
                             placeholder="此刻，你想说点什么......"
@@ -126,6 +133,13 @@ class CreateDynamic extends Component {
                                 {
                                     recommendList.map((item, index) => {
                                         return <Tag key={index}
+                                        selected={
+                                            this.state.recommendSelected.some((val, i) => {
+                                                if(item === val){
+                                                    return true
+                                                } 
+                                            })
+                                        }
                                         onChange={selected => {
                                             if (selected) {
                                                 var newSelect = this.state.recommendSelected
@@ -153,14 +167,15 @@ class CreateDynamic extends Component {
                             </TagContainer>
                         </List.Item>
                         <List.Item 
+                            style={{display: JSON.stringify(this.state.followRecipes) === "{}" ? 'none' : 'block'}}
                             arrow="horizontal" 
-                            extra="请选择"
-                            // {...getFieldProps('selected1', {
-                            //     initialValue: this.state.selected1
-                            // })}
+                            {...getFieldProps('followRecipes', {
+                                initialValue: this.state.followRecipes
+                            })}
+                            extra={JSON.stringify(this.state.followRecipes) !== "{}" ? this.state.followRecipes.recipeName : '请选择'}
                             // onClick={this.showModal('modal1')} 
-                            // extra={this.state.selected1}
                         >关联菜谱</List.Item>
+                        {dynamicId ? <DeleteDynamic onClick={this.deleteDynamic}>删除该动态</DeleteDynamic> : ''}
                     </List>
                 </form>
                 <ActivityIndicator
@@ -170,6 +185,25 @@ class CreateDynamic extends Component {
                 />
             </div>
          );
+    }
+
+    deleteDynamic() {
+        alert('', '是否删除该动态', [
+            { text: '否', onPress: () => {
+                // this.props.history.replace('/tab/center/myRecipes');
+            }, style: 'default' },
+            { text: '是', onPress: () => {
+                deleteDynamic({dynamicId: this.props.location.dynamicId}).then(res => {
+                    if (res.data.code === 200) {
+                        Toast.success('删除成功！', 1);
+                        this.props.history.replace('/tab/center/myDynamic');
+                        window.location.reload();
+                    }
+                }).catch((err) => {
+                    console.log('error', err);
+                })
+            } },
+        ]);
     }
 
     handleBackClick() {
@@ -198,20 +232,59 @@ class CreateDynamic extends Component {
         createDynamicList.userId = this.props.userList._id;
         console.log('createDynamicList', createDynamicList);
         startLoading(this);
-        createDynamic(createDynamicList).then(res => {
-            finishLoading(this);
-            if (res.data.code === 200) {
-                console.log('res.data', res.data);
-                Toast.success('发布成功！', 1)
-                this.props.history.push({
-                    pathname: '/tab/release'
-                })
-            }
-        }).catch((err) => {
-            console.log('error', err);
-        })
+        if (this.props.location.dynamicId) {
+            createDynamicList.dynamicId = this.props.location.dynamicId;
+            let dynamicDetail = this.state.dynamicDetail;
+            createDynamicList.imgs.forEach((item, index) => {
+                if (item.url.substring(0, 4) !== 'data') {
+                    item.url = dynamicDetail.imgs[index].url;
+                }
+            })
+            console.log('createRecipesList', createDynamicList)
+            editDynamic(createDynamicList).then(res => {
+                finishLoading(this);
+                if (res.data.code === 200) {
+                    console.log('res.data', res.data);
+                    Toast.success('更新成功！', 1)
+                    this.props.history.replace('/tab/center/myDynamic');
+                }
+            }).catch((err) => {
+                console.log('error', err);
+            })
+        } else {
+            createDynamic(createDynamicList).then(res => {
+                if (res.data.code === 200) {
+                    console.log('res.data', res.data);
+                    var id = res.data.data._id;
+                    if (JSON.stringify(this.state.followRecipes) === "{}" || !this.state.followRecipes) {
+                        finishLoading(this);
+                        Toast.success('发布成功！', 1)
+                        this.props.history.replace({
+                            pathname: '/dynamicDetail/' + id
+                        })
+                    } else {
+                        let collectRecipe = this.props.location.collectRecipe;
+                        collectRecipe.followNumber++;
+                        collectRecipe.followList.push(res.data.data._id);
+                        addFollowRecipes({
+                            recipeId: collectRecipe._id, 
+                            followNumber: collectRecipe.followNumber,
+                            followList: collectRecipe.followList
+                        }).then(() => {
+                            finishLoading(this);
+                            Toast.success('发布成功！', 1)
+                            this.props.history.replace({
+                                pathname: '/dynamicDetail/' + id
+                            })
+                        })
+                    }
+                }
+                // return res.data.data._id
+            }).catch((err) => {
+                console.log('error', err);
+            })
+        }
     }
-    
     
     showModal = key => (e) => {
         e.preventDefault(); // 修复 Android 上点击穿透
@@ -236,7 +309,6 @@ class CreateDynamic extends Component {
         }
       }
 
-    
       onChange = (files, type, index) => {
         let file
         if (files.length) {
@@ -278,6 +350,46 @@ class CreateDynamic extends Component {
                 files: newFile
             })
         })
+    }
+
+    getDynamicDetail() {
+        getDynamicDetail({
+            id: this.props.location.dynamicId
+        }).then(res => {
+            if (res.data.code === 200) {
+                let dynamicDetail = res.data.data;
+                let imgs = JSON.parse(JSON.stringify(dynamicDetail.imgs)); 
+                imgs.forEach(item => {
+                    item.url = require('@/' + item.url)
+                })
+                this.setState({
+                    dynamicDetail,
+                    files: imgs,
+                    recommendSelected: dynamicDetail.recommend
+                })
+                console.log('dynamicDetail', dynamicDetail)
+            }
+        }).catch((err) => {
+            console.log('error：', err);
+        })
+    }
+
+    componentDidMount() {
+        if (this.props.location.dynamicId) {
+            this.getDynamicDetail();
+        }
+        if (this.props.location.collectRecipe) {
+            let collectRecipe = this.props.location.collectRecipe
+            let followRecipes = {
+                recipeId: collectRecipe._id,
+                recipeName: collectRecipe.recipeName
+            }
+            this.setState({
+                followRecipes: followRecipes
+            }, () => {
+                console.log('followRecipes', this.state.followRecipes)
+            })
+        }
     }
 }
  

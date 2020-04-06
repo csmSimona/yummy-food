@@ -20,3 +20,7 @@ export const addConcernUser = (data) => http.post('/user/addConcernUser', data);
 
 export const updateUserInfo = (data) => http.post('/user/updateUserInfo', data);
 
+export const getConcernList = (data) => http.post('/user/getConcernList', data);
+
+export const getFanList = (data) => http.post('/user/getFanList', data);
+

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { getDynamicDetail, addLikeDynamic } from '@/api/dynamicApi';
 import { getUserInfo, addConcernUser } from '@/api/userApi';
 import formatDate from '@/utils/formatDate';
-import { Toast, Button, InputItem, Carousel } from 'antd-mobile';
+import { Toast, Button, InputItem, Carousel, Modal } from 'antd-mobile';
 import Header from '@/components/header';
 import { RecipesDetailWrapper, Border } from '../recommendPage/style';
 import { connect } from 'react-redux';
@@ -11,16 +11,30 @@ import { actionCreators as centerActionCreators } from '@/views/center/store';
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
 
+function closest(el, selector) {
+    const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
+    while (el) {
+      if (matchesSelector.call(el, selector)) {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return null;
+}
+
 class DynamicDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          dynamicDetail: {},
-          writer: {},
-          imgHeight: 176,
+            showBigModal: false,
+            showBigUrl: '',
+            dynamicDetail: {},
+            writer: {},
+            imgHeight: 176,
         }
         this.handleLikeClick = this.handleLikeClick.bind(this);
         this.handleConcernClick = this.handleConcernClick.bind(this);
+        this.getRecipesDetail = this.getRecipesDetail.bind(this);
     }
 
     render() {
@@ -51,9 +65,26 @@ class DynamicDetail extends Component {
                                 this.setState({ imgHeight: 'auto' });
                             }}
                             key={index}
+                            onClick={() => {
+                                this.setState({
+                                    showBigModal: true,
+                                    showBigUrl: require('@/' + val.url)
+                                })
+                            }}
                         />
                     ))}
                 </Carousel>
+                <Modal
+                    visible={this.state.showBigModal}
+                    transparent
+                    maskClosable={true}
+                    onClose={this.onClose('showBigModal')}
+                    title="查看图片"
+                    footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
+                    wrapProps={{ onTouchStart: this.onWrapTouchStart }}
+                >
+                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
+                </Modal>
                 {/* <img className='album' src={dynamicDetail.imgs ? require('@/' + dynamicDetail.imgs[0].url) : require('@/statics/img/title.png')} alt=""/> */}
                 <p className='recipeName'>{dynamicDetail.dynamicName}</p>
                 <p className='createDate'>
@@ -61,8 +92,12 @@ class DynamicDetail extends Component {
                     {dynamicDetail.likeNumber ? ` · ${dynamicDetail.likeNumber} 点赞` : ''}
                 </p>
                 <div className='writer'>
-                    <img className='avatar' src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/title.png')} alt=""/>
-                    <div className='writerName'>
+                    <img 
+                        className='avatar' 
+                        src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/title.png')} 
+                        alt=""
+                        onClick={() => this.gotoUserDetail(writer)}/>
+                    <div className='writerName' onClick={() => this.gotoUserDetail(writer)}>
                         <p>{writer.name}</p>
                         <p>{writer.profile}</p>
                     </div>
@@ -74,6 +109,13 @@ class DynamicDetail extends Component {
                     >{writer.concern ? '已关注' : '关注'}</Button>
                 </div>
                 <p className='story'>{dynamicDetail.dynamicStory}</p>
+                <div 
+                    style={{display: dynamicDetail.followRecipes ? 'block' : 'none'}}
+                    className='followRecipes' 
+                    onClick={this.getRecipesDetail}
+                >
+                    来自：{dynamicDetail.followRecipes ? dynamicDetail.followRecipes.recipeName : ''}
+                </div>
                 <div className='cookSteps'>
                     <p className='subject'>评论</p>
                 </div>
@@ -105,6 +147,44 @@ class DynamicDetail extends Component {
             </div>
           </RecipesDetailWrapper>
         )
+    }
+
+    gotoUserDetail(userData) {
+        this.props.history.replace({
+          pathname: '/tab/center/myRecipes',
+          userDetail: userData
+        })
+    }
+    
+    showModal = key => (e) => {
+        e.preventDefault(); // 修复 Android 上点击穿透
+        this.setState({
+          [key]: true,
+        });
+    }
+
+    onClose = key => () => {
+        this.setState({
+            [key]: false,
+        });
+    }
+    
+    onWrapTouchStart = (e) => {
+        // fix touch to scroll background page on iOS
+        if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
+            return;
+        }
+        const pNode = closest(e.target, '.am-modal-content');
+        if (!pNode) {
+            e.preventDefault();
+        }
+    }
+
+    getRecipesDetail() {
+        let recipeId = this.state.dynamicDetail.followRecipes.recipeId
+        this.props.history.push({
+            pathname: '/recipesDetail/' + recipeId
+        })
     }
 
     handleConcernClick() {
@@ -157,9 +237,11 @@ class DynamicDetail extends Component {
 
         var user = this.props.userList;
         var newLikeNumber = this.state.dynamicDetail.likeNumber;
+        var newLikeList = this.state.dynamicDetail.likeList;
 
         if (like === UNLIKE) {
             newLikeNumber++;
+            newLikeList.push(user._id);
             if (user.likeDynamic) {
                 user.likeDynamic.push(dynamicId);
             } else {
@@ -167,6 +249,12 @@ class DynamicDetail extends Component {
             }
         } else {
             newLikeNumber--;
+            newLikeList.forEach((item, i) => {
+                if (item === user._id) {
+                    newLikeList.splice(i, 1);
+                    i--;
+                }
+            })
             user.likeDynamic.forEach((item, i) => {
                 if (item === dynamicId) {
                     user.likeDynamic.splice(i, 1);
@@ -179,10 +267,12 @@ class DynamicDetail extends Component {
             userId: user._id,
             dynamicId: dynamicId,
             likeDynamic: user.likeDynamic,
-            likeNumber: newLikeNumber
+            likeNumber: newLikeNumber,
+            likeList: newLikeList
         }).then(() => {
             var newDynamicDetail = this.state.dynamicDetail;
             newDynamicDetail.likeNumber = newLikeNumber;
+            newDynamicDetail.likeList = newLikeList;
             newDynamicDetail.like = like === UNLIKE ? LIKE : UNLIKE;
             this.setState({
               dynamicDetail: newDynamicDetail
@@ -202,6 +292,9 @@ class DynamicDetail extends Component {
                 if (!dynamicDetail.likeNumber) {
                   dynamicDetail.likeNumber = 0;
                 }
+                if (!dynamicDetail.likeList) {
+                    dynamicDetail.likeList = [];
+                  }
                 if (this.props.userList.likeDynamic instanceof Array) {
                     if (this.props.userList.likeDynamic.length !== 0) {
                         this.props.userList.likeDynamic.forEach(val => {

@@ -1,4 +1,13 @@
 import React, { Component } from 'react';
+import Header from '@/components/header';
+import { MessageWrapper, IconFont } from './style';
+import { Link } from 'react-router-dom';
+
+const header = {
+    left: "",
+    title: '我的消息',
+    right: ''
+};
 
 class Message extends Component {
     constructor(props) {
@@ -6,8 +15,46 @@ class Message extends Component {
         this.state = {  }
     }
     render() { 
+        const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         return ( 
-            <div>这是消息页</div>
+            <MessageWrapper height={height}>
+                <Header header={header}></Header>
+                <Link to='/newFanList'>
+                    <div className='text'>
+                        <IconFont className='iconfont'>&#xe63d;</IconFont>
+                        <p className='title'>新增粉丝</p>
+                        <span className='iconfont back icon'>&#xe61f;</span>
+                    </div>
+                </Link>
+                <Link to='/newLikeList'>
+                    <div className='text'>
+                        <IconFont className='iconfont' style={{background: '#FDA402'}}>&#xe63a;</IconFont>
+                        <p className='title'>收到的赞</p>
+                        <span className='iconfont back icon'>&#xe61f;</span>
+                    </div>
+                </Link>
+                <Link to='/newCollectList'>
+                    <div className='text'>
+                        <IconFont className='iconfont' style={{background: '#5BB5DA'}}>&#xe60f;</IconFont>
+                        <p className='title'>收藏</p>
+                        <span className='iconfont back icon'>&#xe61f;</span>
+                    </div>
+                </Link>
+                <Link to='/newCommentList'>
+                    <div className='text'>
+                        <IconFont className='iconfont' style={{background: '#34B87F'}}>&#xe648;</IconFont>
+                        <p className='title'>评论</p>
+                        <span className='iconfont back icon'>&#xe61f;</span>
+                    </div>
+                </Link>
+                <Link to='/inform'>
+                    <div className='text'>
+                        <IconFont className='iconfont' style={{background: '#5C99EC'}}>&#xe64a;</IconFont>
+                        <p className='title'>官方通知</p>
+                        <span className='iconfont back icon'>&#xe61f;</span>
+                    </div>
+                </Link>
+            </MessageWrapper>
         );
     }
 }

@@ -1,0 +1,1 @@
+export const SAVE_SELECTED_TAB = 'tab/SAVE_SELECTED_TAB';

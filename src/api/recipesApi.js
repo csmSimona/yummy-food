@@ -13,3 +13,15 @@ export const getRecipesDetail = (id) => http.post('/recipes/getRecipesDetail', i
 export const uploadVideo = (video) => http.post('/recipes/uploadVideo', video);
 
 export const findRecipesByUseId = (userId) => http.post('/recipes/findRecipesByUseId', userId);
+
+export const getCollectRecipesList = (data) => http.post('/recipes/getCollectRecipesList', data);
+
+export const addFollowRecipes = (data) => http.post('/recipes/addFollowRecipes', data);
+
+export const deleteRecipes = (id) => http.post('/recipes/deleteRecipes', id);
+
+export const updateRecipes = (data) => http.post('/recipes/updateRecipes', data);
+
+export const findRecipesDraftByUseId = (id) => http.post('/recipes/findRecipesDraftByUseId', id);
+
+export const deleteRecipesDraft = (id) => http.post('/recipes/deleteRecipesDraft', id);

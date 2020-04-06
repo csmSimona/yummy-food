@@ -29,7 +29,7 @@ class Recommend extends Component {
     }
 
     render() { 
-        let {leftData, rightData} = this.state;
+        let {leftData, rightData, recipesList} = this.state;
         return ( 
             <div>
                 <Carousel
@@ -72,13 +72,28 @@ class Recommend extends Component {
                                 leftData && leftData.map((item, index) => {
                                     return (
                                         <div key={index} className='contentBox'>
-                                            <img src={item.album[0].url} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/>
-                                            {/* <img src={require('@/' + item.album[0].url)} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/> */}
+                                            { item.videoUrl ? 
+                                                <video 
+                                                    onClick={this.getRecipesDetail(item._id)}
+                                                    src={item.videoUrl} 
+                                                    controls="controls" 
+                                                    width='100%'
+                                                >
+                                                    您的浏览器不支持 video 标签。
+                                                </video> : 
+                                                <img 
+                                                    src={require('@/' + item.album[0].url)} 
+                                                    width="100%" 
+                                                    height="100%"  
+                                                    key={index} 
+                                                    onClick={this.getRecipesDetail(item._id)} 
+                                                    alt=""/> 
+                                            }
                                             <div className='title' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
-                                                    <span className='userName'>{item.userName}</span>
+                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>
                                                     <CollectionIcon 
@@ -102,13 +117,28 @@ class Recommend extends Component {
                                 rightData && rightData.map((item, index) => {
                                     return (
                                         <div key={index} className='contentBox'>
-                                            {/* <img src={require('@/' + item.album[0].url)} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/> */}
-                                            <img src={item.album[0].url} width="100%" height="100%"  key={index} onClick={this.getRecipesDetail(item._id)} alt=""/>
+                                            { item.videoUrl ? 
+                                                <video 
+                                                    onClick={this.getRecipesDetail(item._id)}
+                                                    src={item.videoUrl} 
+                                                    controls="controls" 
+                                                    width='100%'
+                                                >
+                                                    您的浏览器不支持 video 标签。
+                                                </video> : 
+                                                <img 
+                                                    src={require('@/' + item.album[0].url)} 
+                                                    width="100%" 
+                                                    height="100%"  
+                                                    key={index} 
+                                                    onClick={this.getRecipesDetail(item._id)} 
+                                                    alt=""/> 
+                                            }
                                             <div className='title' onClick={this.getRecipesDetail(item._id)} alt="">{item.recipeName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
-                                                    <span className='userName'>{item.userName}</span>
+                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>
                                                     <CollectionIcon 
@@ -135,20 +165,24 @@ class Recommend extends Component {
 
     getRecipesDetail = (recipeId) => () => {
         this.props.history.push({
-            pathname: '/recipesDetail/' + recipeId
+            pathname: '/recipesDetail/' + recipeId,
+            type: 'look'
         })
     }
 
     handleCollectionClick = (recipeId, index, choose, collect) => () => {
         var userInfo = this.props.userList;
-        var newCollectionNumber;
+        var newCollectionNumber, newCollectionList;
         if (choose === 'left') {
             newCollectionNumber = this.state.leftData[index].collectionNumber;
+            newCollectionList = this.state.leftData[index].collectionList;
         } else {
             newCollectionNumber = this.state.rightData[index].collectionNumber;
+            newCollectionList = this.state.rightData[index].collectionList;
         }
         if (collect === UNCOLLECT) {
             newCollectionNumber++;
+            newCollectionList.push(userInfo._id);
             if (userInfo.collectRecipes) {
                 userInfo.collectRecipes.push(recipeId);
             } else {
@@ -156,6 +190,12 @@ class Recommend extends Component {
             }
         } else {
             newCollectionNumber--;
+            newCollectionList.forEach((item, i) => {
+                if (item === userInfo._id) {
+                    newCollectionList.splice(i, 1);
+                    i--;
+                }
+            })
             userInfo.collectRecipes.forEach((item, i) => {
                 if (item === recipeId) {
                     userInfo.collectRecipes.splice(i, 1);
@@ -169,12 +209,14 @@ class Recommend extends Component {
             userId: userInfo._id,
             recipeId: recipeId,
             collectRecipes: userInfo.collectRecipes,
-            collectionNumber: newCollectionNumber
+            collectionNumber: newCollectionNumber,
+            collectionList: newCollectionList
         }).then(() => {
             var newData = []
             if (choose === 'left') {
                 newData = this.state.leftData;
                 newData[index].collectionNumber = newCollectionNumber;
+                newData[index].collectionList = newCollectionList;
                 newData[index].collect = collect === UNCOLLECT ? COLLECTED : UNCOLLECT;
                 this.setState({
                     leftData: newData
@@ -182,11 +224,19 @@ class Recommend extends Component {
             } else {
                 newData = this.state.rightData;
                 newData[index].collectionNumber = newCollectionNumber;
+                newData[index].collectionList = newCollectionList;
                 newData[index].collect = collect === UNCOLLECT ? COLLECTED : UNCOLLECT;
                 this.setState({
                     rightData: newData
                 })
             }
+        })
+    }
+
+    gotoUserDetail(userData) {
+        this.props.history.replace({
+          pathname: '/tab/center/myRecipes',
+          userDetail: userData
         })
     }
 
@@ -198,22 +248,29 @@ class Recommend extends Component {
         getRecipes().then(res => {
             if (res.data.code === 200) {
                 var recipesList = res.data.data;
-
                 var actionArr = []
                 recipesList.forEach(item => {
+                    if (item.album[0].url.substring(0, 13) === 'statics/video') {
+                        item.videoUrl = require('@/' + item.album[0].url)
+                    }
                     if (!item.collectionNumber) {
                         item.collectionNumber = 0;
                     }
-
+                    if (!item.collectionList) {
+                        item.collectionList = [];
+                    }
                     if (this.props.userList.collectRecipes instanceof Array) {
                         if (this.props.userList.collectRecipes.length !== 0) {
-                            this.props.userList.collectRecipes.forEach(val => {
+                            var collected = this.props.userList.collectRecipes.some(val => {
                                 if (val === item._id) {
-                                    item.collect = COLLECTED
-                                } else {
-                                    item.collect = UNCOLLECT
+                                    return true
                                 }
                             })
+                            if (collected) {
+                                item.collect = COLLECTED
+                            } else {
+                                item.collect = UNCOLLECT
+                            }
                         } else {
                             item.collect = UNCOLLECT
                         }
@@ -227,11 +284,11 @@ class Recommend extends Component {
                 Promise.all(actionArr).then(function (res) {
                     for (var i = 0; i < res.length; i++) {
                         var userData = res[i].data.data[0];
+                        recipesList[i].writer = userData;
                         recipesList[i].userName = userData.name;
                         recipesList[i].avatar = userData.img[0].url;
                     }
                 }).then(() => {
-                    // console.log('recipesList', recipesList)
                     this.setState({
                         recipesList: recipesList
                     })
@@ -257,6 +314,16 @@ class Recommend extends Component {
         // console.log('this.props.rightData', this.props.rightData);
 
         if (this.props.recipesList instanceof Array) {
+            
+            // let collectNum = 0;
+            // this.props.recipesList.forEach(item => {
+            //     if (!item.collectionNumber) {
+            //         item.collectionNumber = 0
+            //     }
+            //     collectNum += item.collectionNumber
+            // })
+
+            // if (collectNum === this.props.userList.collectRecipes.length) {
             if (this.props.recipesList.length !== 0) {
                 this.setState({
                     recipesList: this.props.recipesList,
@@ -276,7 +343,6 @@ class Recommend extends Component {
         let recipesList = this.state.recipesList;
         let leftData = this.state.leftData;
         let rightData = this.state.rightData;
-
         this.props.saveRecipesList(recipesList);
         this.props.saveLeftData(leftData);
         this.props.saveRightData(rightData);

@@ -1,180 +1,263 @@
 import React, { Component } from 'react';
-import { ImagePicker, Modal } from 'antd-mobile';
-import CropperModal from '@/components/CropperModal/CropperModal';
-import { uploadVideo } from '@/api/recipesApi';
+import { actionCreators as centerActionCreators } from '@/views/center/store';
+import { connect } from 'react-redux';
+import { Toast, Carousel } from 'antd-mobile';
+import { getConcernList } from '@/api/userApi';
+import { getDynamicDetailByUserId, addLikeDynamic } from '@/api/dynamicApi';
+import { ConcernListWrapper, Border, Icon, Input } from './style';
+import formatDate from '@/utils/formatDate';
 
-// import { Player, ControlBar, ReplayControl,
-//   ForwardControl, CurrentTimeDisplay,
-//   TimeDivider, PlaybackRateMenuButton, VolumeMenuButton } from 'video-react';
-import { Player } from 'video-react';
-import "video-react/dist/video-react.css";
-
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
-
-function blobToBase64(blob, callback) {
-    let a = new FileReader();
-    a.onload = function (e) { callback(e.target.result); }
-    a.readAsDataURL(blob);
-}
-
-function closest(el, selector) {
-    const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
-    while (el) {
-      if (matchesSelector.call(el, selector)) {
-        return el;
-      }
-      el = el.parentElement;
-    }
-    return null;
-}
+const UNLIKE = '&#xe63a;';
+const LIKE = '&#xe60c;';
 
 class Concern extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            classModalVisible: false,
-            classModalFile: null,
-            classResultImgUrl: null,
-            files: [],
-            showBigModal: false,
-            showBigUrl: '',
-            videoUrl: ''
+          concernList: [],
+          dynamicList: []
         }
-        this.onChange = this.onChange.bind(this)
-        this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this)
     }
     
-    showModal = key => (e) => {
-        e.preventDefault(); // 修复 Android 上点击穿透
-        this.setState({
-          [key]: true,
-        });
-      }
-      onClose = key => () => {
-        this.setState({
-          [key]: false,
-        });
-      }
-    
-      onWrapTouchStart = (e) => {
-        // fix touch to scroll background page on iOS
-        if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
-          return;
-        }
-        const pNode = closest(e.target, '.am-modal-content');
-        if (!pNode) {
-          e.preventDefault();
-        }
-      }
-
-    onChange = (files, type, index) => {
-        let file;
-
-        if (files.length) {
-            file = files[files.length - 1].file;
-            var uploadType = files[0].url.split('/')[0];
-        }
-        console.log(files, type, index)
-        
-        if (type === 'add') {
-          if (uploadType === 'data:video') {
-            uploadVideo({
-              video: files[0].url
-            }).then(res => {
-              this.setState({
-                // files: [{url: res.data.videoUrl}],
-                videoUrl: res.data.videoUrl
-              })
-              // res.data.videoUrl statics/video/1585055722129.mp4
-              console.log('res.data.videoUrl', res.data.videoUrl);
-            }).catch((err) => {
-              console.log('error', err);
-            })
-          } else {
-            if (file.size <= MAX_FILE_SIZE) {
-              this.setState(
-                {
-                  classModalFile: file // 先把上传的文件暂存在state中
-                },
-                () => {
-                  this.setState({
-                    classModalVisible: true // 然后弹出modal
-                  })
-                }
+    render() {
+      let { dynamicList } = this.state;
+      let userList = this.props.userList;
+      return (
+        <div>
+          {
+            dynamicList && dynamicList.map((item, index) => {
+              return (
+                <ConcernListWrapper key={index}>
+                  <div className='writer'>
+                    <img className='avatar' src={item.writer.img ? require('@/' + item.writer.img[0].url) : require('@/statics/img/title.png')} alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                    <p onClick={() => this.gotoUserDetail(item.writer)}>{item.writer.name}</p>
+                  </div>
+                  <Carousel
+                      style={{touchAction: 'none'}}
+                      autoplay
+                      infinite
+                      frameOverflow="visible"
+                    >
+                      {item.imgs && item.imgs.map((val, index) => (
+                          <img
+                              src={require('@/' + val.url)}
+                              alt=""
+                              style={{ width: '100%', verticalAlign: 'top' }}
+                              onLoad={() => {
+                              // fire window resize event to change height
+                              window.dispatchEvent(new Event('resize'));
+                                  this.setState({ imgHeight: 'auto' });
+                              }}
+                              key={index}
+                              onClick={this.getDynamicDetail(item._id)}
+                          />
+                      ))}
+                  </Carousel>
+                  <div className='concernContent'>
+                      <div className='concernDesc'>
+                          <div className='concernDate'>{formatDate(item.createDate)}</div>
+                          <div className='collection'>
+                              <Icon 
+                                  className="iconfont" 
+                                  onClick={() => this.handleLikeClick(item._id, index, item.like)}
+                                  dangerouslySetInnerHTML={{__html: item.like}} 
+                                  style={{
+                                      color: item.like === UNLIKE ? '#888888' : '#FB6650'
+                                  }} 
+                              />
+                              <span 
+                                  style={{
+                                      color: item.like === UNLIKE ? '#888888' : '#FB6650',
+                                      marginRight: '1rem'
+                                  }} >{item.likeNumber}</span>
+                              <Icon className='iconfont'>&#xe648;</Icon>评论
+                          </div>
+                      </div>
+                      <div>
+                          <p>{item.dynamicName}</p>
+                          <p>{item.dynamicStory}</p>
+                          <div 
+                              style={{display: item.followRecipes ? 'block' : 'none'}}
+                              className='followRecipes' 
+                              onClick={this.getDynamicDetail(item._id)}
+                          >
+                              来自：{item.followRecipes ? item.followRecipes.recipeName : ''}
+                          </div>
+                      </div>
+                      <div className='comment'>
+                          <img className='avatar' src={require('@/' + userList.img[0].url)} alt=""/>
+                          <Input placeholder="写评论"/>
+                      </div>
+                      <Border/>
+                  </div>
+                </ConcernListWrapper>
               )
-            } else {
-              console.log('文件过大')
-            }
+            })
           }
-        } else {
-          this.setState({
-            files: files // 然后弹出modal
-          })
-        }
-
+        </div>
+      )
     }
-    
-    handleGetResultImgUrl = blob => {
-        // blob转base64
-        blobToBase64(blob, (str) => {
-            var newFile = this.state.files
-            newFile.push({
-                url: str
+
+    gotoUserDetail(userData) {
+      this.props.history.replace({
+        pathname: '/tab/center/myRecipes',
+        userDetail: userData
+      })
+    }
+
+    handleLikeClick(dynamicId, index, like) {
+        var user = this.props.userList;
+        var dynamicList =  this.state.dynamicList;
+        var newLikeNumber = dynamicList[index].likeNumber;
+        var newLikeList = dynamicList[index].likeList;
+
+        if (like === UNLIKE) {
+            newLikeNumber++;
+            newLikeList.push(user._id);
+            if (user.likeDynamic) {
+                user.likeDynamic.push(dynamicId);
+            } else {
+                user.likeDynamic = [dynamicId];
+            }
+        } else {
+            newLikeNumber--;
+            newLikeList.forEach((item, i) => {
+                if (item === user._id) {
+                    newLikeList.splice(i, 1);
+                    i--;
+                }
             })
+            user.likeDynamic.forEach((item, i) => {
+                if (item === dynamicId) {
+                    user.likeDynamic.splice(i, 1);
+                    i--;
+                }
+            })
+        }
+        this.props.saveUserList(user);
+        addLikeDynamic({
+            userId: user._id,
+            dynamicId: dynamicId,
+            likeDynamic: user.likeDynamic,
+            likeNumber: newLikeNumber,
+            likeList: newLikeList
+        }).then(() => {
+            // var newDynamicDetail = this.state.dynamicDetail;
+            dynamicList[index].likeNumber = newLikeNumber;
+            dynamicList[index].likeList = newLikeList;
+            dynamicList[index].like = like === UNLIKE ? LIKE : UNLIKE;
             this.setState({
-                classResultImgUrl: str,
-                files: newFile
+              dynamicList: dynamicList
             })
+        }).catch((err) => {
+            console.log('error：', err);
         })
     }
 
-    render() {
-        return (
-          <div>
-            <ImagePicker
-                accept='*'
-                files={this.state.files}
-                onChange={this.onChange}
-                onImageClick={(index, fs) => {
-                    console.log(index, fs);
-                    this.setState({
-                        showBigModal: true,
-                        showBigUrl: fs[index].url
-                    })
-                }}
-                selectable={this.state.files.length < 3}
-            />
-            {this.state.classModalVisible && (
-              <CropperModal
-                uploadedImageFile={this.state.classModalFile}
-                onClose={() => {
-                  this.setState({ classModalVisible: false })
-                }}
-                onSubmit={this.handleGetResultImgUrl}
-                classModalVisible={this.state.classModalVisible}
-              />
-            )}
-            <Modal
-                visible={this.state.showBigModal}
-                transparent
-                maskClosable={true}
-                onClose={this.onClose('showBigModal')}
-                title="查看图片"
-                footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
-                wrapProps={{ onTouchStart: this.onWrapTouchStart }}
-            >
-                <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-            </Modal>
-                <Player>
-                  <source src={require('@/' + this.state.videoUrl)}/>
-                </Player>
-                {/* <video src={require('@/statics/video/1585055722129.mp4')} controls="controls">
-                  您的浏览器不支持 video 标签。
-                </video> */}
-          </div>
-        )
+    getDynamicDetail = (recipeId) => () => {
+      this.props.history.push({
+          pathname: '/dynamicDetail/' + recipeId
+      })
+    }
+
+    getConcernList() {
+      let userList = this.props.userList;
+      let that = this;
+      getConcernList({concernIdList: userList.concernList}).then(res => {
+          if (res.data.code === 200) {
+              let concernList = res.data.data;
+
+              var actionArr = [];
+              concernList.forEach(item => {
+                  // let index = item.concernList.indexOf(userList._id);
+                  // if (index) {
+                  //     item.concern = '互相关注'
+                  // } else {
+                  //     item.concern = '已关注'
+                  // }
+                  actionArr.push(getDynamicDetailByUserId({ userId: item._id }))
+              })
+              // console.log('concernList', concernList);
+              this.setState({
+                concernList: concernList
+              })
+          }
+          return Promise.all(actionArr);
+      }).then(function (res) {
+          let dynamicList = [];
+          for (var i = 0; i < res.length; i++) {
+            let dynamicDetail = res[i].data.data;
+            if (JSON.stringify(dynamicDetail) !== []) {
+              dynamicDetail.forEach(item => {
+                item.writer = that.state.concernList[i];
+                if (!item.likeNumber) {
+                  item.likeNumber = 0;
+                }
+                if (!item.likeList) {
+                  item.likeList = [];
+                  }
+                if (userList.likeDynamic instanceof Array) {
+                    if (userList.likeDynamic.length !== 0) {
+                        userList.likeDynamic.forEach(val => {
+                            if (val === item._id) {
+                              item.like = LIKE
+                            } else {
+                              item.like = UNLIKE
+                            }
+                        })
+                    } else {
+                      item.like = UNLIKE
+                    }
+                } else {
+                  item.like = UNLIKE
+                }
+              })
+            }
+            dynamicList = dynamicList.concat(dynamicDetail);
+          }
+          dynamicList.sort(function(a, b){
+              return a.createDate < b.createDate ? 1 : -1
+          });
+          console.log('dynamicList', dynamicList);
+          that.setState({
+            dynamicList: dynamicList
+          })
+      }).catch(function (err) {
+          Toast.fail('未知错误', 1);
+          console.log('err', err)
+      })
+    }
+
+    componentDidMount() {
+      console.log(this.props.userList);
+      this.getConcernList();
     }
 }
  
-export default Concern;
+const mapStateToProps = (state) => {
+  return {
+      userList: state.getIn(['center', 'userList']),
+      // recipesList: state.getIn(['home', 'recipesList']),
+      // leftData: state.getIn(['home', 'leftData']),
+      // rightData: state.getIn(['home', 'rightData'])
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      saveUserList(userList) {
+          dispatch(centerActionCreators.saveUserList(userList));
+      },
+      // saveRecipesList(recipesList) {
+      //     dispatch(actionCreators.saveRecipesList(recipesList));
+      // },
+      // saveLeftData(leftData) {
+      //     dispatch(actionCreators.saveLeftData(leftData));
+      // },
+      // saveRightData(rightData) {
+      //     dispatch(actionCreators.saveRightData(rightData));
+      // }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Concern);
