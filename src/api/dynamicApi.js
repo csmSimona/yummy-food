@@ -17,3 +17,6 @@ export const editDynamic = (data) => http.post('/dynamic/editDynamic', data);
 export const deleteDynamic = (id) => http.post('/dynamic/deleteDynamic', id);
 
 export const getDynamicDetailByUserId = (id) => http.post('/dynamic/getDynamicDetailByUserId', id);
+
+export const getDynamicById = (id) => http.post('/dynamic/getDynamicById', id);
+

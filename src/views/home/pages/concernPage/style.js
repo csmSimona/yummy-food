@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { hintColor, descColor, bgColor } from '@/styles/color';
+import { hintColor, descColor, bgColor, themeColor } from '@/styles/color';
 import border from '@/styles/border';
 import { InputItem } from 'antd-mobile';
 
@@ -53,14 +53,26 @@ export const ConcernListWrapper = styled.div`{
             white-space: nowrap;
             background: ${bgColor};
         }
-        .comment {
-            margin: 1rem 0;
-            display: flex;
-            align-item: center;
-            .avatar {
-                border-radius: 50%;
-                width: 2rem;
-                height: 2rem;
+        .commentContent {
+            .comment {
+                display: flex;
+                width: 100%;
+                align-items: center;
+                line-height: 1.25rem;
+                margin: .5rem 0;
+                .avatar {
+                    border-radius: 50%;
+                    width: 2rem;
+                    height: 2rem;
+                }
+                .user {
+                    flex: 1;
+                    font-size: .8rem;
+                    line-height: 1.25rem;
+                    .name {
+                        color: ${descColor};
+                    }
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import { renderRoutes } from 'react-router-config';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '../center/store';
 import { actionCreators } from './store';
+import { getUnreadCommentNumber, getUnreadFanNumber, getUnreadCollectNumber, getUnreadLikeNumber } from '@/api/informApi';
 
 let tabBarList=[
   {
@@ -80,6 +81,7 @@ class TabBarExample extends Component {
                         this.gotoLogin();
                       })
                     }}
+                    badge={item.key === 'message' ? this.props.unReadNumber : ''}
                   >
                   </TabBar.Item>
               )
@@ -121,9 +123,29 @@ class TabBarExample extends Component {
             localStorage.setItem('userPhone', res.data.userList[0].phone);
             localStorage.setItem('userId', res.data.userList[0]._id);
             this.props.saveUserList(res.data.userList[0]);
+            this.getUnreadNumber();
         }).catch((err) => {
           console.log('error', err);
           this.props.history.push('/login');
+        })
+    }
+
+    getUnreadNumber() {
+        let that = this;
+        let actionArr = [
+          getUnreadCommentNumber({userId: this.props.userList._id}),
+          getUnreadFanNumber({writerId: this.props.userList._id}),
+          getUnreadCollectNumber({writerId: this.props.userList._id}),
+          getUnreadLikeNumber({writerId: this.props.userList._id})
+        ];
+        Promise.all(actionArr).then(function (res) {
+          that.props.saveUnReadCommentNumber(res[0].data.data);
+          that.props.saveUnReadFanNumber(res[1].data.data);
+          that.props.saveUnReadCollectNumber(res[2].data.data);
+          that.props.saveUnReadLikeNumber(res[3].data.data);
+          that.props.saveUnReadNumber(res[0].data.data + res[1].data.data + res[2].data.data + res[3].data.data);
+        }).catch(err => {
+          console.log('err', err);
         })
     }
 
@@ -146,10 +168,16 @@ class TabBarExample extends Component {
 
 }
 
+
 const mapStateToProps = (state) => {
   return {
       userList: state.getIn(['center', 'userList']),
-      selectedTab: state.getIn(['tab', 'selectedTab'])
+      selectedTab: state.getIn(['tab', 'selectedTab']),
+      unReadNumber: state.getIn(['tab', 'unReadNumber']),
+      unReadCollectNumber: state.getIn(['tab', 'unReadCollectNumber']),
+      unReadCommentNumber: state.getIn(['tab', 'unReadCommentNumber']),
+      unReadLikeNumber: state.getIn(['tab', 'unReadLikeNumber']),
+      unReadFanNumber: state.getIn(['tab', 'unReadFanNumber']),
   }
 }
 
@@ -160,6 +188,21 @@ const mapDispatchToProps = (dispatch) => {
       },
       saveSelectedTab(selectedTab) {
         dispatch(actionCreators.saveSelectedTab(selectedTab));
+      },
+      saveUnReadNumber(unReadNumber) {
+        dispatch(actionCreators.saveUnReadNumber(unReadNumber));
+      },
+      saveUnReadCollectNumber(unReadCollectNumber) {
+        dispatch(actionCreators.saveUnReadCollectNumber(unReadCollectNumber));
+      },
+      saveUnReadCommentNumber(unReadCommentNumber) {
+        dispatch(actionCreators.saveUnReadCommentNumber(unReadCommentNumber));
+      },
+      saveUnReadLikeNumber(unReadLikeNumber) {
+        dispatch(actionCreators.saveUnReadLikeNumber(unReadLikeNumber));
+      },
+      saveUnReadFanNumber(unReadFanNumber) {
+        dispatch(actionCreators.saveUnReadFanNumber(unReadFanNumber));
       }
   }
 }

@@ -7,6 +7,7 @@ import getHW from '@/utils/getHW';
 import { findRecipesByUseId, addCollectRecipes, findRecipesDraftByUseId } from '@/api/recipesApi';
 import { TitleWrapper, RecipesListWrapper, CollectionIcon } from '@/views/home/pages/recommendPage/style';
 import { BlankWrapper, EditIcon } from '../../style';
+import LazyLoad from 'react-lazyload';
 
 const UNCOLLECT = '&#xe60f;';
 const COLLECTED = '&#xe661;';
@@ -38,28 +39,31 @@ class MyRecipes extends Component {
                                     this.props.location.userDetail ? '' : 
                                     <EditIcon className='iconfont' onClick={this.editRecipes(item._id)}>&#xe678;</EditIcon>
                                 }
-                                { item.videoUrl ? 
-                                    <video 
-                                        onClick={this.getRecipesDetail(item._id)}
-                                        src={item.videoUrl} 
-                                        controls="controls" 
-                                        width='100%'
-                                    >
-                                        您的浏览器不支持 video 标签。
-                                    </video> : 
-                                    <img 
-                                        src={require('@/' + item.album[0].url)} 
-                                        width="100%" 
-                                        height="100%"  
-                                        key={index} 
-                                        onClick={this.getRecipesDetail(item._id)} 
-                                        alt=""/> 
-                                }
-
+                                <LazyLoad offset={100}>
+                                    { item.videoUrl ? 
+                                        <video 
+                                            onClick={this.getRecipesDetail(item._id)}
+                                            src={item.videoUrl} 
+                                            controls="controls" 
+                                            width='100%'
+                                        >
+                                            您的浏览器不支持 video 标签。
+                                        </video> : 
+                                        <img 
+                                            src={require('@/' + item.album[0].url)} 
+                                            width="100%" 
+                                            height="100%"  
+                                            key={index} 
+                                            onClick={this.getRecipesDetail(item._id)} 
+                                            alt=""/> 
+                                    }
+                                </LazyLoad>
                                 <div className='title' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                 <div className='otherInfo'>
                                     <div className='user'>
-                                        <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/title.png')} className='avatar' alt=""/>
+                                        <LazyLoad offset={100}>
+                                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
+                                        </LazyLoad>
                                         <span className='userName'>{userList.name}</span>
                                     </div>
                                     <div className='collection'>
@@ -88,27 +92,31 @@ class MyRecipes extends Component {
                                     this.props.location.userDetail ? '' : 
                                     <EditIcon className='iconfont' onClick={this.editRecipes(item._id)}>&#xe678;</EditIcon>
                                 }
-                                { item.videoUrl ? 
-                                    <video 
-                                        onClick={this.getRecipesDetail(item._id)}
-                                        src={item.videoUrl} 
-                                        controls="controls" 
-                                        width='100%'
-                                    >
-                                        您的浏览器不支持 video 标签。
-                                    </video> : 
-                                    <img 
-                                        src={require('@/' + item.album[0].url)} 
-                                        width="100%" 
-                                        height="100%"  
-                                        key={index} 
-                                        onClick={this.getRecipesDetail(item._id)} 
-                                        alt=""/> 
-                                }
+                                <LazyLoad offset={100}>
+                                    { item.videoUrl ? 
+                                        <video 
+                                            onClick={this.getRecipesDetail(item._id)}
+                                            src={item.videoUrl} 
+                                            controls="controls" 
+                                            width='100%'
+                                        >
+                                            您的浏览器不支持 video 标签。
+                                        </video> : 
+                                        <img 
+                                            src={require('@/' + item.album[0].url)} 
+                                            width="100%" 
+                                            height="100%"  
+                                            key={index} 
+                                            onClick={this.getRecipesDetail(item._id)} 
+                                            alt=""/> 
+                                    }
+                                </LazyLoad>
                                 <div className='title' onClick={this.getRecipesDetail(item._id)} alt="">{item.recipeName}</div>
                                 <div className='otherInfo'>
                                     <div className='user'>
-                                        <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/title.png')} className='avatar' alt=""/>
+                                        <LazyLoad offset={100}>
+                                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
+                                        </LazyLoad>
                                         <span className='userName'>{userList.name}</span>
                                     </div>
                                     <div className='collection'>
@@ -175,16 +183,21 @@ class MyRecipes extends Component {
     }
     
     handleCollectionClick = (recipeId, index, choose, collect) => () => {
-        var userInfo = this.props.userList;
-        var newCollectionNumber, newCollectionList;
+        let userInfo = this.props.userList;
+        let newCollectionNumber, newCollectionList;
+        let type;
+        let writerId;
         if (choose === 'left') {
             newCollectionNumber = this.state.leftData[index].collectionNumber;
             newCollectionList = this.state.leftData[index].collectionList;
+            writerId = this.state.leftData[index].userId;
         } else {
             newCollectionNumber = this.state.rightData[index].collectionNumber;
             newCollectionList = this.state.rightData[index].collectionList;
+            writerId = this.state.rightData[index].userId;
         }
         if (collect === UNCOLLECT) {
+            type = 'add';
             newCollectionNumber++;
             newCollectionList.push(userInfo._id);
             if (userInfo.collectRecipes) {
@@ -193,6 +206,7 @@ class MyRecipes extends Component {
                 userInfo.collectRecipes = [recipeId];
             }
         } else {
+            type = 'delete';
             newCollectionNumber--;
             newCollectionList.forEach((item, i) => {
                 if (item === userInfo._id) {
@@ -210,11 +224,13 @@ class MyRecipes extends Component {
         this.props.saveUserList(userInfo);
         
         addCollectRecipes({
+            writerId,
             userId: userInfo._id,
             recipeId: recipeId,
             collectRecipes: userInfo.collectRecipes,
             collectionNumber: newCollectionNumber,
-            collectionList: newCollectionList
+            collectionList: newCollectionList,
+            type
         }).then(() => {
             var newData = []
             if (choose === 'left') {

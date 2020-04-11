@@ -7,6 +7,7 @@ import getHW from '@/utils/getHW';
 import { findDynamicByUseId, addLikeDynamic } from '@/api/dynamicApi';
 import { TitleWrapper, RecipesListWrapper, CollectionIcon } from '@/views/home/pages/recommendPage/style';
 import { BlankWrapper, EditIcon } from '../../style';
+import LazyLoad from 'react-lazyload';
 
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
@@ -37,11 +38,15 @@ class MyDynamic extends Component {
                                     this.props.location.userDetail ? '' : 
                                     <EditIcon className='iconfont' onClick={this.editDynamic(item._id)}>&#xe678;</EditIcon>
                                 }
-                                <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                <LazyLoad offset={100}>
+                                    <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                </LazyLoad>
                                 <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                 <div className='otherInfo'>
                                     <div className='user'>
-                                        <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/title.png')} className='avatar' alt=""/>
+                                        <LazyLoad offset={100}>
+                                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
+                                        </LazyLoad>
                                         <span className='userName'>{userList.name}</span>
                                     </div>
                                     <div className='collection'>
@@ -70,11 +75,15 @@ class MyDynamic extends Component {
                                     this.props.location.userDetail ? '' : 
                                     <EditIcon className='iconfont' onClick={this.editDynamic(item._id)}>&#xe678;</EditIcon>
                                 }
-                                <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                <LazyLoad offset={100}>
+                                    <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                </LazyLoad>
                                 <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                 <div className='otherInfo'>
                                     <div className='user'>
-                                    <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/title.png')} className='avatar' alt=""/>
+                                        <LazyLoad offset={100}>
+                                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
+                                        </LazyLoad>
                                         <span className='userName'>{userList.name}</span>
                                     </div>
                                     <div className='collection'>
@@ -132,17 +141,21 @@ class MyDynamic extends Component {
     }
     
     handleLikeClick = (dynamicId, index, choose, like) => () => {
-        var userInfo = this.props.userList;
-        var newLikeNumber, newLikeList;
+        let userInfo = this.props.userList;
+        let newLikeNumber, newLikeList;
+        let type, writerId;
         
         if (choose === 'left') {
+            writerId = this.state.leftData[index].userId;
             newLikeNumber = this.state.leftData[index].likeNumber;
             newLikeList = this.state.leftData[index].likeList;
         } else {
+            writerId = this.state.rightData[index].userId;
             newLikeNumber = this.state.rightData[index].likeNumber;
             newLikeList = this.state.rightData[index].likeList;
         }
         if (like === UNLIKE) {
+            type = 'add';
             newLikeNumber++;
             newLikeList.push(userInfo._id);
             if (userInfo.likeDynamic) {
@@ -151,6 +164,7 @@ class MyDynamic extends Component {
                 userInfo.likeDynamic = [dynamicId];
             }
         } else {
+            type = 'delete';
             newLikeNumber--;
             newLikeList.forEach((item, i) => {
                 if (item === userInfo._id) {
@@ -173,7 +187,9 @@ class MyDynamic extends Component {
             dynamicId: dynamicId,
             likeDynamic: userInfo.likeDynamic,
             likeNumber: newLikeNumber,
-            likeList: newLikeList
+            likeList: newLikeList,
+            type,
+            writerId
         }).then(res => {
             var newData = []
             if (choose === 'left') {

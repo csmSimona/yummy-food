@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { themeColor, hintColor, descColor, textColor, bgColor } from '@/styles/color';
 import border from '@/styles/border';
+import { InputItem } from 'antd-mobile';
 
 export const Border = border({
     component: styled.div`{
@@ -227,6 +228,99 @@ export const RecipesDetailWrapper = styled.div`{
         .tips {
             line-height: 1.25rem;
         }
+        .followDynamic {
+            margin-top: .5rem;
+            overflow: hidden;
+            overflow-x: auto;
+            white-space: nowrap;
+            img {
+                height: 8rem;
+                border-radius: .5rem;
+            }
+            .dynamic {
+                margin: 0 .5rem;
+                display: inline-block;
+                .title {
+                    margin: 0.5rem 0;
+                    font-weight: bold;
+                }
+                .otherInfo {
+                    display: flex;
+                    position: relative;
+                    padding-bottom: 0.5rem;
+                    color: ${descColor};
+                    font-weight: normal; 
+                    font-size: 0.75rem;
+                    .userName {
+                        position: absolute;
+                        top: .125rem;
+                        width: 60%;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                }
+                .avatar {
+                    display: inline-block;
+                    margin-right: 0.25rem;
+                    border-radius: 50%;
+                    width: 1rem;
+                    height: 1rem;
+                }
+                .user {
+                    flex: 2;
+                }
+                .collection {
+                    flex: 1;
+                    text-align: right;
+                }
+            }
+        }
+        .commentInput {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            .avatar {
+                border-radius: 50%;
+                width: 2rem;
+                height: 2rem;
+            }
+            // .send {
+            //     margin-left: .5rem;
+            //     color: ${themeColor};
+            // }
+        }
+        .comment {
+            // margin: .5rem 0;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            line-height: 1.25rem;
+            .avatar {
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            .user {
+                flex: 1;
+                padding: .5rem 1rem;
+                .name {
+                    color: ${descColor};
+                    margin: .5rem 0 ;
+                    font-size: .8rem;
+                }
+            }
+        }
+        .reply {
+            flex: 1;
+            padding: .5rem 1rem;
+            background: #FAFAF8;
+            font-size: .8rem;
+            line-height: 1.25rem;
+            .name {
+                color: ${descColor};
+            }
+        }
     }
 }`;
 
@@ -234,3 +328,21 @@ export const SelectIcon = styled.i`{
     font-size: 1.5rem !important;
     margin-bottom: .5rem;
 }`;
+
+export const Input = styled(InputItem)`{
+    flex: 1;
+    margin-left: .5rem;
+    height: 2rem !important;
+    min-height: 1rem;
+    background: #efeff4;
+    border-radius: 4.5rem;
+    color: #fff;
+}`;
+
+export const SelectContent = styled.div`{
+    margin: .5rem;
+    font-size: 1rem;
+    text-align: center;
+    color: #000;
+    font-weight: bold;
+}`

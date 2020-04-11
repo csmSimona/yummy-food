@@ -8,6 +8,7 @@ import { Toast, ActivityIndicator, Icon, Modal } from 'antd-mobile';
 import { addCollectRecipes, getCollectRecipesList } from '@/api/recipesApi';
 import { getUserInfo } from '@/api/userApi';
 import { finishLoading } from '@/utils/loading';
+import LazyLoad from 'react-lazyload';
 
 function closest(el, selector) {
     const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
@@ -39,23 +40,24 @@ class MyCollect extends Component {
                 this.state.collectRecipesList.map((item, index) => {
                     return (
                         <div className='recipesListContent' key={index}>
-                            {/* <img src={require('@/' + item.album[0].url)} className='album' key={index} onClick={this.getRecipesDetail(item._id)} alt=""/> */}
-                            { item.videoUrl ? 
-                                <video 
-                                    onClick={this.getRecipesDetail(item._id)}
-                                    src={item.videoUrl} 
-                                    controls="controls" 
-                                    width='40%'
-                                >
-                                    您的浏览器不支持 video 标签。
-                                </video> : 
-                                <img 
-                                    src={require('@/' + item.album[0].url)} 
-                                    className='album'  
-                                    key={index} 
-                                    onClick={this.getRecipesDetail(item._id)} 
-                                    alt=""/> 
-                            }
+                            <LazyLoad offset={100}>
+                                { item.videoUrl ? 
+                                    <video 
+                                        onClick={this.getRecipesDetail(item._id)}
+                                        src={item.videoUrl} 
+                                        controls="controls" 
+                                        width='40%'
+                                    >
+                                        您的浏览器不支持 video 标签。
+                                    </video> : 
+                                    <img 
+                                        src={require('@/' + item.album[0].url)} 
+                                        className='album'  
+                                        key={index} 
+                                        onClick={this.getRecipesDetail(item._id)} 
+                                        alt=""/> 
+                                }
+                            </LazyLoad>
                             <div className='center'>
                                 <div className='recipeName' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                 <div className='desc'>

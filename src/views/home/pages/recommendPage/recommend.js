@@ -8,6 +8,7 @@ import { actionCreators as centerActionCreators } from '@/views/center/store';
 import { actionCreators } from '../../store';
 import { finishLoading } from '@/utils/loading';
 import getHW from '@/utils/getHW';
+import LazyLoad from 'react-lazyload';
 
 const UNCOLLECT = '&#xe60f;';
 const COLLECTED = '&#xe661;';
@@ -72,27 +73,31 @@ class Recommend extends Component {
                                 leftData && leftData.map((item, index) => {
                                     return (
                                         <div key={index} className='contentBox'>
-                                            { item.videoUrl ? 
-                                                <video 
-                                                    onClick={this.getRecipesDetail(item._id)}
-                                                    src={item.videoUrl} 
-                                                    controls="controls" 
-                                                    width='100%'
-                                                >
-                                                    您的浏览器不支持 video 标签。
-                                                </video> : 
-                                                <img 
-                                                    src={require('@/' + item.album[0].url)} 
-                                                    width="100%" 
-                                                    height="100%"  
-                                                    key={index} 
-                                                    onClick={this.getRecipesDetail(item._id)} 
-                                                    alt=""/> 
-                                            }
+                                            <LazyLoad offset={100} height={50}>
+                                                { item.videoUrl ? 
+                                                    <video 
+                                                        onClick={this.getRecipesDetail(item._id)}
+                                                        src={item.videoUrl} 
+                                                        controls="controls" 
+                                                        width='100%'
+                                                    >
+                                                        您的浏览器不支持 video 标签。
+                                                    </video> : 
+                                                    <img 
+                                                        src={require('@/' + item.album[0].url)} 
+                                                        width="100%" 
+                                                        height="100%"  
+                                                        key={index} 
+                                                        onClick={this.getRecipesDetail(item._id)} 
+                                                        alt=""/> 
+                                                }
+                                            </LazyLoad>
                                             <div className='title' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    <LazyLoad offset={100}>
+                                                        <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    </LazyLoad>
                                                     <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>
@@ -117,27 +122,31 @@ class Recommend extends Component {
                                 rightData && rightData.map((item, index) => {
                                     return (
                                         <div key={index} className='contentBox'>
-                                            { item.videoUrl ? 
-                                                <video 
-                                                    onClick={this.getRecipesDetail(item._id)}
-                                                    src={item.videoUrl} 
-                                                    controls="controls" 
-                                                    width='100%'
-                                                >
-                                                    您的浏览器不支持 video 标签。
-                                                </video> : 
-                                                <img 
-                                                    src={require('@/' + item.album[0].url)} 
-                                                    width="100%" 
-                                                    height="100%"  
-                                                    key={index} 
-                                                    onClick={this.getRecipesDetail(item._id)} 
-                                                    alt=""/> 
-                                            }
+                                            <LazyLoad offset={100} height={50}>
+                                                { item.videoUrl ? 
+                                                    <video 
+                                                        onClick={this.getRecipesDetail(item._id)}
+                                                        src={item.videoUrl} 
+                                                        controls="controls" 
+                                                        width='100%'
+                                                    >
+                                                        您的浏览器不支持 video 标签。
+                                                    </video> : 
+                                                    <img 
+                                                        src={require('@/' + item.album[0].url)} 
+                                                        width="100%" 
+                                                        height="100%"  
+                                                        key={index} 
+                                                        onClick={this.getRecipesDetail(item._id)} 
+                                                        alt=""/> 
+                                                }
+                                            </LazyLoad>
                                             <div className='title' onClick={this.getRecipesDetail(item._id)} alt="">{item.recipeName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    <LazyLoad offset={100}>
+                                                        <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    </LazyLoad>
                                                     <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>
@@ -171,16 +180,21 @@ class Recommend extends Component {
     }
 
     handleCollectionClick = (recipeId, index, choose, collect) => () => {
-        var userInfo = this.props.userList;
-        var newCollectionNumber, newCollectionList;
+        let userInfo = this.props.userList;
+        let newCollectionNumber, newCollectionList;
+        let type;
+        let writerId;
         if (choose === 'left') {
             newCollectionNumber = this.state.leftData[index].collectionNumber;
             newCollectionList = this.state.leftData[index].collectionList;
+            writerId = this.state.leftData[index].userId;
         } else {
             newCollectionNumber = this.state.rightData[index].collectionNumber;
             newCollectionList = this.state.rightData[index].collectionList;
+            writerId = this.state.rightData[index].userId;
         }
         if (collect === UNCOLLECT) {
+            type = 'add';
             newCollectionNumber++;
             newCollectionList.push(userInfo._id);
             if (userInfo.collectRecipes) {
@@ -189,6 +203,7 @@ class Recommend extends Component {
                 userInfo.collectRecipes = [recipeId];
             }
         } else {
+            type = 'delete';
             newCollectionNumber--;
             newCollectionList.forEach((item, i) => {
                 if (item === userInfo._id) {
@@ -206,11 +221,13 @@ class Recommend extends Component {
         this.props.saveUserList(userInfo);
         
         addCollectRecipes({
+            writerId: writerId,
             userId: userInfo._id,
             recipeId: recipeId,
             collectRecipes: userInfo.collectRecipes,
             collectionNumber: newCollectionNumber,
-            collectionList: newCollectionList
+            collectionList: newCollectionList,
+            type
         }).then(() => {
             var newData = []
             if (choose === 'left') {

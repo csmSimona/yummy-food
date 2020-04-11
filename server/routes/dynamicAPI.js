@@ -3,6 +3,7 @@ var router = express.Router();
 var Dynamic = require('../models/Dynamic');
 var pWriteFile = require('../utils/pWriteFile');
 var User = require('../models/User');
+var LikeInform = require('../models/LikeInform');
 
 router.post('/createDynamic', function(req, res, next) {
     var dynamicList = req.body;
@@ -57,26 +58,29 @@ router.get('/getDynamic', function(req, res, next) {
 });
 
 router.post('/addLikeDynamic', function(req, res, next) {
+    var writerId = req.body.writerId;
+    var type = req.body.type;
     var userId = req.body.userId;
     var dynamicId = req.body.dynamicId;
     var likeDynamic = req.body.likeDynamic;
     var likeList = req.body.likeList;
     var likeNumber = req.body.likeNumber;
 
-    User.updateOne({_id: userId}, {$set: {likeDynamic: likeDynamic}}, function (err, data) {
-        if (err) {
-          console.log('updateUser err', err)
+    User.updateOne({_id: userId}, {$set: {likeDynamic: likeDynamic}})
+    .then(() => {
+        return Dynamic.updateOne({_id: dynamicId}, {$set: {likeList: likeList, likeNumber: likeNumber}})
+    }).then(() => {
+        if (type === 'add') {
+            let createDate = new Date();
+            new LikeInform({writerId, userId, createDate, dynamicId}).save(function (err, data) {
+              if (err) {
+                  console.log(err);
+                  return res.status(500).send('Server error.');
+              }
+            });
         }
-        console.log('updateUser data', data)
+        return res.json({ code: 200 });
     })
-
-    Dynamic.updateOne({_id: dynamicId}, {$set: {likeList: likeList, likeNumber: likeNumber}}, function (err, data) {
-        if (err) {
-          console.log('updateDynamic err', err)
-        }
-        console.log('updateDynamic data', data)
-    })
-    return res.json({ code: 200 });
 });
 
 router.post('/getDynamicDetail', function(req, res, next) {
@@ -185,6 +189,17 @@ router.post('/deleteDynamic', function(req, res) {
 
 router.post('/getDynamicDetailByUserId', function(req, res, next) {
     Dynamic.find({userId: req.body.userId}, function (err, data) {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('获取动态信息失败');
+        }
+        return res.json({ code: 200, data: data });
+    });
+});
+
+
+router.post('/getDynamicById', function(req, res, next) {
+    Dynamic.findOne({_id: req.body.id}, function (err, data) {
         if (err) {
             console.log(err);
             return res.status(500).send('获取动态信息失败');

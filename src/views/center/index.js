@@ -77,7 +77,7 @@ class Center extends Component {
                     <div className='editWrapper'>
                         <img 
                             className='avatar' 
-                            src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/title.png')} 
+                            src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} 
                             alt="" 
                             onClick={() => {
                                 this.setState({
@@ -94,7 +94,7 @@ class Center extends Component {
                             footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
                             wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                         >
-                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/title.png')} alt="查看图片" width="100%" height="100%" />
+                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt="查看图片" width="100%" height="100%" />
                         </Modal>
                         {
                             this.props.location.userDetail ? 
@@ -297,8 +297,9 @@ class Center extends Component {
         return likeNum;
     }
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
         if (this.props.location.userDetail) {
-            console.log('center userDetail', this.props.location.userDetail);
+            // console.log('center userDetail', this.props.location.userDetail);
             let userDetail = this.props.location.userDetail;
             if (!userDetail.concernList) {
                 userDetail.concernList = []

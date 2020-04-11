@@ -6,6 +6,8 @@ export const saveRecipesDraft = (recipesList) => http.post('/recipes/saveRecipes
 
 export const getRecipes = () => http.get('/recipes/getRecipes');
 
+export const getRecipesById = (id) => http.post('/recipes/getRecipesById', id);
+
 export const addCollectRecipes = (data) => http.post('/recipes/addCollectRecipes', data);
 
 export const getRecipesDetail = (id) => http.post('/recipes/getRecipesDetail', id);

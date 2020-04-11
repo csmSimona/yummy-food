@@ -67,9 +67,14 @@ export const SearchRecipesListWrapper = styled.div`{
     .recipesListContent {
         display: flex;
         margin-top: 1rem;
-        height: 7rem;
-        .album {
+        background: #FAFAF8;
+        height: 100%;
+        border-radius: .25rem;
+        video, img {
+            border-radius: .25rem 0 0 .25rem;
             width: 40%;
+            height: 40%;
+            max-height: 10rem;
         }
         .avatar {
             display: inline-block;
@@ -124,5 +129,57 @@ export const BlankWrapper = styled.div`{
     }
     .create {
         color: ${themeColor}
+    }
+}`;
+
+export const Ingredient = styled.div`{
+    display: flex;
+    margin: 1rem;
+    background: #FAFAF8;
+    height: 100%;
+    border-radius: .25rem;
+    img {
+        border-radius: .25rem 0 0 .25rem;
+        width: 30%;
+        height: 30%;
+    }
+    .desc {
+        margin: .5rem;
+        line-height: 1.5rem;
+        .name {
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 2rem;
+        }
+        .introduce {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+    }
+}`;
+
+export const IngredientDetailWrapper = styled.div`{
+    white-space: pre-wrap;
+    p {
+        line-height: 1.5rem;
+    }
+    .content {
+        margin: 1rem;
+        .name {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .desc {
+            margin: 1rem 0;
+            line-height: 1.5rem;
+        }
+        .title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
     }
 }`;

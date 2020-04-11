@@ -6,7 +6,6 @@ import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, Ma
 import { connect } from 'react-redux';
 import { createRecipes, saveRecipesDraft, getRecipesDetail, deleteRecipes, updateRecipes, deleteRecipesDraft } from '@/api/recipesApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
-import { uploadVideo } from '@/api/recipesApi';
 import { startLoading, finishLoading } from '@/utils/loading';
 
 // import { Player, ControlBar, ReplayControl,

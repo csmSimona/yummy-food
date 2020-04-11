@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Toast, ActivityIndicator } from 'antd-mobile';
+import { Toast, ActivityIndicator, Tag } from 'antd-mobile';
 import { getDynamic, addLikeDynamic } from '@/api/dynamicApi';
 import { finishLoading } from '@/utils/loading';
 import getHW from '@/utils/getHW';
@@ -8,6 +8,8 @@ import { RecipesListWrapper, CollectionIcon } from '../recommendPage/style';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
 import { actionCreators } from '../../store';
 import { connect } from 'react-redux';
+import LazyLoad from 'react-lazyload';
+import { TagWrapper } from './style';
 
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
@@ -19,15 +21,35 @@ class Find extends Component {
             dynamicList: [],
             leftData:[],//左边的数据
             rightData:[],//右边的数据
-            animating: true
+            animating: true,
          }
         this.handleLikeClick = this.handleLikeClick.bind(this);
         this.getDynamicDetail = this.getDynamicDetail.bind(this);
     }
+
+    handleImageLoaded() {
+        //加载完毕
+    }
+
+    handleImageErrored() {
+        //加载失败
+        this.setState({
+            src: require('@/statics/img/title.png')
+        });
+    }
+
     render() { 
         let {leftData, rightData} = this.state;
         return ( 
             <div style={{margin: '1rem'}}>
+                <TagWrapper>
+                    <Tag selected className='tag'>早餐</Tag>
+                    <Tag selected className='tag'>中餐</Tag>
+                    <Tag selected className='tag'>晚餐</Tag>
+                    <Tag selected className='tag'>火锅</Tag>
+                    <Tag selected className='tag'>烘焙</Tag>
+                    <Tag selected className='tag'>宵夜</Tag>
+                </TagWrapper>
                 <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'300px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
                 </div>
@@ -37,11 +59,23 @@ class Find extends Component {
                             leftData && leftData.map((item, index) => {
                                 return (
                                     <div key={index} className='contentBox'>
-                                        <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                        <LazyLoad offset={100} height={80}>
+                                            <img 
+                                                src={require('@/' + item.imgs[0].url)} 
+                                                width="100%" 
+                                                height="100%"  
+                                                key={index} 
+                                                onClick={this.getDynamicDetail(item._id)} 
+                                                alt=""
+                                                // onError={(img) => {img.onerror = null; img.src=require('@/statics/img/title.png')}}
+                                            />
+                                        </LazyLoad>
                                         <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                         <div className='otherInfo'>
                                             <div className='user'>
-                                                <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                <LazyLoad offset={100}>
+                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                </LazyLoad>
                                                 <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                             </div>
                                             <div className='collection'>
@@ -66,11 +100,23 @@ class Find extends Component {
                         rightData && rightData.map((item, index) => {
                             return (
                                 <div key={index} className='contentBox'>
-                                    <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                    <LazyLoad offset={100} height={80}>
+                                        <img 
+                                            src={require('@/' + item.imgs[0].url)} 
+                                            width="100%" 
+                                            height="100%"  
+                                            key={index} 
+                                            onClick={this.getDynamicDetail(item._id)} 
+                                            alt=""
+                                            // onError={(img) => {img.onerror = null; img.src=require('@/statics/img/title.png')}}
+                                        />
+                                    </LazyLoad>
                                     <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                     <div className='otherInfo'>
                                         <div className='user'>
-                                            <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                            <LazyLoad offset={100}>
+                                                <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                            </LazyLoad>
                                             <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                         </div>
                                         <div className='collection'>
@@ -102,24 +148,29 @@ class Find extends Component {
         })
     }
 
-    getDynamicDetail = (recipeId) => () => {
+    getDynamicDetail = (dynamicId) => () => {
         this.props.history.push({
-            pathname: '/dynamicDetail/' + recipeId
+            pathname: '/dynamicDetail/' + dynamicId
         })
     }
     
     handleLikeClick = (dynamicId, index, choose, like) => () => {
-        var userInfo = this.props.userList;
-        var newLikeNumber, newLikeList;
+        let userInfo = this.props.userList;
+        let newLikeNumber, newLikeList;
+        let type;
+        let writerId;
         
         if (choose === 'left') {
+            writerId = this.state.leftData[index].userId;
             newLikeNumber = this.state.leftData[index].likeNumber;
             newLikeList = this.state.leftData[index].likeList;
         } else {
+            writerId = this.state.rightData[index].userId;
             newLikeNumber = this.state.rightData[index].likeNumber;
             newLikeList = this.state.rightData[index].likeList;
         }
         if (like === UNLIKE) {
+            type = 'add';
             newLikeNumber++;
             newLikeList.push(userInfo._id);
             if (userInfo.likeDynamic) {
@@ -128,6 +179,7 @@ class Find extends Component {
                 userInfo.likeDynamic = [dynamicId];
             }
         } else {
+            type = 'delete';
             newLikeNumber--;
             newLikeList.forEach((item, i) => {
                 if (item === userInfo._id) {
@@ -150,7 +202,9 @@ class Find extends Component {
             dynamicId: dynamicId,
             likeDynamic: userInfo.likeDynamic,
             likeNumber: newLikeNumber,
-            likeList: newLikeList
+            likeList: newLikeList,
+            type,
+            writerId
         }).then(res => {
             var newData = []
             if (choose === 'left') {

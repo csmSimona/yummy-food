@@ -3,6 +3,8 @@ var router = express.Router();
 var Classification = require('../models/Classification');
 var Recipes = require('../models/Recipes');
 var Situation = require('../models/Situation');
+var Recommend = require('../models/Recommend');
+var Ingredient = require('../models/Ingredient');
 
 router.get('/getClassification', function(req, res, next) {
     Classification.find({}, function (err, data) {
@@ -156,6 +158,29 @@ router.get('/getSituationList', function(req, res, next) {
         }
         return res.json({ code: 200, data: data });
     });
+});
+
+router.post('/getSituationDetail', function(req, res, next) {
+    Recommend.findOne({name: req.body.name}, function (err, data) {
+        if (err) {
+            return res.status(500).send('查询失败');
+        } else {
+            console.log('SituationDetail data', data)
+            return res.json({ code: 200, data: data });
+        }
+    })
+});
+
+router.post('/getIngredient', function(req, res, next) {
+    console.log('name', req.body.name)
+    Ingredient.findOne({name: req.body.name}, function (err, data) {
+        if (err) {
+            return res.status(500).send('查询失败');
+        } else {
+            console.log('getIngredient data', data)
+            return res.json({ code: 200, data: data });
+        }
+    })
 });
 
 module.exports = router;

@@ -4,6 +4,7 @@ var Recipes = require('../models/Recipes');
 var RecipesDraft = require('../models/RecipesDraft');
 var User = require('../models/User');
 var pWriteFile = require('../utils/pWriteFile');
+var CollectInform = require('../models/CollectInform');
 
 // 视频存本地
 router.post('/uploadVideo', function(req, res, next) {
@@ -140,27 +141,44 @@ router.get('/getRecipes', function(req, res, next) {
     });
 });
 
+router.post('/getRecipesById', function(req, res, next) {
+    Recipes.findOne({_id: req.body.id}, {
+        _id: 1,
+        album: 1,
+        recipeName: 1
+    }, function (err, data) {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('获取菜谱信息失败');
+        }
+        return res.json({ code: 200, data: data });
+    });
+});
+
 router.post('/addCollectRecipes', function(req, res, next) {
+    var writerId = req.body.writerId;
     var userId = req.body.userId;
     var recipeId = req.body.recipeId;
     var collectRecipes = req.body.collectRecipes;
     var collectionList = req.body.collectionList;
     var collectionNumber = req.body.collectionNumber;
+    var type = req.body.type;
 
-    User.updateOne({_id: userId}, {$set: {collectRecipes: collectRecipes}}, function (err, data) {
-        if (err) {
-          console.log('updateUser err', err)
+    User.updateOne({_id: userId}, {$set: {collectRecipes: collectRecipes}})
+    .then(() => {
+        return Recipes.updateOne({_id: recipeId}, {$set: {collectionList: collectionList, collectionNumber: collectionNumber}})
+    }).then(() => {
+        if (type === 'add') {
+            let createDate = new Date();
+            new CollectInform({writerId, userId, createDate, recipeId}).save(function (err, data) {
+              if (err) {
+                  console.log(err);
+                  return res.status(500).send('Server error.');
+              }
+            });
         }
-        console.log('updateUser data', data)
+        return res.json({ code: 200 });
     })
-
-    Recipes.updateOne({_id: recipeId}, {$set: {collectionList: collectionList, collectionNumber: collectionNumber}}, function (err, data) {
-        if (err) {
-          console.log('updateRecipes err', err)
-        }
-        console.log('updateRecipes data', data)
-    })
-    return res.json({ code: 200 });
 });
 
 router.post('/getRecipesDetail', function(req, res, next) {

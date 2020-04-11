@@ -26,6 +26,20 @@ export const GrobalStyle = createGlobalStyle`
         line-height:1;
     }
 
+    img {
+        position: relative;
+    }
+    
+    img::after {
+        content: "";
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: url(require('@/statics/img/title.png')) no-repeat center;
+    }
+
     :focus {
         outline: 1;
     }

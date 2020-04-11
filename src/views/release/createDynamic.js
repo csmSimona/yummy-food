@@ -247,6 +247,7 @@ class CreateDynamic extends Component {
                     console.log('res.data', res.data);
                     Toast.success('更新成功！', 1)
                     this.props.history.replace('/tab/center/myDynamic');
+                    window.location.reload();
                 }
             }).catch((err) => {
                 console.log('error', err);

@@ -4,9 +4,11 @@ import { getUserInfo, addConcernUser } from '@/api/userApi';
 import formatDate from '@/utils/formatDate';
 import { Toast, Button, InputItem, Carousel, Modal } from 'antd-mobile';
 import Header from '@/components/header';
-import { RecipesDetailWrapper, Border } from '../recommendPage/style';
+import { RecipesDetailWrapper, Border, Input, SelectContent } from '../recommendPage/style';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
+import { sendComment, getDynamicComment, deleteComment, addCommentInform } from '@/api/informApi';
+import formatTime from '@/utils/formatTime';
 
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
@@ -23,6 +25,8 @@ function closest(el, selector) {
 }
 
 class DynamicDetail extends Component {
+    longPressInterval = 600;     //longPressInterval长按的毫秒数
+    longPressItemTimeOut;      //setTimeOut的返回值    为了清掉定时器
     constructor(props) {
         super(props);
         this.state = {
@@ -31,14 +35,23 @@ class DynamicDetail extends Component {
             dynamicDetail: {},
             writer: {},
             imgHeight: 176,
+            commentInput: '',
+            dynamicCommentList: [],
+            modal: false,
+            select: null,
+            placeholder: "评论",
+            send: false,
+            commentNumber: 0
         }
         this.handleLikeClick = this.handleLikeClick.bind(this);
         this.handleConcernClick = this.handleConcernClick.bind(this);
         this.getRecipesDetail = this.getRecipesDetail.bind(this);
+        this.deleteComment = this.deleteComment.bind(this);
     }
 
     render() {
-        let {dynamicDetail, writer} = this.state;
+        let {dynamicDetail, writer, dynamicCommentList} = this.state;
+        let userList = this.props.userList;
         const header = {
             left: "<span class='iconfont back'>&#xe61f;</span>",
             title: dynamicDetail.dynamicName,
@@ -85,7 +98,6 @@ class DynamicDetail extends Component {
                 >
                     <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
                 </Modal>
-                {/* <img className='album' src={dynamicDetail.imgs ? require('@/' + dynamicDetail.imgs[0].url) : require('@/statics/img/title.png')} alt=""/> */}
                 <p className='recipeName'>{dynamicDetail.dynamicName}</p>
                 <p className='createDate'>
                     {formatDate(dynamicDetail.createDate)}
@@ -94,7 +106,7 @@ class DynamicDetail extends Component {
                 <div className='writer'>
                     <img 
                         className='avatar' 
-                        src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/title.png')} 
+                        src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/blank.jpeg')} 
                         alt=""
                         onClick={() => this.gotoUserDetail(writer)}/>
                     <div className='writerName' onClick={() => this.gotoUserDetail(writer)}>
@@ -118,6 +130,86 @@ class DynamicDetail extends Component {
                 </div>
                 <div className='cookSteps'>
                     <p className='subject'>评论</p>
+                    {
+                        dynamicCommentList && dynamicCommentList.map((item, index) => {
+                            return (
+                                <div key={index}>
+                                    <div className='comment'>
+                                        <img 
+                                            className='avatar' 
+                                            src={require('@/' + item.avatar)} 
+                                            onClick={() => this.gotoUserDetail(item.writer)}
+                                        />
+                                        <div 
+                                            className='user' 
+                                            onTouchStart={() => this.onItemTouchStart(index)} 
+                                            onTouchEnd={this.onItemTouchEnd}
+                                        >
+                                            <div className='name'>
+                                                {item.userName}
+                                                {item.userId === writer._id ? '（作者）' : ''} 
+                                            </div>
+                                            <p>{item.content}</p>
+                                            <div className='name'>{formatTime(item.createDate)}</div>
+                                        </div>
+                                        {/* <span className='iconfont' style={{fontSize: '1.25rem', alignItem: 'center'}}>&#xe63a;</span> */}
+                                    </div>
+                                    {
+                                        item.reply ? 
+                                        item.reply.map((val, i) => {
+                                            return (
+                                                <div style={{display: 'flex'}} key={i}>
+                                                    <div style={{width: '3rem'}}></div>
+                                                    <div className='reply' key={i}>
+                                                        <span className='name' onClick={() => this.gotoUserDetail(item.writer)}>
+                                                            {val.userName}
+                                                            {val.userId === writer._id ? '（作者）' : ''}：
+                                                        </span>
+                                                        <span>{val.content}</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }) : ''
+                                    }
+                                </div>
+                            )
+                        })
+                    }
+                    <div className='commentInput'>
+                        <img className='avatar' src={require('@/' + userList.img[0].url)} alt=""/>
+                        <Input 
+                            ref={ref => this.searchInput = ref} 
+                            placeholder={this.state.placeholder} 
+                            value={this.state.commentInput}  
+                            onChange={(value) => {
+                                this.setState({
+                                    commentInput: value
+                                })
+                            }} 
+                            onFocus={
+                                () => {
+                                    this.setState({
+                                        send: true
+                                    })
+                                }
+                            }
+                            onBlur={
+                                () => {
+                                    this.setState({
+                                        placeholder: '评论',
+                                        select: null,
+                                        send: false
+                                    })
+                                }
+                            }
+                            clear
+                        />
+                        {/* <div 
+                        className='send' 
+                        style={{display: this.state.send ? 'block' : 'none'}}
+                        onClick={() => {this.searchInput.focus();this.sendComment();}}
+                          >发送</div> */}
+                    </div>
                 </div>
                 <Border/>
             </div>
@@ -143,10 +235,86 @@ class DynamicDetail extends Component {
                         }}
                     />{dynamicDetail.likeNumber === 0 ? '赞' : dynamicDetail.likeNumber}
                 </div>
-                <div className='fixedIcon'><span className='iconfont'>&#xe648;</span>评论</div>
+                <div className='fixedIcon' onClick={() => {
+                    this.searchInput.focus();
+                    this.setState({
+                        send: true
+                    })
+                }}>
+                    <span className='iconfont'>&#xe648;</span>{this.state.commentNumber === 0 ? '评论' : this.state.commentNumber}
+                </div>
             </div>
+            <Modal
+                visible={this.state.modal}
+                transparent
+                onClose={this.onClose('modal')}
+                title="更多"
+                footer={[{ text: '取消', onPress: () => { this.onClose('modal')(); } }]}
+                wrapProps={{ onTouchStart: this.onWrapTouchStart }}
+            >
+                <div>
+                    <SelectContent>举报</SelectContent>
+                    <SelectContent onClick={this.deleteComment}>删除</SelectContent>
+                </div>
+            </Modal>
           </RecipesDetailWrapper>
         )
+    }
+
+    
+    deleteComment() {
+        let commentId = this.state.dynamicCommentList[this.state.select]._id;
+        deleteComment({commentId}).then(res => {
+            if (res.data.code === 200) {
+                Toast.success('删除成功', 1);
+                this.setState({
+                    modal: false
+                })
+                this.getDynamicComment();
+            }
+        }).catch(err => {
+            console.log('err', err)
+        })
+    }
+    
+    onItemTouchStart = index => {
+        this.startTime = +new Date();
+        this.setState({
+            select: index,
+        });
+        this.longPressItemTimeOut = setTimeout(
+          () => this.onLongPressItem(index),
+          this.longPressInterval
+        );
+    };
+
+    onLongPressItem(index) {
+        this.setState({
+            modal: true
+        });
+    }
+
+    onItemTouchEnd = (e) => {
+        this.endTime = +new Date();
+        const interval = this.endTime - this.startTime;   //长按时长
+        
+        if (interval < this.longPressInterval) {      //按键时长<600,默认是点击事件
+          // TODO click操作  点击进入对应的Item
+          clearTimeout(this.longPressItemTimeOut);
+          this.replyComment(e);
+        } else {        //按键时长>600   长按
+          // TODO 长按操作
+        }
+    };
+
+    replyComment(e) {
+        e.preventDefault();
+        this.searchInput.focus();
+        let comment = this.state.dynamicCommentList[this.state.select];
+        this.setState({
+          placeholder: `回复${comment.userName}`,
+          send: true
+        })
     }
 
     gotoUserDetail(userData) {
@@ -188,9 +356,11 @@ class DynamicDetail extends Component {
     }
 
     handleConcernClick() {
-        var writer = this.state.writer;
-        var user = this.props.userList;
+        let writer = this.state.writer;
+        let user = this.props.userList;
+        let type;
         if (writer.concern) {
+            type = 'delete';
             writer.fanList.forEach((item, i) => {
                 if (item === user._id) {
                     writer.fanList.splice(i, 1);
@@ -206,6 +376,7 @@ class DynamicDetail extends Component {
                 }
             })
         } else {
+            type = 'add';
             writer.fanList.push(user._id);
             if (user.concernList) {
                 user.concernList.push(writer._id);
@@ -218,7 +389,8 @@ class DynamicDetail extends Component {
             writerId: writer._id, 
             userId: user._id,
             concernList: user.concernList,
-            fanList: writer.fanList
+            fanList: writer.fanList,
+            type
         }).then(res => {
             if (res.data.code === 200) {
                 this.props.saveUserList(user);
@@ -235,11 +407,14 @@ class DynamicDetail extends Component {
     handleLikeClick(dynamicId, like) {
         console.log('userList', this.props.userList);
 
-        var user = this.props.userList;
-        var newLikeNumber = this.state.dynamicDetail.likeNumber;
-        var newLikeList = this.state.dynamicDetail.likeList;
+        let user = this.props.userList;
+        let newLikeNumber = this.state.dynamicDetail.likeNumber;
+        let newLikeList = this.state.dynamicDetail.likeList;
+        let type;
+        let writerId = this.state.dynamicDetail.userId;
 
         if (like === UNLIKE) {
+            type = 'add';
             newLikeNumber++;
             newLikeList.push(user._id);
             if (user.likeDynamic) {
@@ -248,6 +423,7 @@ class DynamicDetail extends Component {
                 user.likeDynamic = [dynamicId];
             }
         } else {
+            type = 'delete';
             newLikeNumber--;
             newLikeList.forEach((item, i) => {
                 if (item === user._id) {
@@ -268,7 +444,9 @@ class DynamicDetail extends Component {
             dynamicId: dynamicId,
             likeDynamic: user.likeDynamic,
             likeNumber: newLikeNumber,
-            likeList: newLikeList
+            likeList: newLikeList,
+            type,
+            writerId
         }).then(() => {
             var newDynamicDetail = this.state.dynamicDetail;
             newDynamicDetail.likeNumber = newLikeNumber;
@@ -351,8 +529,116 @@ class DynamicDetail extends Component {
         })
     }
 
+    sendComment() {
+        if (this.state.commentInput) {
+            let placeholder = this.state.placeholder;
+            let comment = {
+                userId: this.props.userList._id,
+                dynamicId: this.state.dynamicDetail._id,
+                content: this.state.commentInput,
+                writerId: this.state.writer._id
+            }
+
+            if (placeholder.substring(0, 2) === '回复') {
+                comment.replyId = this.state.dynamicCommentList[this.state.select]._id
+            }
+            sendComment({comment}).then(res => {
+                if (res.data.code === 200) {
+                    this.setState({
+                        commentInput: ''
+                    })
+                    // this.getDynamicComment();
+                }
+                // 如果没有replyId，就发消息给该菜谱的作者 ，如果有就发给这条评论的作者
+                let commentInform = {
+                    userId: comment.replyId ? this.state.dynamicCommentList[this.state.select].userId : comment.writerId,
+                    writerId: this.props.userList._id,
+                    commentId: res.data.data._id
+                }
+                return addCommentInform({commentInform})
+            }).then(res => {
+                if (res.data.code === 200) {
+                    this.getDynamicComment();
+                }
+            }).catch(err => {
+                console.log('err', err);
+                Toast.fail('未知错误', 1);
+            })
+        } else {
+            Toast.info('评论内容不能为空', 1)
+        }
+
+    }
+
+    getDynamicComment() {
+        getDynamicComment({dynamicId: this.props.match.params.id}).then(res => {
+            if (res.data.code === 200) {
+                let dynamicComment = res.data.data;
+                let dynamicCommentList = [];
+                // console.log('getDynamicComment', dynamicComment);
+
+                let actionArr = [];
+                if (dynamicComment.length !== 0) {
+                    dynamicComment.forEach(item => {
+                        actionArr.push(getUserInfo({userId: item.userId}));
+                    })
+                }
+                Promise.all(actionArr).then(function (res) {
+                    for (var i = 0; i < res.length; i++) {
+                        var userData = res[i].data.data[0];
+                        dynamicComment[i].writer = userData;
+                        dynamicComment[i].userName = userData.name;
+                        dynamicComment[i].avatar = userData.img[0].url;
+                    }
+                }).then(() => {
+                    dynamicComment.forEach(item => {
+                        // 回复 与 回复楼中楼
+                        if (item.replyId) {
+                            let index = dynamicCommentList.findIndex((val) => {
+                                return val._id === item.replyId
+                            })
+                            if (dynamicCommentList[index].reply) {
+                                dynamicCommentList[index].reply.push(item);
+                            } else {
+                                dynamicCommentList[index].reply = [item];
+                            }
+                        } else {
+                            dynamicCommentList.push(item);
+                        }
+                    })
+                    this.setState({
+                        dynamicCommentList: dynamicCommentList,
+                        commentNumber: dynamicComment.length ? dynamicComment.length : 0
+                    })
+                    // console.log('update dynamicCommentList', dynamicCommentList)
+                }).catch(function (err) {
+                    console.log('err'. err)
+                })
+            }
+        })
+    }
+
     componentDidMount() {
-      this.getDynamicDetail();
+        this.getDynamicDetail();
+        this.getDynamicComment();
+
+        document.body.addEventListener('keyup', (e) => {
+            if (window.event) {
+                e = window.event
+            }
+            let code = e.charCode || e.keyCode;
+            if (code === 13) {
+                if (this.state.commentInput) {
+                    this.sendComment();
+                } else {
+                    return
+                }
+            }		
+        })
+    }
+
+    componentWillMount() {
+        document.body.removeEventListener('keyup', () => {});
     }
 }
  

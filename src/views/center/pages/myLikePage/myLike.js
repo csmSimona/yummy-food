@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { actionCreators } from '../../store';
 import { actionCreators as tabActionCreators} from '@/views/tabBar/store';
 import { Toast, ActivityIndicator } from 'antd-mobile';
-import { getLikeDynamicList, addLikeDynamic, getDynamicDetail } from '@/api/dynamicApi';
+import { getLikeDynamicList, addLikeDynamic } from '@/api/dynamicApi';
 import { TitleWrapper, RecipesListWrapper, CollectionIcon } from '@/views/home/pages/recommendPage/style';
 import { finishLoading } from '@/utils/loading';
 import getHW from '@/utils/getHW';
 import { getUserInfo } from '@/api/userApi';
+import LazyLoad from 'react-lazyload';
 
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
@@ -34,11 +35,15 @@ class MyLike extends Component {
                     leftData && leftData.map((item, index) => {
                         return (
                             <div key={index} className='contentBox'>
-                                <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                <LazyLoad offset={100}>
+                                    <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                </LazyLoad>
                                 <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                 <div className='otherInfo'>
                                     <div className='user'>
-                                        <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                        <LazyLoad offset={100}>
+                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                        </LazyLoad>
                                         <span className='userName'>{item.userName}</span>
                                     </div>
                                     <div className='collection'>
@@ -63,11 +68,15 @@ class MyLike extends Component {
                     rightData && rightData.map((item, index) => {
                         return (
                             <div key={index} className='contentBox'>
-                                <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                <LazyLoad offset={100}>
+                                    <img src={require('@/' + item.imgs[0].url)} width="100%" height="100%"  key={index} onClick={this.getDynamicDetail(item._id)} alt=""/>
+                                </LazyLoad>
                                 <div className='title' onClick={this.getDynamicDetail(item._id)} >{item.dynamicName}</div>
                                 <div className='otherInfo'>
                                     <div className='user'>
-                                        <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                        <LazyLoad offset={100}>
+                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                        </LazyLoad>
                                         <span className='userName'>{item.userName}</span>
                                     </div>
                                     <div className='collection'>
@@ -116,17 +125,22 @@ class MyLike extends Component {
     }
     
     handleLikeClick = (dynamicId, index, choose, like) => () => {
-        var userInfo = this.props.userList;
-        var newLikeNumber, newLikeList;
+        let userInfo = this.props.userList;
+        let newLikeNumber, newLikeList;
+        let type;
+        let writerId;
         
         if (choose === 'left') {
+            writerId = this.state.leftData[index].userId;
             newLikeNumber = this.state.leftData[index].likeNumber;
             newLikeList = this.state.leftData[index].likeList;
         } else {
+            writerId = this.state.rightData[index].userId;
             newLikeNumber = this.state.rightData[index].likeNumber;
             newLikeList = this.state.rightData[index].likeList;
         }
         if (like === UNLIKE) {
+            type = 'add';
             newLikeNumber++;
             newLikeList.push(userInfo._id);
             if (userInfo.likeDynamic) {
@@ -135,6 +149,7 @@ class MyLike extends Component {
                 userInfo.likeDynamic = [dynamicId];
             }
         } else {
+            type = 'delete';
             newLikeNumber--;
             newLikeList.forEach((item, i) => {
                 if (item === userInfo._id) {
@@ -157,7 +172,9 @@ class MyLike extends Component {
             dynamicId: dynamicId,
             likeDynamic: userInfo.likeDynamic,
             likeNumber: newLikeNumber,
-            likeList: newLikeList
+            likeList: newLikeList,
+            type,
+            writerId
         }).then(res => {
             var newData = []
             if (choose === 'left') {

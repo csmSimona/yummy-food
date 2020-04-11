@@ -39,10 +39,12 @@ var RecipesSchema = new Schema({
     type: String
   },
   collectionNumber:{
-    type: Number
+    type: Number,
+    default: 0
   },
   followNumber:{
-    type: Number
+    type: Number,
+    default: 0
   },
   collectionList:{
     type: Array

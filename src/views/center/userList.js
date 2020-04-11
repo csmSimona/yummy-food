@@ -54,12 +54,14 @@ class UserList extends Component {
     }
 
     changeConcern = (concern, index) => () => {
-        var type = this.props.location.type;
-        var user = this.props.userList;
-        var newUserList = this.state.userList;
-        var concernInfo = newUserList[index];
+        let concernType = this.props.location.type;
+        let user = this.props.userList;
+        let newUserList = this.state.userList;
+        let concernInfo = newUserList[index];
+        let type;
 
         if (concern === '互相关注' || concern === '已关注') {
+            type = 'delete';
             concernInfo.fanList.forEach((item, i) => {
                 if (item === user._id) {
                     concernInfo.fanList.splice(i, 1);
@@ -75,6 +77,7 @@ class UserList extends Component {
                 }
             })
         } else {
+            type = 'add';
             concernInfo.fanList.push(user._id);
             user.concernList.push(concernInfo._id);
         }
@@ -83,15 +86,16 @@ class UserList extends Component {
             writerId: concern._id, 
             userId: user._id,
             concernList: user.concernList,
-            fanList: concernInfo.fanList
+            fanList: concernInfo.fanList,
+            type
         }).then(res => {
             if (res.data.code === 200) {
                 this.props.saveUserList(user);
                 if (concern === '互相关注' || concern === '已关注') {
                     concernInfo.concern = '关注';
-                } else if (concern === '关注' && type === 'concernList') {
+                } else if (concern === '关注' && concernType === 'concernList') {
                     concernInfo.concern = '已关注';
-                } else if (concern === '关注' && type === 'fanList') {
+                } else if (concern === '关注' && concernType === 'fanList') {
                     concernInfo.concern = this.props.location.userDetail ? '已关注' : '互相关注';
                 }
                 newUserList[index] = concernInfo;

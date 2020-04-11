@@ -8,7 +8,7 @@ var bodyParser = require('body-parser')
 
 var mongo = require('./utils/db');
 
-var indexRouter = require('./routes/index');
+var informRouter = require('./routes/informAPI');
 var userRouter = require('./routes/userAPI');
 var recipesRouter = require('./routes/recipesAPI');
 var dynamicRouter = require('./routes/dynamicAPI');
@@ -36,7 +36,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-app.use('/', indexRouter);
+app.use('/inform', informRouter);
 app.use('/user', userRouter);
 app.use('/recipes', recipesRouter);
 app.use('/dynamic', dynamicRouter);

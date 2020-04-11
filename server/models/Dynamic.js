@@ -29,7 +29,8 @@ var DynamicSchema = new Schema({
     type: String
   },
   likeNumber: {
-    type: Number
+    type: Number,
+    default: 0
   },
   likeList: {
     type: Array

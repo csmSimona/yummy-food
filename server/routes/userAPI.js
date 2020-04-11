@@ -5,6 +5,7 @@ var SmsRequest = require('../utils/smsRequest');
 const request = require('request');
 const jwt = require('jsonwebtoken');
 var pWriteFile = require('../utils/pWriteFile');
+var FanInform = require('../models/FanInform');
 
 // 网易云信
 const appKey = "1463872763e2ebb7e7040d5ba4cd1544";
@@ -238,20 +239,24 @@ router.post('/addConcernUser', function(req, res, next) {
   var userId = req.body.userId;
   var concernList = req.body.concernList;
   var fanList = req.body.fanList;
+  var type = req.body.type;
 
-  User.updateOne({_id: writerId}, {$set: {fanList: fanList}}, function (err, data) {
-    if (err) {
-      return res.status(500).send('关注失败');
-    }
-    console.log('data', data);
+  User.updateOne({_id: writerId}, {$set: {fanList: fanList}})
+  .then(() => {
+    return User.updateOne({_id: userId}, {$set: {concernList: concernList}})
   })
-
-  User.updateOne({_id: userId}, {$set: {concernList: concernList}}, function (err) {
-    if (err) {
-      return res.status(500).send('关注失败');
+  .then(() => {
+    if (type === 'add') {
+      let createDate = new Date();
+      new FanInform({writerId, userId, createDate}).save(function (err, data) {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Server error.');
+        }
+      });
     }
+    return res.json({ code: 200 });
   })
-  return res.json({ code: 200 });
 });
 
 // 更新用户个人信息

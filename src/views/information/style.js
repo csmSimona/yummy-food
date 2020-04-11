@@ -57,22 +57,19 @@ export const TodayInformationWrapper = styled.div`{
         overflow: hidden;
         overflow-x: auto;
         white-space: nowrap;
-        // display: flex;
-        // flex-direction: row;
         .recipes {
             margin: 0 .5rem;
             display: inline-block;
         }
         p {
-            margin: 1rem;
+            margin: .5rem;
             font-weight: bold;
             font-size: .75rem;
             text-align: center;
         }
         img {
             height: 7rem;
-            // width: 100%;
-            // height: 100%;
+            border-radius: .5rem;
         }
         .season {
             height: 10rem;
@@ -91,8 +88,70 @@ export const BlankWrapper = styled.div`{
 }`;
 
 export const More = styled.div`{
-    padding-bottom: 1rem;
+    padding: 1rem;
     text-align: center;
     color: ${hintColor};
     font-size: .75rem;
+}`;
+
+export const SituationDetailWrapper = styled.div`{
+    margin: 1rem;
+    p {
+        line-height: 1.5rem;
+        letter-spacing: .1rem;
+        margin: 1rem 0;
+        white-space: pre-wrap;
+    }
+    span {
+        font-weight: bold;
+    }
+    .ingredient {
+        height: 100%;
+        padding: 1rem .5rem;
+        .am-tag-active {
+            margin: .25rem;
+            font-size: 1rem;
+        }
+        .am-tag-normal {
+            margin: .25rem;
+            color: #000;
+            font-size: 1rem;
+        }
+    }
+}`;
+
+export const RecipesListWrapper = styled.div`{
+    display: flex;
+    img {
+        border-radius: .3125rem;
+    }
+    .left {
+        width: 49%;
+        margin: 1rem 1rem 1rem 0;
+    }
+    .right {
+        width: 49%;
+        margin: 1rem 0 1rem 0;
+    }
+    .contentBox {
+        margin-bottom: 1rem;
+    }
+    .title {
+        margin: 0.5rem 0;
+        font-weight: bold;
+        text-align: center;
+    }
+}`;
+
+export const NoDataWrapper = styled.div`{
+    margin-top: 50%;
+    text-align: center;
+    font-size: 1.25rem;
+    line-height: 2rem;
+}`;
+
+
+export const BackIcon = styled.i`{
+    font-size: 1.4rem !important;
+    margin-top: 0.65rem;
 }`;

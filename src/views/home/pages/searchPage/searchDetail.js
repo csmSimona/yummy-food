@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { HeaderFix, Border, IconFont, SearchRecipesListWrapper, BlankWrapper } from './style';
+import { HeaderFix, Border, IconFont, SearchRecipesListWrapper, BlankWrapper, Ingredient } from './style';
 import { SearchBar, ActivityIndicator, Toast, Tabs } from 'antd-mobile';
-import { searchRecipes } from '@/api/searchApi';
+import { searchRecipes, getIngredient } from '@/api/searchApi';
 import { getUserInfo } from '@/api/userApi';
 import { finishLoading } from '@/utils/loading';
 
@@ -35,11 +35,13 @@ class SearchDetail extends Component {
           searchContent: this.props.location.searchInput ? this.props.location.searchInput : '',
           searchRecipesList: [],
           animating: true,
+          ingredient: {}
         }
         this.getSearchDetail = this.getSearchDetail.bind(this);
+        this.getIngredientDetail = this.getIngredientDetail.bind(this);
     }
     render() { 
-        let { searchRecipesList } = this.state;
+        let { searchRecipesList, ingredient } = this.state;
         const Blank = <BlankWrapper>
             <p>没有你想找的这道菜</p>
             <p className='create' onClick={() => {
@@ -51,20 +53,16 @@ class SearchDetail extends Component {
                 searchRecipesList && searchRecipesList.map((item, index) => {
                     return (
                         <div className='recipesListContent' key={index}>
-                            {/* <img src={require('@/' + item.album[0].url)} className='album' key={index} onClick={this.getRecipesDetail(item._id)} alt=""/> */}
-
                             { item.videoUrl ? 
                                 <video 
                                     onClick={this.getRecipesDetail(item._id)}
                                     src={item.videoUrl} 
                                     controls="controls" 
-                                    width='40%'
                                 >
                                     您的浏览器不支持 video 标签。
                                 </video> : 
                                 <img 
                                     src={require('@/' + item.album[0].url)} 
-                                    className='album'  
                                     key={index} 
                                     onClick={this.getRecipesDetail(item._id)} 
                                     alt=""/> 
@@ -86,7 +84,7 @@ class SearchDetail extends Component {
             }
         </SearchRecipesListWrapper>
         return ( 
-            <div>
+            <div style={{ overflow: 'hidden'}}>
                 <HeaderFix>
                     <IconFont 
                         className='iconfont back' 
@@ -119,9 +117,26 @@ class SearchDetail extends Component {
                 <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'600px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
                 </div>
+                {
+                    ingredient && 
+                    <Ingredient onClick={this.getIngredientDetail}>
+                        {ingredient.img && <img src={require('@/' + ingredient.img)} /> }
+                        <div className='desc'>
+                            <div className='name'>{ingredient.name}</div>
+                            <div className='introduce'>{ingredient.introduce}</div>
+                        </div>
+                    </Ingredient>
+                }
                 { this.state.searchRecipesList.length === 0 ? Blank : SearchRecipesList }
             </div>
          );
+    }
+
+    getIngredientDetail() {
+        this.props.history.replace({
+            pathname: '/ingredientDetail',
+            ingredientDetail: this.state.ingredient
+        })
     }
 
     gotoUserDetail(userData) {
@@ -152,8 +167,23 @@ class SearchDetail extends Component {
         } else {
             historySearch = [val];
         }
+        this.getIngredient();
         this.searchRecipes(0);
         localStorage.setItem('historySearch', JSON.stringify(historySearch));
+    }
+
+    getIngredient() {
+        getIngredient({name: this.state.searchContent}).then(res => {
+            if (res.data.code === 200) {
+                this.setState({
+                    ingredient: res.data.data
+                })
+            } else {
+                Toast.fail('未知错误', 1);
+            }
+        }).catch(err => {
+            console.log('err', err);
+        })
     }
 
     searchRecipes(index) {
@@ -203,7 +233,23 @@ class SearchDetail extends Component {
     }
 
     componentDidMount() {
+        this.getIngredient();
         this.searchRecipes(0);
+
+        document.body.addEventListener('keyup', (e) => {
+            if (window.event) {
+                e = window.event
+            }
+            let code = e.charCode || e.keyCode;
+            if (code === 13) {
+                this.getIngredient();
+                this.searchRecipes(0);
+            }
+        })
+    }
+
+    componentWillMount() {
+        document.body.removeEventListener('keyup', () => {})
     }
 }
  

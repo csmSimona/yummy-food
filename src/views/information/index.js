@@ -1,40 +1,38 @@
 import React, { Component } from 'react';
-import { SearchBar } from 'antd-mobile';
+import { SearchBar, Toast } from 'antd-mobile';
 import { HeaderFix, TodayInformationWrapper, IconFont, Border, BlankWrapper, More } from './style';
 import axios from 'axios';
 import getJQ from '@/utils/getJQ';
-// let situationList = require('@/utils/situation');
-import { getSituationList } from '@/api/searchApi';
+import { getSituationList, getSituationDetail } from '@/api/searchApi';
+import { getRecipesById } from '@/api/recipesApi';
+import LazyLoad from 'react-lazyload';
 
 class Information extends Component {
     constructor(props) {
         super(props);
         this.state = { 
             weatherList: {},
-            situationList: []
+            situationList: [],
+            searchContent: '',
+            recipesList: []
          }
     }
     render() { 
-        let { weatherList } = this.state;
+        let { weatherList, searchContent, recipesList } = this.state;
         return ( 
             <div>
                 <HeaderFix>
                     <SearchBar 
-                        // ref={ref => this.searchInput = ref} 
                         placeholder="搜索 吃什么 场景"
-                        // onCancel={() => {
-                        //     this.props.history.replace('/tab/home/recommend')
-                        // }}
                         cancelText=" "
-                        // value={searchContent}
-                        // onChange={(val) => {
-                        //     this.setState({
-                        //         searchContent: val
-                        //     })
-                        // }}
+                        value={searchContent}
+                        onChange={(val) => {
+                            this.setState({
+                                searchContent: val
+                            })
+                        }}
                     />
-                    {/* <div className='searchButton' onClick={this.getSearchDetail(searchContent)}>搜索</div> */}
-                    <div className='searchButton'>搜索</div>
+                    <div className='searchButton' onClick={() => {this.getSituationDetail(searchContent)}}>搜索</div>
                 </HeaderFix>
                 <Border/>
                 <TodayInformationWrapper>
@@ -51,18 +49,18 @@ class Information extends Component {
                         <span>{weatherList.brf}</span>
                     </div>
                     <div className='recommend'>
-                        <div className='recipes'>
-                            <img src={require('@/statics/images/recipes/15857106929620.png')}/>
-                            <p>菜谱名称</p>
-                        </div>
-                        <div className='recipes'>
-                            <img src={require('@/statics/images/recipes/15857106929620.png')}/>
-                            <p>菜谱名称</p>
-                        </div>
-                        <div className='recipes'>
-                            <img src={require('@/statics/images/recipes/15857106929620.png')}/>
-                            <p>菜谱名称</p>
-                        </div>
+                        {
+                            recipesList && recipesList.map((item, index) => {
+                                return (
+                                    <div className='recipes' key={index}>
+                                        <LazyLoad offset={100} height={100}>
+                                            <img src={require('@/' + item.album[0].url)} onClick={this.getRecipesDetail(item._id)}/>
+                                        </LazyLoad>
+                                        <p>{item.recipeName}</p>
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </TodayInformationWrapper>
                 {
@@ -79,8 +77,10 @@ class Information extends Component {
                                         {
                                             item.list.map((val, i) => {
                                                 return (
-                                                    <div className='recipes' key={i}>
-                                                        <img src={require('@/' + val.img)} className={item.type.length === 5 ? 'season' : ''}/>
+                                                    <div className='recipes' key={i} onClick={() => {this.getSituationDetail(val.name)}}>
+                                                        <LazyLoad offset={100} height={100}>
+                                                            <img src={require('@/' + val.img)} className={item.type.length === 5 ? 'season' : ''}/>
+                                                        </LazyLoad>
                                                         <p>{val.name}</p>
                                                     </div>
                                                 )
@@ -97,21 +97,54 @@ class Information extends Component {
         );
     }
 
+    getRecipesDetail = (recipeId) => () => {
+        this.props.history.push({
+            pathname: '/recipesDetail/' + recipeId,
+            type: 'look'
+        })
+    }
+
+    getTodayDetail(name) {
+        getSituationDetail({name}).then(res => {
+            if (res.data.code === 200) {
+                let situationDetail = res.data.data;
+                if (situationDetail) {
+                    let actionArr = [];
+                    let recipesList = [];
+                    situationDetail.recipes.forEach(item => {
+                        actionArr.push(getRecipesById({id: item}))
+                    })
+                    Promise.all(actionArr).then(function (res) {
+                        for (var i = 0; i < res.length; i++) {
+                            recipesList.push(res[i].data.data);
+                        }
+                    }).then(() => {
+                        this.setState({
+                            recipesList: recipesList
+                        })
+                    }).catch(function (err) {
+                        Toast.fail('未知错误', 1);
+                    })
+                }
+            }
+        }).catch(function (err) {
+            Toast.fail('未知错误', 1);
+        })
+    }
+
+    getSituationDetail(name) {
+        this.props.history.replace({
+            pathname: '/situationDetail',
+            name: name
+        })
+    }
+
     componentDidMount() {
-        // let newSituationList = situationList.map(item => {
-        //     item.list.map(val => {
-        //         let url = require(val.img);
-        //         val.img = url;
-        //     })
-        // })
         getSituationList().then(res => {
-            console.log('res',res.data.data)
-            
-        this.setState({
-            situationList: res.data.data
+            this.setState({
+                situationList: res.data.data
+            })
         })
-        })
-        // console.log('situation', newSituationList);
 
         var BMap = window.BMap; //取出window中的BMap对象
         var myCity = new BMap.LocalCity();
@@ -120,7 +153,6 @@ class Information extends Component {
         myCity.get(function (result) {
             if (result.name) {
                 /*通过当前位置城市信息获取天气*/
-                // axios.get('https://free-api.heweather.com/v5/weather?key=19713447578c4afe8c12a351d46ea922', {
                 axios.get('https://free-api.heweather.net/s6/weather?', {
                     params: {
                         location: result.name,
@@ -142,6 +174,7 @@ class Information extends Component {
                     that.setState({
                         weatherList: weatherList
                     })
+                    that.getTodayDetail(solarTerm)
                     // console.log(weatherInfo);
                 });
             }

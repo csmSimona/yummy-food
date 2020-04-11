@@ -43,7 +43,7 @@ export const HomeWrapper = styled.div`{
 }`;
 
 export const PageWrapper = styled.div`{
-    margin-top: 6rem;
+    margin-top: 7rem;
     width: 100%;
 }`;
 
