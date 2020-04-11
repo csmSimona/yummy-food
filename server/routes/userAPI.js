@@ -171,15 +171,63 @@ router.get('/wechat_login', function(req,res, next){
   // 第一步：用户同意授权，获取code
   // var router = 'get_wx_access_token';
   // 这是编码后的地址
-  var return_uri = encodeURIComponent('http://88841d2f.ngrok.io');  
-  var scope = 'snsapi_userinfo';
-  res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+AppID+'&redirect_uri='+return_uri+'&response_type=code&scope='+scope+'&state=STATE#wechat_redirect');
+  var return_uri = encodeURIComponent('https://08b2ee24.ngrok.io/');  
+  // https%3A%2F%2F08b2ee24.ngrok.io%2F
+  // var scope = 'snsapi_userinfo';
+  // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+AppID+'&redirect_uri='+return_uri+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect');
+  // // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf5fff2aa6e0b1af7&redirect_uri=https%3A%2F%2F08b2ee24.ngrok.io%2F&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
+  // return res.json({ code: 200});
+
+  request.get(
+    {   
+        url:'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+AppID+'&redirect_uri='+return_uri+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect',
+    },
+    function(error, response, body){
+      if (error) {
+        console.log('error', error)
+      }
+        if(response.statusCode == 200){
+            // 第三步：拉取用户信息(需scope为 snsapi_userinfo)
+            //console.log(JSON.parse(body));
+            // var data = JSON.parse(body);
+            return res.json({ code: 200, data: body});
+            // var access_token = data.access_token;
+            // var openid = data.openid;
+            // request.get(
+            //     {
+            //         url:'https://api.weixin.qq.com/sns/userinfo?access_token='+access_token+'&openid='+openid+'&lang=zh_CN',
+            //     },
+            //     function(error, response, body){
+            //         if(response.statusCode == 200){
+            //             // 第四步：根据获取的用户信息进行对应操作
+            //             var userinfo = JSON.parse(body);
+            //             console.log('获取微信信息成功！', userinfo);
+            //             return res.json({ code: 200, data: userinfo});
+            //             //其实，到这就写完了，你应该拿到微信信息以后去干该干的事情，比如对比数据库该用户有没有关联过你们的数据库，如果没有就让用户关联....等等等...
+            //             // 小测试，实际应用中，可以由此创建一个帐户
+            //             // res.send("\
+            //             //     <h1>"+userinfo.nickname+" 的个人信息</h1>\
+            //             //     <p><img src='"+userinfo.headimgurl+"' /></p>\
+            //             //     <p>"+userinfo.city+"，"+userinfo.province+"，"+userinfo.country+"</p>\
+            //             //     <p>openid: "+userinfo.openid+"</p>\
+            //             // ");
+            //         }else{
+            //             console.log('response.statusCode !== 200', response.statusCode);
+            //         }
+            //     }
+            // );
+        } else {
+            console.log(response.statusCode);
+        }
+    }
+  )
 });
 
 router.get('/get_wx_access_token', function(req, res, next){
   // 第二步：通过code换取网页授权access_token
-  // var code = req.query.code;
-  var code = '011jfSxE06PQSi2p30AE0LEMxE0jfSxM';
+  var code = req.query.code;
+  console.log('code', code)
+  // var code = '011jfSxE06PQSi2p30AE0LEMxE0jfSxM';
   request.get(
       {   
           url:'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+AppID+'&secret='+AppSecret+'&code='+code+'&grant_type=authorization_code',
@@ -199,7 +247,8 @@ router.get('/get_wx_access_token', function(req, res, next){
                       if(response.statusCode == 200){
                           // 第四步：根据获取的用户信息进行对应操作
                           var userinfo = JSON.parse(body);
-                          console.log('获取微信信息成功！');
+                          console.log('获取微信信息成功！', userinfo);
+                          return res.json({ code: 200, data: userinfo});
                           //其实，到这就写完了，你应该拿到微信信息以后去干该干的事情，比如对比数据库该用户有没有关联过你们的数据库，如果没有就让用户关联....等等等...
                           // 小测试，实际应用中，可以由此创建一个帐户
                           // res.send("\
@@ -209,7 +258,7 @@ router.get('/get_wx_access_token', function(req, res, next){
                           //     <p>openid: "+userinfo.openid+"</p>\
                           // ");
                       }else{
-                          console.log(response.statusCode);
+                          console.log('response.statusCode !== 200', response.statusCode);
                       }
                   }
               );

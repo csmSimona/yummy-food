@@ -7,10 +7,6 @@ module.exports = override(
         libraryName: 'antd-mobile',
         style: true,
     }),
-    // fixBabelImports('import',{
-    //     libraryName: '@babel/plugin-proposal-decorators',
-    //     legacy: true,
-    // }),
     addLessLoader({
         javascriptEnabled: true,
         modifyVars: theme
@@ -36,8 +32,6 @@ module.exports = override(
     //         esModule: false
     //     }
     // })
-   
-       
     //   return config
     // }
    
