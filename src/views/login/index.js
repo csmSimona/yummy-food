@@ -28,6 +28,7 @@ class Login extends Component {
         <Cancel onClick={this.cancelLogin}></Cancel>
         <img src={require('@/statics/img/title.png')} style={logo} alt="头像" ></img>
         <Slogan>唯有美食与爱不可辜负</Slogan>
+        {/* <a href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf5fff2aa6e0b1af7&redirect_uri=https%3A%2F%2F08b2ee24.ngrok.io%2F&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'>直接跳转到微信提供的网页</a> */}
         <Button style={wechatLogin} onClick={this.handleWechatBtnClick}>使用微信登录</Button>
         <Button style={phoneLogin} onClick={this.handlePhoneBtnClick}>手机登录注册</Button>
       </div>
