@@ -355,7 +355,7 @@ class personInfo extends Component {
             updateUserInfo(information).then(res => {
                 if (res.data.code === 200) {
                     Toast.success('编辑成功！', 1);
-                    this.props.history.replace('/tab/center/myRecipes');
+                    this.props.history.replace('/tab/home/recommend');
                 }
             }).catch((err) => {
                 console.log('error', err);

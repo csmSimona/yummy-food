@@ -12,7 +12,7 @@ var UserSchema = new Schema({
     required: true
   },
   phone: {
-    type: Number
+    type: String
   },
   gender: {
     type: String
@@ -21,7 +21,10 @@ var UserSchema = new Schema({
     type: Array
   },
   createDate: {
-    type: Array
+    type: Date
+  },
+  birthday: {
+    type: Date
   },
   hometown: {
     type: Array
@@ -64,4 +67,4 @@ var UserSchema = new Schema({
 })
 
 // 直接导出模型构造函数
-module.exports = mongoose.model('User', UserSchema, 'user')
+module.exports = mongoose.model('user', UserSchema, 'user')
