@@ -5,8 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
 var bodyParser = require('body-parser')
-
 var mongo = require('./utils/db');
+// var proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 var informRouter = require('./routes/informAPI');
 var userRouter = require('./routes/userAPI');
@@ -42,6 +43,8 @@ app.use('/recipes', recipesRouter);
 app.use('/dynamic', dynamicRouter);
 app.use('/search', searchRouter);
 
+app.use('/api', createProxyMiddleware({target: 'https://open.weixin.qq.com/', changeOrigin: true}));
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -58,14 +61,14 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+//设置跨域访问  
+app.all('*', function(req, res, next) {  
+  res.header("Access-Control-Allow-Origin", "*");  
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");  
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
+  res.header("X-Powered-By",' 3.2.1')  
+  res.header("Content-Type", "application/json;charset=utf-8");  
+  next();  
+});  
 
-// //设置跨域访问  
-// app.all('*', function(req, res, next) {  
-//   res.header("Access-Control-Allow-Origin", "*");  
-//   res.header("Access-Control-Allow-Headers", "X-Requested-With");  
-//   res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
-//   res.header("X-Powered-By",' 3.2.1')  
-//   res.header("Content-Type", "application/json;charset=utf-8");  
-//   next();  
-// });  
 module.exports = app;

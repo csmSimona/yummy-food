@@ -77,7 +77,7 @@ class Center extends Component {
                     <div className='editWrapper'>
                         <img 
                             className='avatar' 
-                            src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} 
+                            src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} 
                             alt="" 
                             onClick={() => {
                                 this.setState({
@@ -94,7 +94,7 @@ class Center extends Component {
                             footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
                             wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                         >
-                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt="查看图片" width="100%" height="100%" />
+                            <img src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt="查看图片" width="100%" height="100%" />
                         </Modal>
                         {
                             this.props.location.userDetail ? 

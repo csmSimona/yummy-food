@@ -106,7 +106,7 @@ class DynamicDetail extends Component {
                 <div className='writer'>
                     <img 
                         className='avatar' 
-                        src={writer.img ? require('@/' + writer.img[0].url) : require('@/statics/img/blank.jpeg')} 
+                        src={writer.img ? writer.img[0].url.substring(0, 4) === 'http' ? writer.img[0].url : require('@/' + writer.img[0].url) : require('@/statics/img/blank.jpeg')} 
                         alt=""
                         onClick={() => this.gotoUserDetail(writer)}/>
                     <div className='writerName' onClick={() => this.gotoUserDetail(writer)}>
@@ -137,7 +137,7 @@ class DynamicDetail extends Component {
                                     <div className='comment'>
                                         <img 
                                             className='avatar' 
-                                            src={require('@/' + item.avatar)} 
+                                            src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)} 
                                             onClick={() => this.gotoUserDetail(item.writer)}
                                         />
                                         <div 
@@ -176,7 +176,7 @@ class DynamicDetail extends Component {
                         })
                     }
                     <div className='commentInput'>
-                        <img className='avatar' src={require('@/' + userList.img[0].url)} alt=""/>
+                        <img className='avatar' src={userList.img[0].url.substring(0, 4) === ' http' ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
                         <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 

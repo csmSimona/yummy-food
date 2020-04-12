@@ -62,7 +62,7 @@ class MyRecipes extends Component {
                                 <div className='otherInfo'>
                                     <div className='user'>
                                         <LazyLoad offset={100}>
-                                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
+                                            <img src={userList.img ? userList.img[0].url.substring(0, 4) ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
                                         </LazyLoad>
                                         <span className='userName'>{userList.name}</span>
                                     </div>
@@ -115,7 +115,9 @@ class MyRecipes extends Component {
                                 <div className='otherInfo'>
                                     <div className='user'>
                                         <LazyLoad offset={100}>
-                                            <img src={userList.img ? require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} className='avatar' alt=""/>
+                                            <img 
+                                            src={userList.img ? userList.img[0].url.substring(0, 4) ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')}
+                                            className='avatar' alt=""/>
                                         </LazyLoad>
                                         <span className='userName'>{userList.name}</span>
                                     </div>

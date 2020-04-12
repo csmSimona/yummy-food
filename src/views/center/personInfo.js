@@ -3,14 +3,23 @@ import Header from '@/components/header';
 import { List, InputItem, ImagePicker, Picker, DatePicker, TextareaItem, Tag, Toast, Modal } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { TagContainer, PersonInfoWrapper } from './style';
-import { addUser, updateUserInfo} from '@/api/userApi';
+import { addUser, updateUserInfo, checkWechatUser} from '@/api/userApi';
 import { connect } from 'react-redux';
 import { actionCreators } from './store';
 import { actionCreators as tabActionCreators} from '@/views/tabBar/store';
 import CropperModal from '@/components/CropperModal/CropperModal';
 import antdDistrict from '@/utils/antdDistrict';
+import axios from 'axios';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
+const AppID = 'wxf5fff2aa6e0b1af7';
+const AppSecret = 'f396ab92d74c2ba72021d102aa67750b';
+
+function getQueryString(name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var r = window.location.search.substr(1).match(reg);
+  if (r != null) return unescape(r[2]); return null;
+}
 
 function blobToBase64(blob, callback) {
     let a = new FileReader();
@@ -70,6 +79,7 @@ class personInfo extends Component {
             files: [],
             tagSelected: true,
             selectedList: ['无'],
+            userData: {}
         };
         this.back = this.back.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
@@ -123,7 +133,7 @@ class personInfo extends Component {
                     >
                         <InputItem
                             {...getFieldProps('name', {
-                                initialValue: userList.name ? userList.name : '用户' + this.props.location.phone,
+                                initialValue: userList.name ? userList.name : this.props.location.phone ? '用户' + this.props.location.phone : this.state.userData.nickname,
                               })}
                             placeholder="请输入用户名"
                         >用户名</InputItem>
@@ -132,7 +142,7 @@ class personInfo extends Component {
                             {...getFieldProps('phone', {
                                 initialValue: this.props.location.phone,
                               })}
-                            disabled
+                            disabled={this.props.location.phone ? true : false}
                             placeholder="请输入手机号"
                         >手机号</InputItem>
                         <Picker
@@ -310,6 +320,20 @@ class personInfo extends Component {
         information.img = this.state.files;
         information.gender = information.gender ? information.gender[0] : '未知';
 
+        var phone = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if (information.phone) {
+            information.phone = information.phone.replace(/\s*/g,"");
+            if (phone.test(information.phone) === false) {
+              Toast.info('请输入正确的手机号码', 1);
+              return false;
+            }
+        }
+
+        if (JSON.stringify(this.state.userData) !== '{}') {
+            // information.access_token = this.state.userData.access_token
+            information.openid = this.state.userData.openid
+        }
+
         if (!information.name) {
             Toast.info('用户名不能为空', 1)
             return false
@@ -341,7 +365,7 @@ class personInfo extends Component {
                 console.log('addUser', res);
                 if (res.data.code === 200) {
                     localStorage.setItem('token', res.data.token);
-                    localStorage.setItem('userPhone', res.data.data.phone);
+                    // localStorage.setItem('userPhone', res.data.data.phone);
                     localStorage.setItem('userId', res.data.data._id);
                     this.props.saveUserList(res.data.data);
                 }
@@ -351,7 +375,6 @@ class personInfo extends Component {
                 console.log('error', err);
             })
         }
-        
     }
 
     handleSelectedClick(selected) {
@@ -372,18 +395,48 @@ class personInfo extends Component {
         }
     }
 
+    getWeChatInfo(code) {
+        let user;
+        axios.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid='+AppID+'&secret='+AppSecret+'&code='+code+'&grant_type=authorization_code')
+        .then((res) => {
+            user = res.data;
+            console.log(user)
+            return checkWechatUser({openid: user.openid})
+        }).then(res => {
+            if (res.data.msg === 'find it') {
+                localStorage.setItem('token', res.data.userList.token);
+                localStorage.setItem('userId', res.data.userList._id);
+                this.props.saveUserList(res.data.userList);
+                this.props.saveSelectedTab('home');
+                this.props.history.replace('/tab/home/recommend');
+            } else {
+                axios.get('https://api.weixin.qq.com/sns/userinfo?access_token='+ user.access_token +'&openid='+ user.openid +'&lang=zh_CN')
+                .then(res => {
+                    let userData = res.data;
+                    this.setState({
+                        userData: userData,
+                        files: [{
+                            url: userData.headimgurl
+                        }]
+                    })
+                    console.log('userData', userData);
+                })
+            }
+        }).catch(err => {
+            console.log('err', err);
+        });
+    }
+
     componentDidMount() {
         let userList = this.props.userList;
-        console.log('userList', userList);
-
-        if (this.props.location.phone === undefined) {
-            this.props.history.replace('/tab/home/recommend');
-            this.props.saveSelectedTab('home')
+        let code = getQueryString('code');
+        if (code) {
+            this.getWeChatInfo(code);
         }
         if (userList.size !== 0) {
             let tabSelected, url;
             userList.avoidFood && (tabSelected = userList.avoidFood[0] === '无' ? true : false);
-            userList.img && (url = require('@/' + userList.img[0].url))
+            userList.img && (url = userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url))
             this.setState({
                 files: [{url: url}],
                 selectedList: userList.avoidFood,

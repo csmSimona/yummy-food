@@ -52,6 +52,12 @@ var UserSchema = new Schema({
   },
   fanList: {
     type: Array
+  },
+  access_token: {
+    type: String
+  },
+  openid: {
+    type: String
   }
 }, {
   versionKey:false

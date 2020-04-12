@@ -42,7 +42,7 @@ class MyLike extends Component {
                                 <div className='otherInfo'>
                                     <div className='user'>
                                         <LazyLoad offset={100}>
-                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                            <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)} className='avatar' alt=""/>
                                         </LazyLoad>
                                         <span className='userName'>{item.userName}</span>
                                     </div>
@@ -75,7 +75,7 @@ class MyLike extends Component {
                                 <div className='otherInfo'>
                                     <div className='user'>
                                         <LazyLoad offset={100}>
-                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                            <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)} className='avatar' alt=""/>
                                         </LazyLoad>
                                         <span className='userName'>{item.userName}</span>
                                     </div>

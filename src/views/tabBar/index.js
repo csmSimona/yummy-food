@@ -115,12 +115,12 @@ class TabBarExample extends Component {
 
     checkUser() {
       var token = localStorage.getItem('token');
-      var userPhone = localStorage.getItem('userPhone');
+      // var userPhone = localStorage.getItem('userPhone');
       var userId = localStorage.getItem('userId');
-      checkUser({token, userPhone, userId})
+      checkUser({token, userId})
         .then(res => {
             localStorage.setItem('token', res.data.token);
-            localStorage.setItem('userPhone', res.data.userList[0].phone);
+            // localStorage.setItem('userPhone', res.data.userList[0].phone);
             localStorage.setItem('userId', res.data.userList[0]._id);
             this.props.saveUserList(res.data.userList[0]);
             this.getUnreadNumber();

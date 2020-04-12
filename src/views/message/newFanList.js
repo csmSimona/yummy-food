@@ -32,7 +32,7 @@ class NewFanList extends Component {
                     fanList && fanList.map((item, index) => {
                         return (
                             <div className='fanList' key={index}>
-                                <img src={require('@/' + item.user.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.user)}/>
+                                <img src={item.user.img[0].url.substring(0, 4) ? item.user.img[0].url : require('@/' + item.user.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.user)}/>
                                 <div className='desc'>
                                     <span className='name'>{item.user.name}</span> 关注了你
                                     <p className='time'>{formatTime(item.createDate)}</p>

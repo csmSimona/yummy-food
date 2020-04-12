@@ -101,7 +101,7 @@ class RecipesDetail extends Component {
                     <div className='writer'>
                         <img 
                             className='avatar' 
-                            src={writer.img ? require('@/' + writer.img[0].url) : ''} 
+                            src={writer.img ? writer.img[0].url.substring(0, 4) === 'http' ? writer.img[0].url : require('@/' + writer.img[0].url) : ''} 
                             alt=""
                             onClick={() => this.gotoUserDetail(writer)} />
                         <div className='writerName' onClick={() => this.gotoUserDetail(writer)}>
@@ -190,7 +190,7 @@ class RecipesDetail extends Component {
                                 return (
                                     <div key={index}>
                                         <div className='comment'>
-                                            <img className='avatar' src={require('@/' + item.avatar)} onClick={() => this.gotoUserDetail(item.writer)}/>
+                                            <img className='avatar' src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)} onClick={() => this.gotoUserDetail(item.writer)}/>
                                             <div className='user' onTouchStart={() => this.onItemTouchStart(index)} onTouchEnd={this.onItemTouchEnd}>
                                                 <div className='name'>
                                                     {item.userName}
@@ -223,7 +223,7 @@ class RecipesDetail extends Component {
                             })
                         }
                         <div className='commentInput'>
-                          <img className='avatar' src={require('@/' + userList.img[0].url)} alt=""/>
+                          <img className='avatar' src={userList.img[0].url.substring(0, 4) ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
                           <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 
@@ -270,7 +270,7 @@ class RecipesDetail extends Component {
                                             <div className='title' onClick={this.getFollowDynamicDetail(item._id)} >{item.dynamicName}</div>
                                             <div className='otherInfo'>
                                                 <div className='user'>
-                                                    <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                    <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
                                                     <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>
                                                 <div className='collection'>

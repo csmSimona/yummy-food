@@ -25,7 +25,7 @@ class WaterFallLayout extends Component {
                                     <div className='title' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                     <div className='otherInfo'>
                                         <div className='user'>
-                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                            <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)}  className='avatar' alt=""/>
                                             <span className='userName'>{item.userName}</span>
                                         </div>
                                         <div className='collection'>
@@ -55,7 +55,7 @@ class WaterFallLayout extends Component {
                                     <div className='title' onClick={this.getRecipesDetail(item._id)} alt="">{item.recipeName}</div>
                                     <div className='otherInfo'>
                                         <div className='user'>
-                                            <img src={require('@/' + item.avatar)}  className='avatar' alt=""/>
+                                            <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)}  className='avatar' alt=""/>
                                             <span className='userName'>{item.userName}</span>
                                         </div>
                                         <div className='collection'>

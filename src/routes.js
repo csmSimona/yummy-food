@@ -33,6 +33,7 @@ import NewCollectList from './views/message/newCollectList';
 import NewCommentList from './views/message/newCommentList';
 import SituationDetail from './views/information/situationDetail';
 import IngredientDetail from './views/home/pages/searchPage/ingredientDetail';
+import TagDynamic from './views/home/pages/findPage/tagDynamic';
 
 const routes = [
     {
@@ -181,6 +182,10 @@ const routes = [
     {
         path: '/ingredientDetail',
         component: IngredientDetail
+    },
+    {
+        path: '/tagDynamic',
+        component: TagDynamic
     }
 ];
  

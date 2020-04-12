@@ -31,7 +31,7 @@ class NewCommentList extends Component {
                     commentList && commentList.map((item, index) => {
                         return (
                             <div className='list' key={index}>
-                                <img src={require('@/' + item.writer.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                <img src={item.writer.img[0].url.substring(0, 4) ? item.writer.img[0].url : require('@/' + item.writer.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
                                 <div className='user'>
                                     <p className='name' onClick={() => this.gotoUserDetail(item.writer)}>{item.writer.name}</p>
                                     <p className='comment'>{item.comment.content}</p>

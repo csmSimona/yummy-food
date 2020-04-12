@@ -111,7 +111,7 @@ class Concern extends Component {
                               })
                           }
                           <div className='comment'>
-                              <img className='avatar' src={require('@/' + userList.img[0].url)} alt=""/>
+                              <img className='avatar' src={userList.img[0].url.substring(0, 4) ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
                               <Input 
                                 ref={ref => this.index = ref} 
                                 placeholder="写评论"

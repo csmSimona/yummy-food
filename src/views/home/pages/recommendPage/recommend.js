@@ -96,7 +96,7 @@ class Recommend extends Component {
                                             <div className='otherInfo'>
                                                 <div className='user'>
                                                     <LazyLoad offset={100}>
-                                                        <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                        <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
                                                     </LazyLoad>
                                                     <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>
@@ -145,7 +145,7 @@ class Recommend extends Component {
                                             <div className='otherInfo'>
                                                 <div className='user'>
                                                     <LazyLoad offset={100}>
-                                                        <img src={require('@/' + item.avatar)}  className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                                        <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
                                                     </LazyLoad>
                                                     <span className='userName' onClick={() => this.gotoUserDetail(item.writer)}>{item.userName}</span>
                                                 </div>

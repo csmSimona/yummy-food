@@ -1,7 +1,16 @@
 import React, { Component } from 'react';
-import { weChatLogin, get_wx_access_token } from '@/api/userApi';
 import { Button } from 'antd-mobile';
 import {  Cancel, wechatLogin, phoneLogin, logo, Slogan } from './style';
+import axios from 'axios';
+
+const AppID = 'wxf5fff2aa6e0b1af7';
+const AppSecret = 'f396ab92d74c2ba72021d102aa67750b';
+
+function getQueryString(name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var r = window.location.search.substr(1).match(reg);
+  if (r != null) return unescape(r[2]); return null;
+}
 
 class Login extends Component {
   constructor(props) {
@@ -26,17 +35,9 @@ class Login extends Component {
   }
 
   handleWechatBtnClick() {
-      console.log('使用微信登录')
-      weChatLogin().then(res => {
-        console.log('weChatLogin', res)
-      }).catch((err) => {
-        console.log('error', err);
-      })
-      get_wx_access_token().then(res => {
-        console.log('weChatLogin', res)
-      }).catch((err) => {
-        console.log('error', err);
-      })
+    let return_uri = encodeURIComponent('http://127.0.0.1:3000/personInfo');  
+    let url = ('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+AppID+'&redirect_uri='+return_uri+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect');
+    document.location = url;
   }
 
   handlePhoneBtnClick() {
@@ -48,6 +49,7 @@ class Login extends Component {
       pathname: '/tab/home/recommend'
     })
   }
+
 }
 
 export default Login;

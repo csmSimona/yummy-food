@@ -56,13 +56,13 @@ class smsCheck extends Component {
           } else {
             // console.log('登录之后的data', res.data)
             localStorage.setItem('token', res.data.userList.token);
-            localStorage.setItem('userPhone', res.data.userList.phone);
+            // localStorage.setItem('userPhone', res.data.userList.phone);
             localStorage.setItem('userId', res.data.userList._id);
             this.props.saveUserList(res.data.userList);
 
             this.props.history.push({
               pathname: '/tab/home/recommend',
-              phone: this.props.location.phone // 传手机号码
+              // phone: this.props.location.phone // 传手机号码
             })
             this.props.saveSelectedTab('home');
           }

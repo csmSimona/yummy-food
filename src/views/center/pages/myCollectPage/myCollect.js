@@ -65,7 +65,7 @@ class MyCollect extends Component {
                                     <span> {item.followNumber === 0 ? '' : `${item.followNumber} 人跟做`}</span>
                                 </div>
                                 <div className='writer'>
-                                    <img src={require('@/' + item.avatar)} className='avatar' alt=""/>
+                                    <img src={item.avatar.substring(0, 4) === 'http' ? item.avatar : require('@/' + item.avatar)} className='avatar' alt=""/>
                                     <span>{item.userName}</span>
                                 </div>
                             </div>
