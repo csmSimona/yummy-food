@@ -3,7 +3,7 @@ import { SearchBar, Toast } from 'antd-mobile';
 import { HeaderFix, TodayInformationWrapper, IconFont, Border, BlankWrapper, More } from './style';
 import axios from 'axios';
 import getJQ from '@/utils/getJQ';
-import { getSituationList, getSituationDetail } from '@/api/searchApi';
+import { getSituationList, getSituationDetail, getIngredient } from '@/api/searchApi';
 import { getRecipesById } from '@/api/recipesApi';
 import LazyLoad from 'react-lazyload';
 
@@ -32,7 +32,7 @@ class Information extends Component {
                             })
                         }}
                     />
-                    <div className='searchButton' onClick={() => {this.getSituationDetail(searchContent)}}>搜索</div>
+                    <div className='searchButton' onClick={() => {this.getSearchDetail(searchContent)}}>搜索</div>
                 </HeaderFix>
                 <Border/>
                 <TodayInformationWrapper>
@@ -132,10 +132,34 @@ class Information extends Component {
         })
     }
 
+    getSearchDetail(searchContent) {
+        getIngredient({name: searchContent}).then(res => {
+            if (res.data.code === 200) {
+                let ingredient = res.data.data;
+                if (ingredient.length === 0) {
+                    this.getSituationDetail(searchContent)
+                } else {
+                    this.getIngredientDetail(ingredient);
+                }
+            } else {
+                Toast.fail('未知错误', 1);
+            }
+        }).catch(err => {
+            console.log('err', err);
+        })
+    }
+
     getSituationDetail(name) {
         this.props.history.replace({
             pathname: '/situationDetail',
             name: name
+        })
+    }
+
+    getIngredientDetail(ingredient) {
+        this.props.history.replace({
+            pathname: '/ingredientDetail',
+            ingredientDetail: ingredient
         })
     }
 

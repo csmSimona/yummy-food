@@ -73,6 +73,9 @@ class Center extends Component {
                     this.props.location.userDetail ? 
                     <Header header={header} leftClick={this.back}></Header> : ''
                 }
+                {/* <div className='showBigImg' style={{display: this.state.showBigModal ? 'block' : 'none'}}>
+                    <img src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt="查看图片" width="100%" height="100%" />
+                </div> */}
                 <div className='topHeader'>
                     <div className='editWrapper'>
                         <img 
@@ -96,6 +99,7 @@ class Center extends Component {
                         >
                             <img src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt="查看图片" width="100%" height="100%" />
                         </Modal>
+                        
                         {
                             this.props.location.userDetail ? 
                             <div className='userName'>
@@ -180,7 +184,7 @@ class Center extends Component {
                       }}
                 >
                 </Tabs>
-                <div>
+                <div style={{margin: '0 1rem'}}>
                     {renderRoutes(this.state.route.children)}
                 </div>
             </CenterWrapper>

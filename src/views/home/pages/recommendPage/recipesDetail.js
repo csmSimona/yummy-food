@@ -223,7 +223,7 @@ class RecipesDetail extends Component {
                             })
                         }
                         <div className='commentInput'>
-                          <img className='avatar' src={userList.img[0].url.substring(0, 4) ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
+                          <img className='avatar' src={userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
                           <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 

@@ -53,19 +53,19 @@ const header2 = {
 const gender = [
     {
         label: '未知',
-        value: '未知',
+        value: 0,
     },
     {
         label: '男',
-        value: '男',
+        value: 1,
     },
     {
         label: '女',
-        value: '女',
+        value: 2,
     }
 ];
 
-const tagList = ["海鲜", "辛辣", "内脏", "肉类", "酸涩", "蛋类", "酒类", "生冷", "油腻", "腥膻", "香菜", "甜食", "味精", "烧烤", "腌制品", "其他"];
+const tagList = ["海鲜", "辛辣", "内脏", "肉类", "酸涩", "蛋类", "酒类", "生冷", "油腻", "腥膻", "香菜", "甜食", "味精", "烧烤", "腌制品"];
 
 class personInfo extends Component {
     constructor(props) {
@@ -79,18 +79,26 @@ class personInfo extends Component {
             files: [],
             tagSelected: true,
             selectedList: ['无'],
-            userData: {}
+            userData: {},
+            addTagList: [],
+            inputVisible: false,
+            inputValue: '',
+            gender: ''
         };
         this.back = this.back.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
         this.handleSelectedClick = this.handleSelectedClick.bind(this);
-        this.onChange = this.onChange.bind(this)
-        this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this)
+        this.onChange = this.onChange.bind(this);
+        this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.showInput = this.showInput.bind(this);
+        this.handleInputConfirm = this.handleInputConfirm.bind(this);
     }
 
     render() { 
         const { getFieldProps, getFieldError } = this.props.form;
         let { userList } = this.props;
+        let { addTagList, inputVisible, inputValue } = this.state;
         return ( 
             <PersonInfoWrapper>
                 <Header header={userList ? header2 : header1} leftClick={userList ? this.back : this.handleSaveClick} rightClick={this.handleSaveClick}></Header>
@@ -125,7 +133,7 @@ class personInfo extends Component {
                     footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
-                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
+                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
                 </Modal>
                 <form>
                     <List
@@ -147,15 +155,24 @@ class personInfo extends Component {
                         >手机号</InputItem>
                         <Picker
                             data={gender}
-                            title="性别"
                             cols={1}
+                            // value={this.state.gender}
                             {...getFieldProps('gender', {
-                                initialValue: userList.gender ? userList.gender : ''
+                                initialValue: this.state.gender
                             })}
                             extra="请选择性别"
+                            onChange={this.onChangeGender}
                             >
                             <List.Item>性别</List.Item>
                         </Picker>
+                        {/* <Picker
+                            data={colors}
+                            value={this.state.colorValue}
+                            cols={1}
+                            onChange={this.onChangeColor}
+                        >
+                            <List.Item arrow="horizontal">Complex Labels</List.Item>
+                        </Picker> */}
                         <DatePicker
                             mode="date"
                             title="出生日期"
@@ -228,6 +245,50 @@ class personInfo extends Component {
                                         }}>{item}</Tag>
                                     })
                                 }
+                                {
+                                    addTagList && addTagList.map((val, i) => {
+                                        return <Tag key={i}
+                                            disabled={this.state.tagSelected} 
+                                            className='close'
+                                            selected
+                                            closable={this.state.tagSelected ? false : true}
+                                            onClose={() => {
+                                                console.log(val, i);
+                                                let { addTagList, selectedList } = this.state;
+                                                let n = selectedList.indexOf(val)
+                                                if (n !== -1) {
+                                                    selectedList.splice(n, 1);
+                                                }
+                                                addTagList.splice(i, 1)
+
+                                                this.setState({ 
+                                                    selectedList,
+                                                    addTagList
+                                                })
+                                                // console.log('addTagList', addTagList)
+                                                // console.log('selectedList',  selectedList)
+                                            }}
+                                        >{val}</Tag>
+                                    })
+                                }
+                                <span style={{display: this.state.tagSelected ? 'none' : 'block' }}>
+                                    {inputVisible && (
+                                        <InputItem
+                                            ref={ref => this.input = ref}
+                                            type="text"
+                                            size="small"
+                                            className="tagInput"
+                                            value={inputValue}
+                                            onChange={this.handleInputChange}
+                                            onBlur={this.handleInputConfirm}
+                                        />
+                                    )}
+                                    {!inputVisible && (
+                                        <div className='addMore' onClick={this.showInput}>
+                                            其他
+                                        </div>
+                                    )}
+                                </span>
                             </TagContainer>
                         </List.Item>
                         <TextareaItem
@@ -243,6 +304,36 @@ class personInfo extends Component {
             </PersonInfoWrapper>
         )
     }
+
+    onChangeGender = (gender) => {
+        console.log('gender', gender)
+        this.setState({gender});
+    };
+
+    handleInputConfirm() {
+        const { inputValue } = this.state;
+        let { addTagList, selectedList } = this.state;
+        if (inputValue && addTagList.indexOf(inputValue) === -1 && tagList.indexOf(inputValue) === -1) {
+            addTagList = [...addTagList, inputValue];
+        }
+        if (inputValue && selectedList.indexOf(inputValue) === -1) {
+            selectedList = [...selectedList, inputValue];
+        }
+        this.setState({
+            addTagList,
+            selectedList,
+            inputVisible: false,
+            inputValue: '',
+        });
+      };
+  
+    handleInputChange(value) {
+        this.setState({ inputValue: value });
+    };
+
+    showInput() {
+        this.setState({ inputVisible: true }, () => this.input.focus());
+    };
 
     back() {
         window.history.back(-1)
@@ -318,7 +409,7 @@ class personInfo extends Component {
     handleSaveClick() {
         var information = this.props.form.getFieldsValue()
         information.img = this.state.files;
-        information.gender = information.gender ? information.gender[0] : '未知';
+        information.gender = information.gender ? information.gender : [0];
 
         var phone = /^[1][3,4,5,7,8][0-9]{9}$/;
         if (information.phone) {
@@ -355,7 +446,7 @@ class personInfo extends Component {
             updateUserInfo(information).then(res => {
                 if (res.data.code === 200) {
                     Toast.success('编辑成功！', 1);
-                    this.props.history.replace('/tab/home/recommend');
+                    this.props.history.replace('/tab/center/myRecipes');
                 }
             }).catch((err) => {
                 console.log('error', err);
@@ -370,7 +461,7 @@ class personInfo extends Component {
                     this.props.saveUserList(res.data.data);
                 }
             Toast.success('注册成功！', 1);
-                this.props.history.replace('/tab/center/myRecipes');
+                this.props.history.replace('/tab/home/recommend');
             }).catch((err) => {
                 console.log('error', err);
             })
@@ -435,14 +526,32 @@ class personInfo extends Component {
         }
         if (userList.size !== 0) {
             let tabSelected, url;
+            let addTagList = []
             userList.avoidFood && (tabSelected = userList.avoidFood[0] === '无' ? true : false);
-            userList.img && (url = userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url))
+            userList.img && (url = userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url));
+            userList.avoidFood.forEach(item => {
+                if (tagList.indexOf(item) === -1) {
+                    addTagList = [...addTagList, item];
+                }
+            })
+            console.log('userList.gender', userList.gender);
             this.setState({
                 files: [{url: url}],
                 selectedList: userList.avoidFood,
-                tagSelected: tabSelected
+                tagSelected: tabSelected,
+                gender: userList.gender,
+                addTagList
             })
         }
+        document.body.addEventListener('keyup', (e) => {
+            if (window.event) {
+                e = window.event
+            }
+            let code = e.charCode || e.keyCode;
+            if (code === 13) {
+                this.handleInputConfirm();
+            }		
+        })
     }
 }
  

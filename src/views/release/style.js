@@ -95,14 +95,52 @@ export const Tip = styled.div`{
 
 export const TagContainer = styled.div`{
   display: flex;
-  padding-top: 9px;
+  padding: 9px;
   flex-direction: row;
   flex-wrap: wrap;
   & > div {
-      height: 1.75rem;
-      line-height: 1.75rem;
-      margin: .45rem;
-    }
+    height: 1.75rem;
+    line-height: 1.75rem;
+    margin: .45rem;
+  }
+  .am-tag-closable {
+    color: ${themeColor};
+    border: .5px solid ${themeColor} !important;
+  }
+  .am-tag-close {
+    color: ${themeColor};
+  }
+  .am-tag-close .am-tag-normal::before {
+    border: none !important;
+  }
+  .am-list-item {
+    min-height: 2px;
+  }
+  .am-list-item.am-input-item {
+    height: 1.75rem;
+  }
+  .am-list-item .am-input-control input {
+    font-size: 14px;
+  }
+  .addMore {
+    font-size: .875rem;
+    border: .5px solid #ddd;
+    border-radius: 3px;
+    color: #888888;
+    width: 3.5rem;
+    height: 1.75rem;
+    line-height: 1.75rem;
+    margin: .45rem;
+    text-align: center;
+  }
+  .tagInput {
+    font-size: .875rem;
+    border: .5px solid #ddd;
+    border-radius: 3px;
+    color: #888888;
+    width: 7rem;
+    margin: .45rem;
+  }
 }`;
 
 export const MaterialsWrapper = styled.div`{

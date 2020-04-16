@@ -32,7 +32,7 @@ import NewLikeList from './views/message/newLikeList';
 import NewCollectList from './views/message/newCollectList';
 import NewCommentList from './views/message/newCommentList';
 import SituationDetail from './views/information/situationDetail';
-import IngredientDetail from './views/home/pages/searchPage/ingredientDetail';
+import IngredientDetail from './views/information/ingredientDetail';
 import TagDynamic from './views/home/pages/findPage/tagDynamic';
 
 const routes = [

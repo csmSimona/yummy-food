@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Header from '@/components/header';
-import { IngredientDetailWrapper } from './style';
+import { IngredientDetailWrapper } from '../home/pages/searchPage/style';
 import { Tabs } from 'antd-mobile';
 
 const tabs = [
@@ -34,6 +34,7 @@ class IngredientDetail extends Component {
         return ( 
             <IngredientDetailWrapper>
                 <Header header={header} leftClick={this.goBack}></Header>
+                {/* <Header header={header}></Header> */}
                 {ingredientDetail.img && <img src={require('@/' + ingredientDetail.img)} width="100%" /> }
                 <div className='content'>
                     <div className='name'>{ingredientDetail.name}</div>
