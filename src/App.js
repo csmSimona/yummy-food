@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 // import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import { routes } from './routes';
 import { renderRoutes } from 'react-router-config';
