@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/User');
 var SmsRequest = require('../utils/smsRequest');
-const request = require('request');
 const jwt = require('jsonwebtoken');
 var pWriteFile = require('../utils/pWriteFile');
 var FanInform = require('../models/FanInform');

@@ -40,7 +40,7 @@ class MyCollect extends Component {
                 this.state.collectRecipesList.map((item, index) => {
                     return (
                         <div className='recipesListContent' key={index}>
-                            <LazyLoad offset={100}>
+                            <LazyLoad offset={300}>
                                 { item.videoUrl ? 
                                     <video 
                                         onClick={this.getRecipesDetail(item._id)}

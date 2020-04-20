@@ -318,7 +318,7 @@ class CreateDynamic extends Component {
                     console.log('res.data', res.data);
                     Toast.success('更新成功！', 1)
                     this.props.history.replace('/tab/center/myDynamic');
-                    window.location.reload();
+                    // window.location.reload();
                 }
             }).catch((err) => {
                 console.log('error', err);
@@ -454,6 +454,13 @@ class CreateDynamic extends Component {
     }
 
     componentDidMount() {
+        if (this.props.location.tag) {
+            let recommendSelected = this.state.recommendSelected
+            recommendSelected.push(this.props.location.tag)
+            this.setState({
+                recommendSelected
+            })
+        }
         if (this.props.location.dynamicId) {
             this.getDynamicDetail();
         }

@@ -197,7 +197,6 @@ router.post('/getDynamicDetailByUserId', function(req, res, next) {
     });
 });
 
-
 router.post('/getDynamicById', function(req, res, next) {
     Dynamic.findOne({_id: req.body.id}, function (err, data) {
         if (err) {
@@ -206,6 +205,27 @@ router.post('/getDynamicById', function(req, res, next) {
         }
         return res.json({ code: 200, data: data });
     });
+});
+
+router.post('/getDynamicByTag', function(req, res, next) {
+    let data = req.body.tag
+    Dynamic
+    .find(
+        {
+            $or: [
+                {dynamicName: {$regex: data}},
+                {dynamicStory: {$regex: data}},
+                {recommend: {$regex: data}}
+            ]
+        })
+    .exec(function (err, data) {
+        if (err) {
+            return res.status(500).send('查询失败');
+        } else {
+            console.log('dynamic data', data)
+            return res.json({ code: 200, data: data });
+        }
+    })
 });
 
 module.exports = router;

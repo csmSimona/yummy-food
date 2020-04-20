@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Toast, ActivityIndicator, Tag } from 'antd-mobile';
+import { Toast, ActivityIndicator } from 'antd-mobile';
 import { getDynamic, addLikeDynamic } from '@/api/dynamicApi';
 import { finishLoading } from '@/utils/loading';
 import getHW from '@/utils/getHW';
@@ -14,6 +14,8 @@ import { TagWrapper } from './style';
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
 
+const tagList = ["早餐", "午餐", "晚餐", "下午茶", "宵夜", "火锅", "烘焙"];
+
 class Find extends Component {
     constructor(props) {
         super(props);
@@ -25,6 +27,7 @@ class Find extends Component {
          }
         this.handleLikeClick = this.handleLikeClick.bind(this);
         this.getDynamicDetail = this.getDynamicDetail.bind(this);
+        this.gotoTagDynamic = this.gotoTagDynamic.bind(this);
     }
 
     handleImageLoaded() {
@@ -43,12 +46,11 @@ class Find extends Component {
         return ( 
             <div style={{margin: '1rem'}}>
                 <TagWrapper>
-                    <Tag selected className='tag'>早餐</Tag>
-                    <Tag selected className='tag'>中餐</Tag>
-                    <Tag selected className='tag'>晚餐</Tag>
-                    <Tag selected className='tag'>火锅</Tag>
-                    <Tag selected className='tag'>烘焙</Tag>
-                    <Tag selected className='tag'>宵夜</Tag>
+                {
+                    tagList.map((item, index) => {
+                        return <div key={index} selected className='tag' onClick={() => this.gotoTagDynamic(item)}>{item}</div>
+                    })
+                }
                 </TagWrapper>
                 <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'300px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
@@ -139,6 +141,13 @@ class Find extends Component {
                 </RecipesListWrapper>
             </div>
          );
+    }
+
+    gotoTagDynamic(item) {
+        this.props.history.replace({
+            pathname: '/tagDynamic',
+            tag: item
+        })
     }
 
     gotoUserDetail(userData) {
