@@ -87,7 +87,7 @@ class DynamicDetail extends Component {
                         />
                     ))}
                 </Carousel>
-                <Modal
+                {/* <Modal
                     visible={this.state.showBigModal}
                     transparent
                     maskClosable={true}
@@ -97,7 +97,11 @@ class DynamicDetail extends Component {
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
                     <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-                </Modal>
+                </Modal> */}
+                
+                <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                </div>
                 <p className='recipeName'>{dynamicDetail.dynamicName}</p>
                 <p className='createDate'>
                     {formatDate(dynamicDetail.createDate)}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '@/components/header';
 import { List, InputItem, ImagePicker, TextareaItem, Tag, Toast, Modal, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { TagContainer, DeleteDynamic } from './style';
+import { TagContainer, DeleteDynamic, ShowBigWrapper } from './style';
 import { connect } from 'react-redux';
 import { createDynamic, getDynamicDetail, editDynamic, deleteDynamic } from '@/api/dynamicApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
@@ -100,7 +100,7 @@ class CreateDynamic extends Component {
                     classModalVisible={this.state.classModalVisible}
                 />
                 )}
-                <Modal
+                {/* <Modal
                     visible={this.state.showBigModal}
                     transparent
                     maskClosable={true}
@@ -110,8 +110,10 @@ class CreateDynamic extends Component {
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
                     <img src={this.state.showBigUrl} alt='查看图片' width="100%" height="100%" />
-                </Modal>
-
+                </Modal> */}
+                <ShowBigWrapper style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                </ShowBigWrapper>
                 <form style={{marginBottom: '3rem'}}>
                     <List>
                         <InputItem

@@ -93,6 +93,19 @@ export const RecipesDetailWrapper = styled.div`{
     }
     .recipesDetailContent {
         margin-bottom: 3.5rem;
+        .showBig {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            z-index: 1000;
+            img {
+                position: absolute;
+                top: 12.5rem;
+            }
+        }
     }
     .fixedFooter {
         position: fixed;

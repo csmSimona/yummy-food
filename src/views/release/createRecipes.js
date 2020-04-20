@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '@/components/header';
 import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder, VideoWrapper, DeleteIcon } from './style';
+import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder, VideoWrapper, DeleteIcon, ShowBigWrapper } from './style';
 import { connect } from 'react-redux';
 import { createRecipes, saveRecipesDraft, getRecipesDetail, deleteRecipes, updateRecipes, deleteRecipesDraft } from '@/api/recipesApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
@@ -156,7 +156,7 @@ class CreateRecipes extends Component {
                         classModalVisible={this.state.classModalVisible}
                     />
                     )}
-                    <Modal
+                    {/* <Modal
                         visible={this.state.showBigModal}
                         transparent
                         maskClosable={true}
@@ -166,7 +166,10 @@ class CreateRecipes extends Component {
                         wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                     >
                         <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-                    </Modal>
+                    </Modal> */}
+                    <ShowBigWrapper style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                    </ShowBigWrapper>
                 </NoBorder>
                 <form style={{marginBottom: '3rem'}}>
                     <List>

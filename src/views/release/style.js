@@ -209,4 +209,18 @@ export const DeleteIcon = styled(Icon)`{
     right: .5rem;
     color: #fff;
     z-index: 99;
-}`
+}`;
+
+export const ShowBigWrapper = styled.div`{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000;
+    z-index: 1000;
+    img {
+        position: absolute;
+        top: 12.5rem;
+    }
+}`;

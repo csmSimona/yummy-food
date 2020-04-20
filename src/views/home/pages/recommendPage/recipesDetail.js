@@ -81,7 +81,7 @@ class RecipesDetail extends Component {
                 <div className='recipesDetailContent'>
                     <Header header={header} leftClick={this.goBack}></Header>
                     { recipesDetail.videoUrl ? AlbumVideo : AlbumPhoto }
-                    <Modal
+                    {/* <Modal
                         visible={this.state.showBigModal}
                         transparent
                         maskClosable={true}
@@ -91,7 +91,10 @@ class RecipesDetail extends Component {
                         wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                     >
                         <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-                    </Modal>
+                    </Modal> */}
+                    <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                    </div>
                     <p className='recipeName'>{recipesDetail.recipeName}</p>
                     <p className='createDate'>
                         {formatDate(recipesDetail.createDate)}
