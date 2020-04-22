@@ -171,7 +171,7 @@ class SituationDetail extends Component {
     getRecipesDetail = (recipeId) => () => {
         this.props.history.push({
             pathname: '/recipesDetail/' + recipeId,
-            type: 'look'
+            type: 'situation'
         })
     }
 

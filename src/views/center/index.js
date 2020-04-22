@@ -10,7 +10,7 @@ import getAge from '@/utils/getAge';
 import antdDistrict from '@/utils/antdDistrict';
 import Header from '@/components/header';
 
-const tabs = [
+const tabs1 = [
     {
       title: '菜谱',
       path: '/tab/center/myRecipes',
@@ -31,7 +31,30 @@ const tabs = [
       path: '/tab/center/myLike',
       id: 3
     }
-  ];
+];
+
+const tabs2 = [
+    {
+      title: '菜谱',
+      path: '/center/myRecipes',
+      id: 0
+    },
+    { 
+      title: '动态',
+      path: '/center/myDynamic',
+      id: 1
+    },
+    { 
+      title: '收藏',
+      path: '/center/myCollect',
+      id: 2
+    },
+    { 
+      title: '点赞',
+      path: '/center/myLike',
+      id: 3
+    }
+];
 
 const header = {
     left: "<span class='iconfont back'>&#xe61f;</span>",
@@ -57,21 +80,21 @@ class Center extends Component {
             showBigUrl: '',
             route: props.route,
             centerTab: 0,
-            userList: {}
+            userList: {},
+            tabs: []
         };
         this.editUserInfo = this.editUserInfo.bind(this);
         this.gotoUserList = this.gotoUserList.bind(this);
-        this.back = this.back.bind(this);
     }
     render() { 
         // let {userList, recipesList} = this.props;
         let { recipesList } = this.props;
         let { userList } = this.state;
         return ( 
-            <CenterWrapper>
+            <CenterWrapper style={{zIndex: this.props.location.userDetail ? '1000' : ''}}>
                 {
                     this.props.location.userDetail ? 
-                    <Header header={header} leftClick={this.back}></Header> : ''
+                    <Header header={header}></Header> : ''
                 }
                 {/* <div className='showBigImg' style={{display: this.state.showBigModal ? 'block' : 'none'}}>
                     <img src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt="查看图片" width="100%" height="100%" />
@@ -171,7 +194,7 @@ class Center extends Component {
                     </div>
                 </div>
                 <Border />
-                <Tabs tabs={tabs}
+                <Tabs tabs={this.state.tabs}
                     page={this.state.centerTab}
                     onTabClick={tab => { 
                         this.setState({
@@ -189,14 +212,6 @@ class Center extends Component {
                 </div>
             </CenterWrapper>
         );
-    }
-
-    back() {
-        // window.history.back(-1);
-        // this.props.history.push({
-        //     path: '/tab/home/recommend'
-        // })
-        console.log('back', this.props.location.from);
     }
 
     showModal = key => (e) => {
@@ -246,7 +261,8 @@ class Center extends Component {
                     pathname: '/userList',
                     list: userList.fanList,
                     userId: userList._id,
-                    type: 'fanList'
+                    type: 'fanList',
+                    userDetail: this.props.location.userDetail
                 });
             }
         }
@@ -305,6 +321,27 @@ class Center extends Component {
         if (this.props.location.userDetail) {
             // console.log('center userDetail', this.props.location.userDetail);
             let userDetail = this.props.location.userDetail;
+            let pathname = this.props.location.pathname;
+            if (pathname === '/center/myRecipes') {
+                this.setState({
+                    centerTab: 0
+                })
+            }
+            if (pathname === '/center/myDynamic') {
+                this.setState({
+                    centerTab: 1
+                })
+            }
+            if (pathname === '/center/myCollect') {
+                this.setState({
+                    centerTab: 2
+                })
+            }
+            if (pathname === '/center/myLike') {
+                this.setState({
+                    centerTab: 3
+                })
+            }
             if (!userDetail.concernList) {
                 userDetail.concernList = []
             }
@@ -312,7 +349,8 @@ class Center extends Component {
                 userDetail.fanList = []
             }
             this.setState({
-                userList: userDetail
+                userList: userDetail,
+                tabs: tabs2
             })
         } else {
             let userList = this.props.userList;
@@ -335,7 +373,7 @@ class Center extends Component {
             }
             if (pathname === '/tab/center/myLike') {
                 this.setState({
-                    centerTab: 2
+                    centerTab: 3
                 })
             }
             if (!userList.concernList) {
@@ -345,7 +383,8 @@ class Center extends Component {
                 userList.fanList = []
             }
             this.setState({
-                userList: userList
+                userList: userList,
+                tabs: tabs1
             })
             this.props.saveUserList(userList);
         }

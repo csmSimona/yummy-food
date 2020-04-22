@@ -136,7 +136,7 @@ class Information extends Component {
         getIngredient({name: searchContent}).then(res => {
             if (res.data.code === 200) {
                 let ingredient = res.data.data;
-                if (ingredient.length === 0) {
+                if (!ingredient) {
                     this.getSituationDetail(searchContent)
                 } else {
                     this.getIngredientDetail(ingredient);

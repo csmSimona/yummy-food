@@ -186,6 +186,29 @@ const routes = [
     {
         path: '/tagDynamic',
         component: TagDynamic
+    },
+    {
+        path: '/center',
+        component: Center,
+        // redirect: '/center/myRecipes',
+        children: [
+            {
+                path: '/center/myRecipes',
+                component: MyRecipes
+            },
+            {
+                path: '/center/myDynamic',
+                component: MyDynamic
+            },
+            {
+                path: '/center/myCollect',
+                component: MyCollect
+            },
+            {
+                path: '/center/myLike',
+                component: MyLike
+            }
+        ]
     }
 ];
  

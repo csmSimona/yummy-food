@@ -105,6 +105,28 @@ export const RecipesDetailWrapper = styled.div`{
                 position: absolute;
                 top: 12.5rem;
             }
+            /* 入场动画 */
+            &.slide-enter,&.slide-appear{
+                opacity: 0;
+            }
+            &.slide-enter-active,&.slide-appear-active{
+                opacity: 1;
+                transition: opacity 1s ease-in; 
+            }
+            &.slide-enter-done{
+                opacity: 1;
+            }
+            /* 出场动画 */
+            &.slide-exit{
+                opacity: 1;
+            }
+            &.slide-exit-active{
+                opacity: 0;
+                transition: opacity 1s ease-in; 
+            }
+            &.slide-exit-done{
+                opacity: 0;
+            }
         }
     }
     .fixedFooter {

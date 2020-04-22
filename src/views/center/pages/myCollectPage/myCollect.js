@@ -97,10 +97,10 @@ class MyCollect extends Component {
         </BlankWrapper>
         return ( 
             <div>
-                <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'500px'}}>
+                <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'300px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
                 </div>
-                { this.state.collectRecipesList.length === 0 ? Blank : CollectRecipesList }
+                { !this.state.animating && (this.state.collectRecipesList.length === 0 ? Blank : CollectRecipesList) }
                 <Modal
                     visible={this.state.modal}
                     transparent

@@ -30,7 +30,7 @@ export const TagWrapper = styled.div`{
 
 export const JoinWrapper = styled.div`{
     display: inline-block;
-    padding: .5rem;
+    padding: .5rem 1rem;
     position: fixed;
     bottom: 2rem;
     left: 50%;

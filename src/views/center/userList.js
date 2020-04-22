@@ -35,7 +35,7 @@ class UserList extends Component {
                         this.state.userList.map((item, index) => {
                             return (
                                 <UserListWrapper key={index}>
-                                    <img src={item.img[0].url.substring(0, 4) === 'http' ? item.img[0].url : require('@/' + item.img[0].url)} className='avatar' alt=""/>
+                                    <img src={item.img[0].url.substring(0, 4) === 'http' ? item.img[0].url : require('@/' + item.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item)}/>
                                     <div className='desc'>{item.name}</div>
                                     <div className='button'>
                                         <Button type='primary' size='small' onClick={this.changeConcern(item.concern, index)}>{item.concern}</Button>
@@ -49,8 +49,22 @@ class UserList extends Component {
          );
     }
 
+    gotoUserDetail(userData) {
+        this.props.history.replace({
+          pathname: '/center/myRecipes',
+          userDetail: userData
+        })
+    }
+
     back() {
-        this.props.history.replace('/tab/center/myRecipes')
+        if (this.props.location.userDetail) {
+            this.props.history.replace({
+                pathname: '/center/myRecipes',
+                userDetail: this.props.location.userDetail
+            })
+        } else {
+            this.props.history.replace('/tab/center/myRecipes')
+        }
     }
 
     changeConcern = (concern, index) => () => {

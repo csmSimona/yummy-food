@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
 import { sendComment, getDynamicComment, deleteComment, addCommentInform } from '@/api/informApi';
 import formatTime from '@/utils/formatTime';
+import { CSSTransition } from 'react-transition-group';
 
 const UNLIKE = '&#xe63a;';
 const LIKE = '&#xe60c;';
@@ -47,6 +48,7 @@ class DynamicDetail extends Component {
         this.handleConcernClick = this.handleConcernClick.bind(this);
         this.getRecipesDetail = this.getRecipesDetail.bind(this);
         this.deleteComment = this.deleteComment.bind(this);
+        this.goBack = this.goBack.bind(this);
     }
 
     render() {
@@ -59,8 +61,8 @@ class DynamicDetail extends Component {
         };
         return (
           <RecipesDetailWrapper>
-              <div className='recipesDetailContent'>
-                <Header header={header}></Header>
+            <div className='recipesDetailContent'>
+                <Header header={header} leftClick={this.goBack}></Header>
                 <Carousel
                     style={{touchAction: 'none'}}
                     autoplay
@@ -98,10 +100,16 @@ class DynamicDetail extends Component {
                 >
                     <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
                 </Modal> */}
-                
-                <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
-                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
-                </div>
+                <CSSTransition 
+                    in={this.state.showBigModal}
+                    timeout={200}
+                    classNames='slide'
+                    appear={true}
+                >
+                    <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                    </div>
+                </CSSTransition>
                 <p className='recipeName'>{dynamicDetail.dynamicName}</p>
                 <p className='createDate'>
                     {formatDate(dynamicDetail.createDate)}
@@ -180,7 +188,7 @@ class DynamicDetail extends Component {
                         })
                     }
                     <div className='commentInput'>
-                        <img className='avatar' src={userList.img[0].url.substring(0, 4) === ' http' ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
+                        <img className='avatar' src={userList.img ? userList.img[0].url.substring(0, 4) === ' http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt=""/>
                         <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 
@@ -265,7 +273,17 @@ class DynamicDetail extends Component {
         )
     }
 
-    
+    goBack() {
+        if (this.props.location.tag) {
+            this.props.history.replace({
+                pathname: '/tagDynamic',
+                tag: this.props.location.tag
+            })
+        } else {
+            window.history.go(-1);
+        }
+    }
+
     deleteComment() {
         let commentId = this.state.dynamicCommentList[this.state.select]._id;
         deleteComment({commentId}).then(res => {
@@ -323,7 +341,7 @@ class DynamicDetail extends Component {
 
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
@@ -478,7 +496,7 @@ class DynamicDetail extends Component {
                     dynamicDetail.likeList = [];
                   }
                 if (this.props.userList.likeDynamic instanceof Array) {
-                    if (this.props.userList.likeDynamic.length !== 0) {
+                    if (JSON.stringify(this.props.userList.likeDynamic) !== '[]') {
                         this.props.userList.likeDynamic.forEach(val => {
                             if (val === dynamicDetail._id) {
                               dynamicDetail.like = LIKE
@@ -616,9 +634,11 @@ class DynamicDetail extends Component {
                     })
                     // console.log('update dynamicCommentList', dynamicCommentList)
                 }).catch(function (err) {
-                    console.log('err'. err)
+                    console.log('err', err)
                 })
             }
+        }).catch(function (err) {
+            console.log('err', err)
         })
     }
 

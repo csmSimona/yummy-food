@@ -26,6 +26,7 @@ class TagDynamic extends Component {
         this.handleLikeClick = this.handleLikeClick.bind(this);
         this.getDynamicDetail = this.getDynamicDetail.bind(this);
         this.joinTagDynamic = this.joinTagDynamic.bind(this);
+        this.goBack = this.goBack.bind(this);
     }
 
     handleImageLoaded() {
@@ -48,7 +49,7 @@ class TagDynamic extends Component {
         };
         return ( 
             <div style={{position: 'relative'}}>
-                <Header header={header}></Header>
+                <Header header={header} leftClick={this.goBack}></Header>
                 <Border/>
                 <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'300px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
@@ -141,7 +142,11 @@ class TagDynamic extends Component {
             </div>
          );
     }
-    
+
+    goBack() {
+        this.props.history.push('/tab/home/find')
+    }
+
     joinTagDynamic() {
         this.props.history.replace({
             pathname: '/createDynamic',
@@ -151,14 +156,15 @@ class TagDynamic extends Component {
 
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
 
     getDynamicDetail = (dynamicId) => () => {
         this.props.history.push({
-            pathname: '/dynamicDetail/' + dynamicId
+            pathname: '/dynamicDetail/' + dynamicId,
+            tag: this.props.location.tag
         })
     }
     

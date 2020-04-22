@@ -280,10 +280,18 @@ class CreateDynamic extends Component {
     }
 
     handleBackClick() {
-        console.log('handleBackClick')
-        this.props.history.push({
-            pathname: '/tab/release'
-        })
+        if (this.props.location.dynamicId) {
+            this.props.history.replace('/tab/center/myDynamic');
+        } else if (this.props.location.collectRecipe) {
+            this.props.history.replace('/tab/center/myCollect');
+        } else if (this.props.location.tag) {
+            this.props.history.replace({
+                pathname: '/tagDynamic',
+                tag: this.props.location.tag
+            })
+        } else {
+            this.props.history.replace('/tab/release');
+        }
     }
 
     handleReleaseClick() {

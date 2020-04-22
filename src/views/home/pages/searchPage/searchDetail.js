@@ -141,14 +141,15 @@ class SearchDetail extends Component {
 
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
 
     getRecipesDetail = (recipeId) => () => {
         this.props.history.push({
-            pathname: '/recipesDetail/' + recipeId
+            pathname: '/recipesDetail/' + recipeId,
+            searchInput: this.state.searchContent
         })
     }
 

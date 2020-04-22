@@ -11,6 +11,7 @@ import { Toast, Button, Modal } from 'antd-mobile';
 import LazyLoad from 'react-lazyload';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
+import { CSSTransition } from 'react-transition-group';
 
 const selectIcon = ['&#xe738;', '&#xe666;', '&#xe606;', '&#xe633;'];
 const UNCOLLECT = '&#xe60f;';
@@ -92,9 +93,16 @@ class RecipesDetail extends Component {
                     >
                         <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
                     </Modal> */}
-                    <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
-                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
-                    </div>
+                    <CSSTransition 
+                        in={this.state.showBigModal}
+                        timeout={200}
+                        classNames='slide'
+                        appear={true}
+                    >
+                        <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                            <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                        </div>
+                    </CSSTransition>
                     <p className='recipeName'>{recipesDetail.recipeName}</p>
                     <p className='createDate'>
                         {formatDate(recipesDetail.createDate)}
@@ -226,7 +234,7 @@ class RecipesDetail extends Component {
                             })
                         }
                         <div className='commentInput'>
-                          <img className='avatar' src={userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
+                          <img className='avatar' src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt=""/>
                           <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 
@@ -455,7 +463,7 @@ class RecipesDetail extends Component {
     
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
@@ -478,10 +486,17 @@ class RecipesDetail extends Component {
     }
 
     goBack() {
-        if (this.props.location.type === 'look') {
-            window.history.go(-1);
-        } else {
+        if (this.props.location.type === 'create') {
             this.props.history.replace('/tab/release')
+        } else if (this.props.location.type === 'situation') {
+            this.props.history.replace('/tab/information')
+        } else if (this.props.location.searchInput) {
+            this.props.history.replace({
+                pathname: '/searchDetail',
+                searchInput: this.props.location.searchInput
+            })
+        } else {
+            window.history.go(-1);
         }
     }
 

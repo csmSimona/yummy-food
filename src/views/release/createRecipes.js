@@ -652,7 +652,7 @@ class CreateRecipes extends Component {
                     // var recipeId = res.data.data._id;
                     Toast.success('更新成功！', 1);
                     this.props.history.replace('/tab/center/myRecipes');
-                    window.location.reload();
+                    // window.location.reload();
                 }
             }).catch((err) => {
                 console.log('error', err);
