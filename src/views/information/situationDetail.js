@@ -88,7 +88,7 @@ class SituationDetail extends Component {
                                                     您的浏览器不支持 video 标签。
                                                 </video> : 
                                                 <img 
-                                                    src={require('@/' + item.album[0].url)} 
+                                                    src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)}  
                                                     width="100%" 
                                                     height="100%"  
                                                     key={index} 
@@ -116,7 +116,7 @@ class SituationDetail extends Component {
                                                     您的浏览器不支持 video 标签。
                                                 </video> : 
                                                 <img 
-                                                    src={require('@/' + item.album[0].url)} 
+                                                    src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
                                                     width="100%" 
                                                     height="100%"  
                                                     key={index} 

@@ -218,6 +218,7 @@ export const RecipesDetailWrapper = styled.div`{
     .story {
         padding: 1rem 1rem 0 1rem;
         line-height: 1.25rem;
+        letter-spacing: .1rem;
     }
     .followRecipes {
         margin: 1rem 1rem 0 1rem;

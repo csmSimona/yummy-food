@@ -54,7 +54,7 @@ class Information extends Component {
                                 return (
                                     <div className='recipes' key={index}>
                                         <LazyLoad offset={100} height={100}>
-                                            <img src={require('@/' + item.album[0].url)} onClick={this.getRecipesDetail(item._id)}/>
+                                            <img src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} onClick={this.getRecipesDetail(item._id)}/>
                                         </LazyLoad>
                                         <p>{item.recipeName}</p>
                                     </div>

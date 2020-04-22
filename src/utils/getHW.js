@@ -28,7 +28,11 @@ export default function getHW(data, list, that){
             } else {
                 var img = new Image();
                 if (list === 'recipesList') {
-                    img.src = require('@/' + item.album[0].url);
+                    if (item.album[0].url.substring(0, 4) === 'http') {
+                        img.src = item.album[0].url;
+                    } else {
+                        img.src = require('@/' + item.album[0].url);
+                    }
                 } else {
                     img.src = require('@/' + item.imgs[0].url);
                 }

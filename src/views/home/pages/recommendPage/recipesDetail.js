@@ -66,12 +66,12 @@ class RecipesDetail extends Component {
         };
         const AlbumPhoto = <img 
             className='album' 
-            src={recipesDetail.album ? require('@/' + recipesDetail.album[0].url) : require('@/statics/img/blank.jpeg')} 
+            src={recipesDetail.album ? recipesDetail.album[0].url.substring(0, 4) === 'http' ? recipesDetail.album[0].url : require('@/' + recipesDetail.album[0].url) : require('@/statics/img/blank.jpeg')} 
             alt="" 
             onClick={() => {
                 this.setState({
                     showBigModal: true,
-                    showBigUrl: require('@/' + recipesDetail.album[0].url)
+                    showBigUrl: recipesDetail.album[0].url.substring(0, 4) === 'http' ? recipesDetail.album[0].url : require('@/' + recipesDetail.album[0].url)
                 })
             }}/>
         const AlbumVideo = <video src={recipesDetail.videoUrl} controls="controls" width='100%'>
@@ -173,7 +173,7 @@ class RecipesDetail extends Component {
                                         <LazyLoad offset={100}>
                                             <img 
                                                 className='album' 
-                                                src={require('@/' + item.img[0].url)} 
+                                                src={item.img[0].url.substring(0, 4) === 'http' ? item.img[0].url : require('@/' + item.img[0].url)} 
                                                 alt=""
                                                 onClick={() => {
                                                     this.setState({
