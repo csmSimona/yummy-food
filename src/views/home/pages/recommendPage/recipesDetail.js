@@ -178,7 +178,7 @@ class RecipesDetail extends Component {
                                                 onClick={() => {
                                                     this.setState({
                                                         showBigModal: true,
-                                                        showBigUrl: require('@/' + item.img[0].url)
+                                                        showBigUrl: item.img[0].url.substring(0, 4) === 'http' ? item.img[0].url : require('@/' + item.img[0].url)
                                                     })
                                                 }}/>
                                         </LazyLoad>

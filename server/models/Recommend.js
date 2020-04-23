@@ -15,9 +15,6 @@ var RecommendSchema = new Schema({
   },
   ingredients: {
     type: Array
-  },
-  recipes: {
-    type: Array
   }
 }, {
   versionKey: false
