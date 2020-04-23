@@ -48,9 +48,9 @@ class Recommend extends Component {
                         //     style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
                         // >
                         <img
-                            src={require(`@/statics/img/${val}.png`)}
+                            src={require(`@/statics/img/${val}.jpg`)}
                             alt=""
-                            style={{ width: '100%', verticalAlign: 'top' }}
+                            style={{ width: '100%', height: '220px', verticalAlign: 'top' }}
                             onLoad={() => {
                             // fire window resize event to change height
                             window.dispatchEvent(new Event('resize'));

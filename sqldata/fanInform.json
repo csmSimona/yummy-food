@@ -1,0 +1,18 @@
+{
+  "RECORDS": [
+    {
+      "_id": "5ea1a16d8aa01542586e6ff8",
+      "createDate": "Thu Apr 23 2020 22:08:45 GMT+0800 (GMT+08:00)",
+      "read": "true",
+      "userId": "5ea1a0bc8aa01542586e6ff5",
+      "writerId": "5e6e624d1c639857e0d085fa"
+    },
+    {
+      "_id": "5ea1b7c68aa01542586e7000",
+      "createDate": "Thu Apr 23 2020 23:44:06 GMT+0800 (GMT+08:00)",
+      "read": "true",
+      "userId": "5e6e624d1c639857e0d085fa",
+      "writerId": "5ea1a0bc8aa01542586e6ff5"
+    }
+  ]
+}

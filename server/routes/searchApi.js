@@ -174,7 +174,12 @@ router.post('/getSituationDetail', function(req, res, next) {
 
 router.post('/getIngredient', function(req, res, next) {
     console.log('name', req.body.name)
-    Ingredient.findOne({name: req.body.name}, function (err, data) {
+    Ingredient.findOne({
+        $or: [  // 多字段同时匹配
+            {name: {$regex: req.body.name}},
+            {alias: {$regex: req.body.name}}
+        ]
+    }, function (err, data) {
         if (err) {
             return res.status(500).send('查询失败');
         } else {

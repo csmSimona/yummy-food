@@ -21,7 +21,7 @@ class CreateName extends Component {
         return ( 
             <div>
                 <Header header={header} click={this.state.click} rightClick={this.handleNextClick}></Header>
-                <Border/>
+                {/* <Border/> */}
                 <InputItem
                     value={this.state.recipeName}
                     onChange={(val) => {

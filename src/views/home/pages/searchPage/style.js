@@ -134,7 +134,7 @@ export const BlankWrapper = styled.div`{
 
 export const Ingredient = styled.div`{
     display: flex;
-    margin: 1rem;
+    // margin: 1rem;
     background: #FAFAF8;
     height: 100%;
     border-radius: .25rem;

@@ -1,0 +1,52 @@
+{
+  "RECORDS": [
+    {
+      "_id": "5ea19b338aa01542586e6ff2",
+      "createDate": "23/4/2020 13:42:11.621",
+      "dynamicName": "鸡翅和薯条更配哦",
+      "dynamicStory": "好吃好吃好吃",
+      "followRecipes": "",
+      "imgs": "[ { \"url\" : \"statics/images/dynamic/15876493316210.png\" }, { \"url\" : \"statics/images/dynamic/15876493316441.png\" } ]",
+      "likeList": "[ ]",
+      "likeNumber": "0",
+      "recommend": "[ \"烘焙\", \"肉类\" ]",
+      "userId": "5e6e624d1c639857e0d085fa"
+    },
+    {
+      "_id": "5ea19b638aa01542586e6ff3",
+      "createDate": "23/4/2020 13:42:59.228",
+      "dynamicName": "超好吃吐司",
+      "dynamicStory": "超好吃吐司又香又软",
+      "followRecipes": "",
+      "imgs": "[ { \"url\" : \"statics/images/dynamic/15876493792280.png\" } ]",
+      "likeList": "[ ]",
+      "likeNumber": "0",
+      "recommend": "[ \"烘焙\", \"早餐\" ]",
+      "userId": "5e6e624d1c639857e0d085fa"
+    },
+    {
+      "_id": "5ea1a43d8aa01542586e6ff9",
+      "createDate": "23/4/2020 14:20:45.619",
+      "dynamicName": "烤翅",
+      "dynamicStory": "简单好做",
+      "followRecipes": "{ \"recipeId\" : \"5e74c77dcbcedd24f842b63a\", \"recipeName\" : \"新奥尔良烤翅\" }",
+      "imgs": "[ { \"url\" : \"statics/images/dynamic/15876516456190.png\" } ]",
+      "likeList": "[ ]",
+      "likeNumber": "0",
+      "recommend": "[ \"烘焙\" ]",
+      "userId": "5ea1a0bc8aa01542586e6ff5"
+    },
+    {
+      "_id": "5ea1b0588aa01542586e6ffd",
+      "createDate": "23/4/2020 15:12:24.311",
+      "dynamicName": "鸡翅",
+      "dynamicStory": "activity3activity3activity3activity3",
+      "followRecipes": "",
+      "imgs": "[ { \"url\" : \"statics/images/dynamic/15876547443110.png\" } ]",
+      "likeList": "[ ]",
+      "likeNumber": "0",
+      "recommend": "[ \"鸡翅\" ]",
+      "userId": "5ea1a0bc8aa01542586e6ff5"
+    }
+  ]
+}

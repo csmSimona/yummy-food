@@ -1,0 +1,46 @@
+{
+  "RECORDS": [
+    {
+      "_id": "5e8af5a4e3090000cf002372",
+      "icon": "&#xe6ff;",
+      "list": "[ { \"name\" : \"痛风\", \"img\" : \"statics/img/场景/慢性病/痛风.jpg\" }, { \"name\" : \"糖尿病\", \"img\" : \"statics/img/场景/慢性病/糖尿病.jpg\" }, { \"name\" : \"心脏病\", \"img\" : \"statics/img/场景/慢性病/心脏病.png\" } ]",
+      "type": "慢性病吃什么"
+    },
+    {
+      "_id": "5e8af5a4e3090000cf002373",
+      "icon": "&#xe6f2;",
+      "list": "[ { \"name\" : \"降火\", \"img\" : \"statics/img/场景/养生保健/降火.jpg\" }, { \"name\" : \"养血\", \"img\" : \"statics/img/场景/养生保健/养血.jpg\" }, { \"name\" : \"明目\", \"img\" : \"statics/img/场景/养生保健/明目.jpg\" } ]",
+      "type": "养生保健吃什么"
+    },
+    {
+      "_id": "5e8af5a4e3090000cf002374",
+      "icon": "&#xe649;",
+      "list": "[ { \"name\" : \"减肥\", \"img\" : \"statics/img/场景/美容减肥/减肥.jpg\" }, { \"name\" : \"养颜\", \"img\" : \"statics/img/场景/美容减肥/养颜.jpg\" }, { \"name\" : \"排毒\", \"img\" : \"statics/img/场景/美容减肥/排毒.jpg\" } ]",
+      "type": "美容减肥吃什么"
+    },
+    {
+      "_id": "5e8af5a4e3090000cf002375",
+      "icon": "&#xe6f8;",
+      "list": "[ { \"name\" : \"立春\", \"img\" : \"statics/img/场景/二十四节气/立春.jpeg\" }, { \"name\" : \"雨水\", \"img\" : \"statics/img/场景/二十四节气/雨水.jpeg\" }, { \"name\" : \"惊蛰\", \"img\" : \"statics/img/场景/二十四节气/惊蛰.jpeg\" }, { \"name\" : \"春分\", \"img\" : \"statics/img/场景/二十四节气/春分.jpeg\" }, { \"name\" : \"清明\", \"img\" : \"statics/img/场景/二十四节气/清明.jpeg\" }, { \"name\" : \"谷雨\", \"img\" : \"statics/img/场景/二十四节气/谷雨.jpeg\" } ]",
+      "type": "春季吃什么"
+    },
+    {
+      "_id": "5e8af5a4e3090000cf002376",
+      "icon": "&#xe6f9;",
+      "list": "[ { \"name\" : \"立夏\", \"img\" : \"statics/img/场景/二十四节气/立夏.jpeg\" }, { \"name\" : \"小满\", \"img\" : \"statics/img/场景/二十四节气/小满.jpeg\" }, { \"name\" : \"芒种\", \"img\" : \"statics/img/场景/二十四节气/芒种.jpeg\" }, { \"name\" : \"夏至\", \"img\" : \"statics/img/场景/二十四节气/夏至.jpeg\" }, { \"name\" : \"小暑\", \"img\" : \"statics/img/场景/二十四节气/小暑.jpeg\" }, { \"name\" : \"大暑\", \"img\" : \"statics/img/场景/二十四节气/大暑.jpeg\" } ]",
+      "type": "夏季吃什么"
+    },
+    {
+      "_id": "5e8af5a4e3090000cf002377",
+      "icon": "&#xe6fa;",
+      "list": "[ { \"name\" : \"立秋\", \"img\" : \"statics/img/场景/二十四节气/立秋.jpeg\" }, { \"name\" : \"处暑\", \"img\" : \"statics/img/场景/二十四节气/处暑.jpeg\" }, { \"name\" : \"白露\", \"img\" : \"statics/img/场景/二十四节气/白露.jpeg\" }, { \"name\" : \"秋分\", \"img\" : \"statics/img/场景/二十四节气/秋分.jpeg\" }, { \"name\" : \"寒露\", \"img\" : \"statics/img/场景/二十四节气/寒露.jpeg\" }, { \"name\" : \"霜降\", \"img\" : \"statics/img/场景/二十四节气/霜降.jpeg\" } ]",
+      "type": "秋季吃什么"
+    },
+    {
+      "_id": "5e8af5a4e3090000cf002378",
+      "icon": "&#xe6fb;",
+      "list": "[ { \"name\" : \"立冬\", \"img\" : \"statics/img/场景/二十四节气/立冬.jpeg\" }, { \"name\" : \"小雪\", \"img\" : \"statics/img/场景/二十四节气/小雪.jpeg\" }, { \"name\" : \"大雪\", \"img\" : \"statics/img/场景/二十四节气/大雪.jpeg\" }, { \"name\" : \"冬至\", \"img\" : \"statics/img/场景/二十四节气/冬至.jpeg\" }, { \"name\" : \"小寒\", \"img\" : \"statics/img/场景/二十四节气/小寒.jpeg\" }, { \"name\" : \"大寒\", \"img\" : \"statics/img/场景/二十四节气/大寒.jpeg\" } ]",
+      "type": "冬季吃什么"
+    }
+  ]
+}

@@ -39,7 +39,7 @@ class IngredientDetail extends Component {
                 <div className='content'>
                     <div className='name'>{ingredientDetail.name}</div>
                     <div className='desc'>
-                        <p>【别名】：{ingredientDetail.alias}</p>
+                        <p>【别名】：{ingredientDetail.alias ? ingredientDetail.alias : '无'}</p>
                         <p>【食量建议】：{ingredientDetail.intake}</p>
                         <p>【适宜人群】：{ingredientDetail.suitable}</p>
                         <p>【禁忌人群】：{ingredientDetail.avoid}</p>

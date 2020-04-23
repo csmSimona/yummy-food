@@ -490,6 +490,8 @@ class RecipesDetail extends Component {
             this.props.history.replace('/tab/release')
         } else if (this.props.location.type === 'situation') {
             this.props.history.replace('/tab/information')
+        } else if (this.props.userList.size === 0) {
+            this.props.history.replace('/tab/release')
         } else if (this.props.location.searchInput) {
             this.props.history.replace({
                 pathname: '/searchDetail',

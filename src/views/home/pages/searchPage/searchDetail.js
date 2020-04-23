@@ -4,6 +4,7 @@ import { SearchBar, ActivityIndicator, Toast, Tabs } from 'antd-mobile';
 import { searchRecipes, getIngredient } from '@/api/searchApi';
 import { getUserInfo } from '@/api/userApi';
 import { finishLoading } from '@/utils/loading';
+import LazyLoad from 'react-lazyload';
 
 const tabs = [
     {
@@ -50,23 +51,35 @@ class SearchDetail extends Component {
         </BlankWrapper>
         const SearchRecipesList = <SearchRecipesListWrapper>
             {
+                ingredient && 
+                <Ingredient onClick={this.getIngredientDetail}>
+                    {ingredient.img && <img src={require('@/' + ingredient.img)} /> }
+                    <div className='desc'>
+                        <div className='name'>{ingredient.name}</div>
+                        <div className='introduce'>{ingredient.introduce}</div>
+                    </div>
+                </Ingredient>
+            }
+            {
                 searchRecipesList && searchRecipesList.map((item, index) => {
                     return (
                         <div className='recipesListContent' key={index}>
-                            { item.videoUrl ? 
-                                <video 
-                                    onClick={this.getRecipesDetail(item._id)}
-                                    src={item.videoUrl} 
-                                    controls="controls" 
-                                >
-                                    您的浏览器不支持 video 标签。
-                                </video> : 
-                                <img 
-                                    src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
-                                    key={index} 
-                                    onClick={this.getRecipesDetail(item._id)} 
-                                    alt=""/> 
-                            }
+                            <LazyLoad offset={800}>
+                                { item.videoUrl ? 
+                                    <video 
+                                        onClick={this.getRecipesDetail(item._id)}
+                                        src={item.videoUrl} 
+                                        controls="controls" 
+                                    >
+                                        您的浏览器不支持 video 标签。
+                                    </video> : 
+                                    <img 
+                                        src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
+                                        key={index} 
+                                        onClick={this.getRecipesDetail(item._id)} 
+                                        alt=""/> 
+                                }
+                            </LazyLoad>
                             <div className='center'>
                                 <div className='recipeName' onClick={this.getRecipesDetail(item._id)} >{item.recipeName}</div>
                                 <div className='desc'>
@@ -117,16 +130,6 @@ class SearchDetail extends Component {
                 <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'600px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
                 </div>
-                {
-                    ingredient && 
-                    <Ingredient onClick={this.getIngredientDetail}>
-                        {ingredient.img && <img src={require('@/' + ingredient.img)} /> }
-                        <div className='desc'>
-                            <div className='name'>{ingredient.name}</div>
-                            <div className='introduce'>{ingredient.introduce}</div>
-                        </div>
-                    </Ingredient>
-                }
                 { this.state.searchRecipesList.length === 0 ? Blank : SearchRecipesList }
             </div>
          );

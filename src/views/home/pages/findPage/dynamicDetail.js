@@ -279,6 +279,8 @@ class DynamicDetail extends Component {
                 pathname: '/tagDynamic',
                 tag: this.props.location.tag
             })
+        } else if (this.props.userList.size === 0) {
+            this.props.history.replace('/tab/release')
         } else {
             window.history.go(-1);
         }

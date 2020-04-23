@@ -1,0 +1,61 @@
+{
+  "RECORDS": [
+    {
+      "_id": "5e6e624d1c639857e0d085fa",
+      "avoidFood": "[ \"生冷\", \"酸涩\", \"腥膻\" ]",
+      "birthday": "2020-03-19 14:52:59.387",
+      "collectRecipes": "[ \"5ea0fb4ed30800000c001382\" ]",
+      "concernList": "[ ]",
+      "createDate": "2020-03-19 14:52:59.387",
+      "fanList": "[ \"5ea1a0bc8aa01542586e6ff5\" ]",
+      "gender": "女",
+      "hometown": "[ \"330000\", \"330900\", \"330903\" ]",
+      "img": "[ { \"url\" : \"statics/images/avatar/1585331887026.png\" } ]",
+      "likeDynamic": "[ ]",
+      "livingPlace": "[ \"330000\", \"330100\", \"330108\" ]",
+      "name": "二熊不是熊二",
+      "openid": "",
+      "phone": "13757154156",
+      "profile": "啦啦啦啦啦啦啦啦",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjVlNmU2MjRkMWM2Mzk4NTdlMGQwODVmYSIsImlhdCI6MTU4NzY2MjA5OCwiZXhwIjoxNTg4MjY2ODk4fQ.45axMTGhBf02x1rL9lfD1XYDHTLopxS47NJpjcZrEkI"
+    },
+    {
+      "_id": "5e7072c53e4a553eecbb39c1",
+      "avoidFood": "[ \"无\" ]",
+      "birthday": "",
+      "collectRecipes": "[ ]",
+      "concernList": "[ ]",
+      "createDate": "2020-03-19 14:52:59.387",
+      "fanList": "[ ]",
+      "gender": "女",
+      "hometown": "[ ]",
+      "img": "[ { \"url\" : \"statics/images/avatar/1585043451916.png\", \"id\" : \"2121\" } ]",
+      "likeDynamic": "[ ]",
+      "livingPlace": "[ ]",
+      "name": "跟我学做菜",
+      "openid": "",
+      "phone": "13615804059",
+      "profile": "厨房小能手",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjEzNjE1ODA0MDU5IiwiaWF0IjoxNTg2MDk2OTQ4LCJleHAiOjE1ODY3MDE3NDh9.w9dcavBTOTZcAqVRnvOyhd6039XUQGvn9U5osOAWtVU"
+    },
+    {
+      "_id": "5ea1a0bc8aa01542586e6ff5",
+      "avoidFood": "[ \"腌制品\", \"内脏\" ]",
+      "birthday": "",
+      "collectRecipes": "[ \"5e74c77dcbcedd24f842b63a\" ]",
+      "concernList": "[ \"5e6e624d1c639857e0d085fa\" ]",
+      "createDate": "23/4/2020 14:05:48.027",
+      "fanList": "[ ]",
+      "gender": "[ { \"$numberInt\" : \"0\" } ]",
+      "hometown": "[ \"\" ]",
+      "img": "[ { \"url\" : \"statics/images/avatar/1587650748028.png\" } ]",
+      "likeDynamic": "[ ]",
+      "livingPlace": "[ \"\" ]",
+      "name": "哈哈哈哈哈",
+      "openid": "",
+      "phone": "13333333333",
+      "profile": "什么都吃",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjVlYTFhMGJjOGFhMDE1NDI1ODZlNmZmNSIsImlhdCI6MTU4NzY1NzY4NCwiZXhwIjoxNTg4MjYyNDg0fQ.m7eAipTUhlIDZWAG89aLlYlfQpgv5xipTx_YI4rPPeE"
+    }
+  ]
+}

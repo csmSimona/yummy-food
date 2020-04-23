@@ -9,7 +9,7 @@ import { GrobalIconStyle } from './statics/iconfont/iconfont';
 import store from './store';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Route, Switch } from 'react-router-dom';
-import './styles/AnimatedSwitch.less';
+// import './styles/AnimatedSwitch.less';
 import { createHashHistory } from 'history';
 const history = createHashHistory()
 
