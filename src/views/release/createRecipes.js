@@ -833,14 +833,16 @@ class CreateRecipes extends Component {
         }).then(res => {
             if (res.data.code === 200) {
                 let recipesDetail = res.data.data;
-                let url = require('@/' + recipesDetail.album[0].url);
+                let url = recipesDetail.album[0].url.substring(0, 4) === 'http' ? recipesDetail.album[0].url : require('@/' + recipesDetail.album[0].url);
                 let addRecommendList = [];
                 if (recipesDetail.album[0].url.substring(0, 13) === 'statics/video') {
                     recipesDetail.videoUrl = require('@/' + recipesDetail.album[0].url)
                 }
                 let cookSteps = JSON.parse(JSON.stringify(recipesDetail.cookSteps)); 
                 cookSteps.forEach(item => {
-                    item.img[0].url = require('@/' + item.img[0].url)
+                    if (item.img[0].url.substring(0, 4) !== 'http') {
+                        item.img[0].url = require('@/' + item.img[0].url)
+                    }
                 })
                 recipesDetail.recommend.forEach(item => {
                     if (recommendList.indexOf(item) === -1) {

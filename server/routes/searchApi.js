@@ -166,6 +166,7 @@ router.post('/getSituationDetail', function(req, res, next) {
             return res.status(500).send('查询失败');
         } else {
             console.log('SituationDetail data', data)
+            // data.ingredients
             return res.json({ code: 200, data: data });
         }
     })

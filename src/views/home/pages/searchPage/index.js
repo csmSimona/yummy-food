@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { HeaderFix, Border, IconFont, SearchRecordWrapper } from './style';
 import { SearchBar, Tag } from 'antd-mobile';
 
-const hotSearch = ["蛋挞", "蛋糕", "面包", "豆腐", "茄子", "红烧肉", "披萨", "青团", "早餐", "鸡胸肉", "可乐鸡翅", "雪媚娘", "土豆", "手抓饼", "牛奶", "包子", "排骨", "鸡翅", "吐司", "虾"];
+const hotSearch = ["蛋挞", "蛋糕", "面包", "豆腐", "茄子", "红烧肉", "披萨", "青团", "早餐", "鸡胸肉", "可乐鸡翅", "雪媚娘", "土豆", "手抓饼", "牛奶", "包子", "排骨", "鸡翅", "吐司", "虾", "玉米"];
 
 class Search extends Component {
     constructor(props) {

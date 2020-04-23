@@ -39,6 +39,8 @@ class Login extends Component {
   handleWechatBtnClick() {
     let return_uri = encodeURIComponent('http://127.0.0.1:3000/personInfo');  
     let url = ('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+AppID+'&redirect_uri='+return_uri+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect');
+    
+    // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf5fff2aa6e0b1af7&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2FpersonInfo&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
 
     // let url = 'weixin://dl/business/?ticket=ta428dhj739hg3efe6e';
     document.location = url;
@@ -48,30 +50,27 @@ class Login extends Component {
   handlePhoneBtnClick() {
     this.props.history.push('/phoneRegister');
   }
-  // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf5fff2aa6e0b1af7&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2FpersonInfo&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect
 
-  // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf5fff2aa6e0b1af7&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2FpersonInfo&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1&uin=MTY2NjcxNzI0&key=601e91c206e212893e333f08e66ecbba9ac656ff465c386b14ec4f82c8cb54e3c0a29bd8fc2e8a77c198f4c974e8bcb0&pass_ticket=G/oAtnGuAdcptJN/+VHIqLkLRcHGsCTxaRod7cxVpCn9oAvgEh0Cvf4memnzWxgQp0YAzsa9crgmlh5sVKv0Pw==
-  
   cancelLogin() {
     this.props.history.push({
       pathname: '/tab/home/recommend'
     })
   }
-  //判断是否微信浏览器
-  isWeixinBrowser() {  
-    var ua = navigator.userAgent.toLowerCase();  
-    var result = (/micromessenger/.test(ua)) ? true : false;
-    if (result) {
-        console.log('你正在访问微信浏览器');
-    }
-    else {
-        console.log('你访问的不是微信浏览器');
-    }
-    return result;
-  };
-  componentDidMount() {
-    this.isWeixinBrowser();
-  }
+  // //判断是否微信浏览器
+  // isWeixinBrowser() {  
+  //   var ua = navigator.userAgent.toLowerCase();  
+  //   var result = (/micromessenger/.test(ua)) ? true : false;
+  //   if (result) {
+  //       console.log('你正在访问微信浏览器');
+  //   }
+  //   else {
+  //       console.log('你访问的不是微信浏览器');
+  //   }
+  //   return result;
+  // };
+  // componentDidMount() {
+  //   this.isWeixinBrowser();
+  // }
 }
 
 export default Login;

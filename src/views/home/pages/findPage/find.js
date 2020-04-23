@@ -299,6 +299,8 @@ class Find extends Component {
     }
 
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
+        
         // console.log('this.props.dynamicList', this.props.dynamicList);
         // console.log('this.props.leftDynamic', this.props.leftDynamic);
         // console.log('this.props.rightDynamic', this.props.rightDynamic);

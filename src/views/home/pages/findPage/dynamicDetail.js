@@ -643,6 +643,8 @@ class DynamicDetail extends Component {
     }
 
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
+        
         this.getDynamicDetail();
         this.getDynamicComment();
 

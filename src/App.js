@@ -21,8 +21,8 @@ class App extends Component {
         <GrobalIconStyle />
         <Provider store={store}>
           <Router history={history}>
-          {/* {renderRoutes(routes)} */}
-              <Route
+          {renderRoutes(routes)}
+              {/* <Route
                 render={({ location }) => (
                   <TransitionGroup>
                     <CSSTransition
@@ -35,7 +35,7 @@ class App extends Component {
                     </CSSTransition>
                   </TransitionGroup>
                 )}
-              />
+              /> */}
           </Router>
         </Provider>
       </div>

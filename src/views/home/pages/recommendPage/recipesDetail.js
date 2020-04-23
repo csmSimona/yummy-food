@@ -847,6 +847,8 @@ class RecipesDetail extends Component {
     }
 
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
+        
         this.getRecipesDetail();
         this.getRecipeComment();
     

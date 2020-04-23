@@ -326,6 +326,8 @@ class Recommend extends Component {
     }
     
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
+        
         // console.log('this.props.recipesList', this.props.recipesList);
         // console.log('this.props.leftData', this.props.leftData);
         // console.log('this.props.rightData', this.props.rightData);

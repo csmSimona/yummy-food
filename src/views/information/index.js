@@ -3,8 +3,9 @@ import { SearchBar, Toast } from 'antd-mobile';
 import { HeaderFix, TodayInformationWrapper, IconFont, Border, BlankWrapper, More } from './style';
 import axios from 'axios';
 import getJQ from '@/utils/getJQ';
-import { getSituationList, getSituationDetail, getIngredient } from '@/api/searchApi';
-import { getRecipesById } from '@/api/recipesApi';
+import getArrayItems from '@/utils/getArrayItems';
+import { getSituationList, getSituationDetail, getIngredient, searchRecipes } from '@/api/searchApi';
+// import { getRecipesById } from '@/api/recipesApi';
 import LazyLoad from 'react-lazyload';
 
 class Information extends Component {
@@ -104,27 +105,47 @@ class Information extends Component {
         })
     }
 
-    getTodayDetail(name) {
-        getSituationDetail({name}).then(res => {
+    getTodayDetail(solarTerm) {
+        getSituationDetail({name: solarTerm}).then(res => {
             if (res.data.code === 200) {
                 let situationDetail = res.data.data;
                 if (situationDetail) {
-                    let actionArr = [];
+                    // let actionArr = [];
+                    // let recipesList = [];
                     let recipesList = [];
-                    situationDetail.recipes.forEach(item => {
-                        actionArr.push(getRecipesById({id: item}))
-                    })
-                    Promise.all(actionArr).then(function (res) {
-                        for (var i = 0; i < res.length; i++) {
-                            recipesList.push(res[i].data.data);
+
+                    searchRecipes({searchContent: JSON.stringify(situationDetail.ingredients), type: 0}).then(res => {
+                        if (res.data.code === 200) {
+                            // recipesList = res.data.data.;
+                            recipesList = getArrayItems(res.data.data, 5);
+                            recipesList.forEach(item => {
+                                if (item.album[0].url.substring(0, 13) === 'statics/video') {
+                                    item.videoUrl = require('@/' + item.album[0].url)
+                                }
+                            })
+                            this.setState({
+                                recipesList: recipesList
+                            })
+                        } else {
+                            Toast.fail('未知错误', 1);
                         }
-                    }).then(() => {
-                        this.setState({
-                            recipesList: recipesList
-                        })
-                    }).catch(function (err) {
-                        Toast.fail('未知错误', 1);
+                    }).catch(err => {
+                        console.log('err', err);
                     })
+                    // situationDetail.recipes.forEach(item => {
+                    //     actionArr.push(getRecipesById({id: item}))
+                    // })
+                    // Promise.all(actionArr).then(function (res) {
+                    //     for (var i = 0; i < res.length; i++) {
+                    //         recipesList.push(res[i].data.data);
+                    //     }
+                    // }).then(() => {
+                    //     this.setState({
+                    //         recipesList: recipesList
+                    //     })
+                    // }).catch(function (err) {
+                    //     Toast.fail('未知错误', 1);
+                    // })
                 }
             }
         }).catch(function (err) {
