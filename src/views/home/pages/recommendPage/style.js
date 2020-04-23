@@ -93,6 +93,41 @@ export const RecipesDetailWrapper = styled.div`{
     }
     .recipesDetailContent {
         margin-bottom: 3.5rem;
+        .showBig {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            z-index: 1000;
+            img {
+                position: absolute;
+                top: 12.5rem;
+            }
+            /* 入场动画 */
+            &.slide-enter,&.slide-appear{
+                opacity: 0;
+            }
+            &.slide-enter-active,&.slide-appear-active{
+                opacity: 1;
+                transition: opacity 1s ease-in; 
+            }
+            &.slide-enter-done{
+                opacity: 1;
+            }
+            /* 出场动画 */
+            &.slide-exit{
+                opacity: 1;
+            }
+            &.slide-exit-active{
+                opacity: 0;
+                transition: opacity 1s ease-in; 
+            }
+            &.slide-exit-done{
+                opacity: 0;
+            }
+        }
     }
     .fixedFooter {
         position: fixed;
@@ -183,6 +218,7 @@ export const RecipesDetailWrapper = styled.div`{
     .story {
         padding: 1rem 1rem 0 1rem;
         line-height: 1.25rem;
+        letter-spacing: .1rem;
     }
     .followRecipes {
         margin: 1rem 1rem 0 1rem;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '@/components/header';
 import { List, InputItem, ImagePicker, TextareaItem, Tag, Toast, Modal, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { TagContainer, DeleteDynamic } from './style';
+import { TagContainer, DeleteDynamic, ShowBigWrapper } from './style';
 import { connect } from 'react-redux';
 import { createDynamic, getDynamicDetail, editDynamic, deleteDynamic } from '@/api/dynamicApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
@@ -20,8 +20,12 @@ const header2 = {
     title: '编辑动态',
     right: '保存'
 }
+<<<<<<< HEAD
 // const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
 
+=======
+const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜"];
+>>>>>>> 6882515ff1ac93df81998eb0f15ef6c63948ddb5
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
 
@@ -46,6 +50,7 @@ class CreateDynamic extends Component {
     constructor(props) {
         super(props);
         this.state = { 
+            addRecommendList: [],
             recommendSelected: [],
             files: [],
             classModalVisible: false,
@@ -63,6 +68,9 @@ class CreateDynamic extends Component {
         this.handleReleaseClick = this.handleReleaseClick.bind(this);
         this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this);
         this.deleteDynamic = this.deleteDynamic.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.showInput = this.showInput.bind(this);
+        this.handleInputConfirm = this.handleInputConfirm.bind(this);
     }
     render() { 
         let { getFieldProps } = this.props.form;
@@ -96,7 +104,7 @@ class CreateDynamic extends Component {
                     classModalVisible={this.state.classModalVisible}
                 />
                 )}
-                <Modal
+                {/* <Modal
                     visible={this.state.showBigModal}
                     transparent
                     maskClosable={true}
@@ -106,8 +114,10 @@ class CreateDynamic extends Component {
                     wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                 >
                     <img src={this.state.showBigUrl} alt='查看图片' width="100%" height="100%" />
-                </Modal>
-
+                </Modal> */}
+                <ShowBigWrapper style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                    <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                </ShowBigWrapper>
                 <form style={{marginBottom: '3rem'}}>
                     <List>
                         <InputItem
@@ -165,6 +175,47 @@ class CreateDynamic extends Component {
                                         }}>{item}</Tag>
                                     })
                                 }
+                                {
+                                    addRecommendList && addRecommendList.map((val, i) => {
+                                        return <Tag key={i}
+                                            className='close'
+                                            selected
+                                            closable
+                                            onClose={() => {
+                                                console.log(val, i);
+                                                let { addRecommendList, recommendSelected } = this.state;
+                                                let n = recommendSelected.indexOf(val)
+                                                if (n !== -1) {
+                                                    recommendSelected.splice(n, 1);
+                                                }
+                                                addRecommendList.splice(i, 1)
+
+                                                this.setState({ 
+                                                    recommendSelected: recommendSelected,
+                                                    addRecommendList
+                                                })
+                                                console.log('addRecommendList', addRecommendList)
+                                                console.log('recommendSelected',  recommendSelected)
+                                            }}
+                                        >{val}</Tag>
+                                    })
+                                }
+                                {inputVisible && (
+                                    <InputItem
+                                        ref={ref => this.input = ref}
+                                        type="text"
+                                        size="small"
+                                        className="tagInput"
+                                        value={inputValue}
+                                        onChange={this.handleInputChange}
+                                        onBlur={this.handleInputConfirm}
+                                    />
+                                )}
+                                {!inputVisible && (
+                                    <div className='addMore' onClick={this.showInput}>
+                                        其他
+                                    </div>
+                                )}
                             </TagContainer>
                         </List.Item>
                         <List.Item 
@@ -188,6 +239,31 @@ class CreateDynamic extends Component {
          );
     }
 
+    handleInputConfirm() {
+      const { inputValue } = this.state;
+      let { addRecommendList, recommendSelected } = this.state;
+      if (inputValue && addRecommendList.indexOf(inputValue) === -1 && recommendList.indexOf(inputValue) === -1) {
+        addRecommendList = [...addRecommendList, inputValue];
+      }
+      if (inputValue && recommendSelected.indexOf(inputValue) === -1) {
+        recommendSelected = [...recommendSelected, inputValue];
+      }
+      this.setState({
+        addRecommendList,
+        recommendSelected,
+        inputVisible: false,
+        inputValue: '',
+      });
+    };
+
+    handleInputChange(value) {
+        this.setState({ inputValue: value });
+    };
+
+    showInput() {
+        this.setState({ inputVisible: true }, () => this.input.focus());
+    };
+
     deleteDynamic() {
         alert('', '是否删除该动态', [
             { text: '否', onPress: () => {
@@ -208,10 +284,18 @@ class CreateDynamic extends Component {
     }
 
     handleBackClick() {
-        console.log('handleBackClick')
-        this.props.history.push({
-            pathname: '/tab/release'
-        })
+        if (this.props.location.dynamicId) {
+            this.props.history.replace('/tab/center/myDynamic');
+        } else if (this.props.location.collectRecipe) {
+            this.props.history.replace('/tab/center/myCollect');
+        } else if (this.props.location.tag) {
+            this.props.history.replace({
+                pathname: '/tagDynamic',
+                tag: this.props.location.tag
+            })
+        } else {
+            this.props.history.replace('/tab/release');
+        }
     }
 
     handleReleaseClick() {
@@ -248,7 +332,7 @@ class CreateDynamic extends Component {
                     console.log('res.data', res.data);
                     Toast.success('更新成功！', 1)
                     this.props.history.replace('/tab/center/myDynamic');
-                    window.location.reload();
+                    // window.location.reload();
                 }
             }).catch((err) => {
                 console.log('error', err);
@@ -291,16 +375,16 @@ class CreateDynamic extends Component {
     showModal = key => (e) => {
         e.preventDefault(); // 修复 Android 上点击穿透
         this.setState({
-          [key]: true,
+            [key]: true,
         });
-      }
-      onClose = key => () => {
+    }
+    onClose = key => () => {
         this.setState({
-          [key]: false,
+            [key]: false,
         });
-      }
+    }
     
-      onWrapTouchStart = (e) => {
+    onWrapTouchStart = (e) => {
         // fix touch to scroll background page on iOS
         if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
           return;
@@ -309,9 +393,9 @@ class CreateDynamic extends Component {
         if (!pNode) {
           e.preventDefault();
         }
-      }
+    }
 
-      onChange = (files, type, index) => {
+    onChange = (files, type, index) => {
         let file
         if (files.length) {
             file = files[files.length - 1].file
@@ -361,13 +445,20 @@ class CreateDynamic extends Component {
             if (res.data.code === 200) {
                 let dynamicDetail = res.data.data;
                 let imgs = JSON.parse(JSON.stringify(dynamicDetail.imgs)); 
+                let addRecommendList = [];
                 imgs.forEach(item => {
                     item.url = require('@/' + item.url)
+                })
+                dynamicDetail.recommend.forEach(item => {
+                    if (recommendList.indexOf(item) === -1) {
+                        addRecommendList = [...addRecommendList, item];
+                    }
                 })
                 this.setState({
                     dynamicDetail,
                     files: imgs,
-                    recommendSelected: dynamicDetail.recommend
+                    recommendSelected: dynamicDetail.recommend,
+                    addRecommendList
                 })
                 console.log('dynamicDetail', dynamicDetail)
             }
@@ -377,6 +468,13 @@ class CreateDynamic extends Component {
     }
 
     componentDidMount() {
+        if (this.props.location.tag) {
+            let recommendSelected = this.state.recommendSelected
+            recommendSelected.push(this.props.location.tag)
+            this.setState({
+                recommendSelected
+            })
+        }
         if (this.props.location.dynamicId) {
             this.getDynamicDetail();
         }
@@ -392,6 +490,15 @@ class CreateDynamic extends Component {
                 console.log('followRecipes', this.state.followRecipes)
             })
         }
+        document.body.addEventListener('keyup', (e) => {
+            if (window.event) {
+                e = window.event
+            }
+            let code = e.charCode || e.keyCode;
+            if (code === 13) {
+                this.handleInputConfirm();
+            }		
+        })
     }
 }
  

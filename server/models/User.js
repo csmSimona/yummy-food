@@ -15,7 +15,7 @@ var UserSchema = new Schema({
     type: String
   },
   gender: {
-    type: String
+    type: Array
   },
   hometown: {
     type: Array

@@ -40,7 +40,7 @@ class MyCollect extends Component {
                 this.state.collectRecipesList.map((item, index) => {
                     return (
                         <div className='recipesListContent' key={index}>
-                            <LazyLoad offset={100}>
+                            <LazyLoad offset={300}>
                                 { item.videoUrl ? 
                                     <video 
                                         onClick={this.getRecipesDetail(item._id)}
@@ -51,7 +51,7 @@ class MyCollect extends Component {
                                         您的浏览器不支持 video 标签。
                                     </video> : 
                                     <img 
-                                        src={require('@/' + item.album[0].url)} 
+                                        src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
                                         className='album'  
                                         key={index} 
                                         onClick={this.getRecipesDetail(item._id)} 
@@ -97,10 +97,10 @@ class MyCollect extends Component {
         </BlankWrapper>
         return ( 
             <div>
-                <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'500px'}}>
+                <div style={{ display: this.state.animating ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height:'300px'}}>
                     <ActivityIndicator id="loading" size="large" animating={this.state.animating}/>
                 </div>
-                { this.state.collectRecipesList.length === 0 ? Blank : CollectRecipesList }
+                { !this.state.animating && (this.state.collectRecipesList.length === 0 ? Blank : CollectRecipesList) }
                 <Modal
                     visible={this.state.modal}
                     transparent

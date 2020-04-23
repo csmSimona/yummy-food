@@ -31,7 +31,7 @@ class NewCommentList extends Component {
                     commentList && commentList.map((item, index) => {
                         return (
                             <div className='list' key={index}>
-                                <img src={item.writer.img[0].url.substring(0, 4) ? item.writer.img[0].url : require('@/' + item.writer.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
+                                <img src={item.writer.img[0].url.substring(0, 4) === 'http' ? item.writer.img[0].url : require('@/' + item.writer.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.writer)}/>
                                 <div className='user'>
                                     <p className='name' onClick={() => this.gotoUserDetail(item.writer)}>{item.writer.name}</p>
                                     <p className='comment'>{item.comment.content}</p>
@@ -49,7 +49,7 @@ class NewCommentList extends Component {
                                             您的浏览器不支持 video 标签。
                                         </video> : 
                                         <img 
-                                            src={require('@/' + item.recipes.album[0].url)} 
+                                            src={item.recipes.album[0].url.substring(0, 4) === 'http' ? item.recipes.album[0].url : require('@/' + item.recipes.album[0].url)} 
                                             key={index} 
                                             onClick={this.getRecipesDetail(item.recipes._id)} 
                                             alt=""
@@ -85,7 +85,7 @@ class NewCommentList extends Component {
     
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }

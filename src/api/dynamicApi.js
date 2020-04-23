@@ -20,3 +20,4 @@ export const getDynamicDetailByUserId = (id) => http.post('/dynamic/getDynamicDe
 
 export const getDynamicById = (id) => http.post('/dynamic/getDynamicById', id);
 
+export const getDynamicByTag = (tag) => http.post('/dynamic/getDynamicByTag', tag);

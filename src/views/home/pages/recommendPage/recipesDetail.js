@@ -11,6 +11,7 @@ import { Toast, Button, Modal } from 'antd-mobile';
 import LazyLoad from 'react-lazyload';
 import { connect } from 'react-redux';
 import { actionCreators as centerActionCreators } from '@/views/center/store';
+import { CSSTransition } from 'react-transition-group';
 
 const selectIcon = ['&#xe738;', '&#xe666;', '&#xe606;', '&#xe633;'];
 const UNCOLLECT = '&#xe60f;';
@@ -65,12 +66,12 @@ class RecipesDetail extends Component {
         };
         const AlbumPhoto = <img 
             className='album' 
-            src={recipesDetail.album ? require('@/' + recipesDetail.album[0].url) : require('@/statics/img/blank.jpeg')} 
+            src={recipesDetail.album ? recipesDetail.album[0].url.substring(0, 4) === 'http' ? recipesDetail.album[0].url : require('@/' + recipesDetail.album[0].url) : require('@/statics/img/blank.jpeg')} 
             alt="" 
             onClick={() => {
                 this.setState({
                     showBigModal: true,
-                    showBigUrl: require('@/' + recipesDetail.album[0].url)
+                    showBigUrl: recipesDetail.album[0].url.substring(0, 4) === 'http' ? recipesDetail.album[0].url : require('@/' + recipesDetail.album[0].url)
                 })
             }}/>
         const AlbumVideo = <video src={recipesDetail.videoUrl} controls="controls" width='100%'>
@@ -81,7 +82,7 @@ class RecipesDetail extends Component {
                 <div className='recipesDetailContent'>
                     <Header header={header} leftClick={this.goBack}></Header>
                     { recipesDetail.videoUrl ? AlbumVideo : AlbumPhoto }
-                    <Modal
+                    {/* <Modal
                         visible={this.state.showBigModal}
                         transparent
                         maskClosable={true}
@@ -91,7 +92,17 @@ class RecipesDetail extends Component {
                         wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                     >
                         <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-                    </Modal>
+                    </Modal> */}
+                    <CSSTransition 
+                        in={this.state.showBigModal}
+                        timeout={200}
+                        classNames='slide'
+                        appear={true}
+                    >
+                        <div className='showBig' style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                            <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                        </div>
+                    </CSSTransition>
                     <p className='recipeName'>{recipesDetail.recipeName}</p>
                     <p className='createDate'>
                         {formatDate(recipesDetail.createDate)}
@@ -162,12 +173,12 @@ class RecipesDetail extends Component {
                                         <LazyLoad offset={100}>
                                             <img 
                                                 className='album' 
-                                                src={require('@/' + item.img[0].url)} 
+                                                src={item.img[0].url.substring(0, 4) === 'http' ? item.img[0].url : require('@/' + item.img[0].url)} 
                                                 alt=""
                                                 onClick={() => {
                                                     this.setState({
                                                         showBigModal: true,
-                                                        showBigUrl: require('@/' + item.img[0].url)
+                                                        showBigUrl: item.img[0].url.substring(0, 4) === 'http' ? item.img[0].url : require('@/' + item.img[0].url)
                                                     })
                                                 }}/>
                                         </LazyLoad>
@@ -223,7 +234,7 @@ class RecipesDetail extends Component {
                             })
                         }
                         <div className='commentInput'>
-                          <img className='avatar' src={userList.img[0].url.substring(0, 4) ? userList.img[0].url : require('@/' + userList.img[0].url)} alt=""/>
+                          <img className='avatar' src={userList.img ? userList.img[0].url.substring(0, 4) === 'http' ? userList.img[0].url : require('@/' + userList.img[0].url) : require('@/statics/img/blank.jpeg')} alt=""/>
                           <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 
@@ -452,7 +463,7 @@ class RecipesDetail extends Component {
     
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
@@ -475,10 +486,17 @@ class RecipesDetail extends Component {
     }
 
     goBack() {
-        if (this.props.location.type === 'look') {
-            window.history.go(-1);
-        } else {
+        if (this.props.location.type === 'create') {
             this.props.history.replace('/tab/release')
+        } else if (this.props.location.type === 'situation') {
+            this.props.history.replace('/tab/information')
+        } else if (this.props.location.searchInput) {
+            this.props.history.replace({
+                pathname: '/searchDetail',
+                searchInput: this.props.location.searchInput
+            })
+        } else {
+            window.history.go(-1);
         }
     }
 
@@ -829,6 +847,8 @@ class RecipesDetail extends Component {
     }
 
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
+        
         this.getRecipesDetail();
         this.getRecipeComment();
     

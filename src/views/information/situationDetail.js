@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { getSituationDetail } from '@/api/searchApi';
+import { getSituationDetail, searchRecipes } from '@/api/searchApi';
 import Header from '@/components/header';
 import { SituationDetailWrapper, Border, RecipesListWrapper, NoDataWrapper, HeaderFix, BackIcon } from './style';
 import { Tag, Toast, ActivityIndicator, SearchBar } from 'antd-mobile';
-import { getRecipesById } from '@/api/recipesApi';
+// import { getRecipesById } from '@/api/recipesApi';
 import getHW from '@/utils/getHW';
 import { finishLoading } from '@/utils/loading';
+import getArrayItems from '@/utils/getArrayItems';
 
 class SituationDetail extends Component {
     constructor(props) {
@@ -48,7 +49,7 @@ class SituationDetail extends Component {
                         })
                     }}
                 />
-                <div className='searchButton' onClick={() => {this.getSituationDetail(searchContent)}}>搜索</div>
+                <div className='searchButton' onClick={() => {this.gotoSituationDetail(searchContent)}}>搜索</div>
             </HeaderFix>
             <NoDataWrapper>
                 <p>暂无关于“{this.props.location.name}”的资讯</p>
@@ -88,7 +89,7 @@ class SituationDetail extends Component {
                                                     您的浏览器不支持 video 标签。
                                                 </video> : 
                                                 <img 
-                                                    src={require('@/' + item.album[0].url)} 
+                                                    src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)}  
                                                     width="100%" 
                                                     height="100%"  
                                                     key={index} 
@@ -116,7 +117,7 @@ class SituationDetail extends Component {
                                                     您的浏览器不支持 video 标签。
                                                 </video> : 
                                                 <img 
-                                                    src={require('@/' + item.album[0].url)} 
+                                                    src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
                                                     width="100%" 
                                                     height="100%"  
                                                     key={index} 
@@ -161,7 +162,7 @@ class SituationDetail extends Component {
         localStorage.setItem('historySearch', JSON.stringify(historySearch));
     }
     
-    getSituationDetail(name) {
+    gotoSituationDetail(name) {
         this.props.history.replace({
             pathname: '/situationDetail',
             name: name
@@ -171,7 +172,7 @@ class SituationDetail extends Component {
     getRecipesDetail = (recipeId) => () => {
         this.props.history.push({
             pathname: '/recipesDetail/' + recipeId,
-            type: 'look'
+            type: 'situation'
         })
     }
 
@@ -184,26 +185,48 @@ class SituationDetail extends Component {
             if (res.data.code === 200) {
                 let situationDetail = res.data.data;
                 if (situationDetail) {
-                    let actionArr = [];
+                    // let actionArr = [];
                     let recipesList = [];
-                    situationDetail.recipes.forEach(item => {
-                        actionArr.push(getRecipesById({id: item}))
-                    })
-                    Promise.all(actionArr).then(function (res) {
-                        for (var i = 0; i < res.length; i++) {
-                            recipesList.push(res[i].data.data);
+                    searchRecipes({searchContent: JSON.stringify(situationDetail.ingredients), type: 0}).then(res => {
+                        if (res.data.code === 200) {
+                            // recipesList = res.data.data;
+                            recipesList = getArrayItems(res.data.data, 6);
+                            recipesList.forEach(item => {
+                                if (item.album[0].url.substring(0, 13) === 'statics/video') {
+                                    item.videoUrl = require('@/' + item.album[0].url)
+                                }
+                            })
+                            this.setState({
+                                recipesList: recipesList,
+                                situationDetail: situationDetail
+                            })
+                            // 瀑布流分左右布局
+                            getHW(recipesList, 'recipesList', this); //调用
+                            finishLoading(this);
+                        } else {
+                            Toast.fail('未知错误', 1);
                         }
-                    }).then(() => {
-                        this.setState({
-                            recipesList: recipesList,
-                            situationDetail: situationDetail
-                        })
-                        // 瀑布流分左右布局
-                        getHW(recipesList, 'recipesList', this); //调用
-                        finishLoading(this);
-                    }).catch(function (err) {
-                        Toast.fail('未知错误', 1);
+                    }).catch(err => {
+                        console.log('err', err);
                     })
+                    // situationDetail.forEach(item => {
+                    //     actionArr.push(getRecipesById({id: item}))
+                    // })
+                    // Promise.all(actionArr).then(function (res) {
+                    //     for (var i = 0; i < res.length; i++) {
+                    //         recipesList.push(res[i].data.data);
+                    //     }
+                    // }).then(() => {
+                    //     this.setState({
+                    //         recipesList: recipesList,
+                    //         situationDetail: situationDetail
+                    //     })
+                    //     // 瀑布流分左右布局
+                    //     getHW(recipesList, 'recipesList', this); //调用
+                    //     finishLoading(this);
+                    // }).catch(function (err) {
+                    //     Toast.fail('未知错误', 1);
+                    // })
                 } else {
                     finishLoading(this);
                     this.setState({

@@ -3,8 +3,9 @@ import { SearchBar, Toast } from 'antd-mobile';
 import { HeaderFix, TodayInformationWrapper, IconFont, Border, BlankWrapper, More } from './style';
 import axios from 'axios';
 import getJQ from '@/utils/getJQ';
-import { getSituationList, getSituationDetail } from '@/api/searchApi';
-import { getRecipesById } from '@/api/recipesApi';
+import getArrayItems from '@/utils/getArrayItems';
+import { getSituationList, getSituationDetail, getIngredient, searchRecipes } from '@/api/searchApi';
+// import { getRecipesById } from '@/api/recipesApi';
 import LazyLoad from 'react-lazyload';
 
 class Information extends Component {
@@ -32,7 +33,7 @@ class Information extends Component {
                             })
                         }}
                     />
-                    <div className='searchButton' onClick={() => {this.getSituationDetail(searchContent)}}>搜索</div>
+                    <div className='searchButton' onClick={() => {this.getSearchDetail(searchContent)}}>搜索</div>
                 </HeaderFix>
                 <Border/>
                 <TodayInformationWrapper>
@@ -54,7 +55,7 @@ class Information extends Component {
                                 return (
                                     <div className='recipes' key={index}>
                                         <LazyLoad offset={100} height={100}>
-                                            <img src={require('@/' + item.album[0].url)} onClick={this.getRecipesDetail(item._id)}/>
+                                            <img src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} onClick={this.getRecipesDetail(item._id)}/>
                                         </LazyLoad>
                                         <p>{item.recipeName}</p>
                                     </div>
@@ -104,27 +105,47 @@ class Information extends Component {
         })
     }
 
-    getTodayDetail(name) {
-        getSituationDetail({name}).then(res => {
+    getTodayDetail(solarTerm) {
+        getSituationDetail({name: solarTerm}).then(res => {
             if (res.data.code === 200) {
                 let situationDetail = res.data.data;
                 if (situationDetail) {
-                    let actionArr = [];
+                    // let actionArr = [];
+                    // let recipesList = [];
                     let recipesList = [];
-                    situationDetail.recipes.forEach(item => {
-                        actionArr.push(getRecipesById({id: item}))
-                    })
-                    Promise.all(actionArr).then(function (res) {
-                        for (var i = 0; i < res.length; i++) {
-                            recipesList.push(res[i].data.data);
+
+                    searchRecipes({searchContent: JSON.stringify(situationDetail.ingredients), type: 0}).then(res => {
+                        if (res.data.code === 200) {
+                            // recipesList = res.data.data.;
+                            recipesList = getArrayItems(res.data.data, 5);
+                            recipesList.forEach(item => {
+                                if (item.album[0].url.substring(0, 13) === 'statics/video') {
+                                    item.videoUrl = require('@/' + item.album[0].url)
+                                }
+                            })
+                            this.setState({
+                                recipesList: recipesList
+                            })
+                        } else {
+                            Toast.fail('未知错误', 1);
                         }
-                    }).then(() => {
-                        this.setState({
-                            recipesList: recipesList
-                        })
-                    }).catch(function (err) {
-                        Toast.fail('未知错误', 1);
+                    }).catch(err => {
+                        console.log('err', err);
                     })
+                    // situationDetail.recipes.forEach(item => {
+                    //     actionArr.push(getRecipesById({id: item}))
+                    // })
+                    // Promise.all(actionArr).then(function (res) {
+                    //     for (var i = 0; i < res.length; i++) {
+                    //         recipesList.push(res[i].data.data);
+                    //     }
+                    // }).then(() => {
+                    //     this.setState({
+                    //         recipesList: recipesList
+                    //     })
+                    // }).catch(function (err) {
+                    //     Toast.fail('未知错误', 1);
+                    // })
                 }
             }
         }).catch(function (err) {
@@ -132,10 +153,34 @@ class Information extends Component {
         })
     }
 
+    getSearchDetail(searchContent) {
+        getIngredient({name: searchContent}).then(res => {
+            if (res.data.code === 200) {
+                let ingredient = res.data.data;
+                if (!ingredient) {
+                    this.getSituationDetail(searchContent)
+                } else {
+                    this.getIngredientDetail(ingredient);
+                }
+            } else {
+                Toast.fail('未知错误', 1);
+            }
+        }).catch(err => {
+            console.log('err', err);
+        })
+    }
+
     getSituationDetail(name) {
         this.props.history.replace({
             pathname: '/situationDetail',
             name: name
+        })
+    }
+
+    getIngredientDetail(ingredient) {
+        this.props.history.replace({
+            pathname: '/ingredientDetail',
+            ingredientDetail: ingredient
         })
     }
 

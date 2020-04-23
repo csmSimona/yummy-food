@@ -84,7 +84,7 @@ class Recommend extends Component {
                                                         您的浏览器不支持 video 标签。
                                                     </video> : 
                                                     <img 
-                                                        src={require('@/' + item.album[0].url)} 
+                                                        src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
                                                         width="100%" 
                                                         height="100%"  
                                                         key={index} 
@@ -133,7 +133,7 @@ class Recommend extends Component {
                                                         您的浏览器不支持 video 标签。
                                                     </video> : 
                                                     <img 
-                                                        src={require('@/' + item.album[0].url)} 
+                                                        src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
                                                         width="100%" 
                                                         height="100%"  
                                                         key={index} 
@@ -252,7 +252,7 @@ class Recommend extends Component {
 
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
@@ -326,6 +326,8 @@ class Recommend extends Component {
     }
     
     componentDidMount() {
+        document.documentElement.scrollTop = document.body.scrollTop = 0;
+        
         // console.log('this.props.recipesList', this.props.recipesList);
         // console.log('this.props.leftData', this.props.leftData);
         // console.log('this.props.rightData', this.props.rightData);

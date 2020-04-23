@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '@/components/header';
 import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon, ActivityIndicator } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder, VideoWrapper, DeleteIcon } from './style';
+import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder, VideoWrapper, DeleteIcon, ShowBigWrapper } from './style';
 import { connect } from 'react-redux';
 import { createRecipes, saveRecipesDraft, getRecipesDetail, deleteRecipes, updateRecipes, deleteRecipesDraft } from '@/api/recipesApi';
 import CropperModal from '@/components/CropperModal/CropperModal';
@@ -49,7 +49,7 @@ const tagList = [
     }
 ]
 
-const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
+const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜"];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
 
@@ -74,6 +74,9 @@ class CreateRecipes extends Component {
     constructor(props) {
         super(props);
         this.state = { 
+            addRecommendList: [],
+            inputVisible: false,
+            inputValue: '',
             files: [],
             recipeTips: '',
             modal: [false, false, false, false],
@@ -108,13 +111,16 @@ class CreateRecipes extends Component {
         this.handleGetResultImgUrl = this.handleGetResultImgUrl.bind(this);
         this.deleteRecipes = this.deleteRecipes.bind(this);
         this.deleteVideo = this.deleteVideo.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.showInput = this.showInput.bind(this);
+        this.handleInputConfirm = this.handleInputConfirm.bind(this);
     }
 
     render() { 
         const { getFieldProps } = this.props.form;
         const type = this.props.location.type;
         const recipeId = this.props.location.recipeId;
-        const recipesDetail = this.state.recipesDetail;
+        let { addRecommendList, recipesDetail, inputVisible, inputValue } = this.state;
         return ( 
             <CreateRecipesWrapper>
                 <Header header={recipeId ? header2 : header1} leftClick={this.handleBackClick} rightClick={this.handleSaveClick}></Header>
@@ -150,7 +156,7 @@ class CreateRecipes extends Component {
                         classModalVisible={this.state.classModalVisible}
                     />
                     )}
-                    <Modal
+                    {/* <Modal
                         visible={this.state.showBigModal}
                         transparent
                         maskClosable={true}
@@ -160,7 +166,10 @@ class CreateRecipes extends Component {
                         wrapProps={{ onTouchStart: this.onWrapTouchStart }}
                     >
                         <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-                    </Modal>
+                    </Modal> */}
+                    <ShowBigWrapper style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
+                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
+                    </ShowBigWrapper>
                 </NoBorder>
                 <form style={{marginBottom: '3rem'}}>
                     <List>
@@ -405,6 +414,47 @@ class CreateRecipes extends Component {
                                         }}>{item}</Tag>
                                     })
                                 }
+                                {
+                                    addRecommendList && addRecommendList.map((val, i) => {
+                                        return <Tag key={i}
+                                            className='close'
+                                            selected
+                                            closable
+                                            onClose={() => {
+                                                console.log(val, i);
+                                                let { addRecommendList, recommendSelected } = this.state;
+                                                let n = recommendSelected.indexOf(val)
+                                                if (n !== -1) {
+                                                    recommendSelected.splice(n, 1);
+                                                }
+                                                addRecommendList.splice(i, 1)
+
+                                                this.setState({ 
+                                                    recommendSelected: recommendSelected,
+                                                    addRecommendList
+                                                })
+                                                console.log('addRecommendList', addRecommendList)
+                                                console.log('recommendSelected',  recommendSelected)
+                                            }}
+                                        >{val}</Tag>
+                                    })
+                                }
+                                {inputVisible && (
+                                    <InputItem
+                                        ref={ref => this.input = ref}
+                                        type="text"
+                                        size="small"
+                                        className="tagInput"
+                                        value={inputValue}
+                                        onChange={this.handleInputChange}
+                                        onBlur={this.handleInputConfirm}
+                                    />
+                                )}
+                                {!inputVisible && (
+                                    <div className='addMore' onClick={this.showInput}>
+                                        其他
+                                    </div>
+                                )}
                             </TagContainer>
                         </List.Item>
                     </List>
@@ -421,6 +471,31 @@ class CreateRecipes extends Component {
             </CreateRecipesWrapper>
          );
     }
+
+    handleInputConfirm() {
+        const { inputValue } = this.state;
+        let { addRecommendList, recommendSelected } = this.state;
+        if (inputValue && addRecommendList.indexOf(inputValue) === -1 && recommendList.indexOf(inputValue) === -1) {
+          addRecommendList = [...addRecommendList, inputValue];
+        }
+        if (inputValue && recommendSelected.indexOf(inputValue) === -1) {
+          recommendSelected = [...recommendSelected, inputValue];
+        }
+        this.setState({
+          addRecommendList,
+          recommendSelected,
+          inputVisible: false,
+          inputValue: '',
+        });
+      };
+  
+    handleInputChange(value) {
+        this.setState({ inputValue: value });
+    };
+
+    showInput() {
+        this.setState({ inputVisible: true }, () => this.input.focus());
+    };
 
     showModal = key => (e) => {
         e.preventDefault(); // 修复 Android 上点击穿透
@@ -577,7 +652,7 @@ class CreateRecipes extends Component {
                     // var recipeId = res.data.data._id;
                     Toast.success('更新成功！', 1);
                     this.props.history.replace('/tab/center/myRecipes');
-                    window.location.reload();
+                    // window.location.reload();
                 }
             }).catch((err) => {
                 console.log('error', err);
@@ -758,13 +833,21 @@ class CreateRecipes extends Component {
         }).then(res => {
             if (res.data.code === 200) {
                 let recipesDetail = res.data.data;
-                let url = require('@/' + recipesDetail.album[0].url);
+                let url = recipesDetail.album[0].url.substring(0, 4) === 'http' ? recipesDetail.album[0].url : require('@/' + recipesDetail.album[0].url);
+                let addRecommendList = [];
                 if (recipesDetail.album[0].url.substring(0, 13) === 'statics/video') {
                     recipesDetail.videoUrl = require('@/' + recipesDetail.album[0].url)
                 }
                 let cookSteps = JSON.parse(JSON.stringify(recipesDetail.cookSteps)); 
                 cookSteps.forEach(item => {
-                    item.img[0].url = require('@/' + item.img[0].url)
+                    if (item.img[0].url.substring(0, 4) !== 'http') {
+                        item.img[0].url = require('@/' + item.img[0].url)
+                    }
+                })
+                recipesDetail.recommend.forEach(item => {
+                    if (recommendList.indexOf(item) === -1) {
+                        addRecommendList = [...addRecommendList, item];
+                    }
                 })
                 this.setState({
                     recipesDetail,
@@ -775,7 +858,8 @@ class CreateRecipes extends Component {
                     selected: recipesDetail.selected,
                     recipeTips: recipesDetail.recipeTips,
                     visible: recipesDetail.videoUrl ? false : true,
-                    videoUrl: recipesDetail.videoUrl ? recipesDetail.videoUrl : ''
+                    videoUrl: recipesDetail.videoUrl ? recipesDetail.videoUrl : '',
+                    addRecommendList
                 })
                 // console.log('recipesDetail', recipesDetail)
             }
@@ -801,6 +885,15 @@ class CreateRecipes extends Component {
             })
             // console.log('recipeDraft', recipesDetail)
         }
+        document.body.addEventListener('keyup', (e) => {
+            if (window.event) {
+                e = window.event
+            }
+            let code = e.charCode || e.keyCode;
+            if (code === 13) {
+                this.handleInputConfirm();
+            }		
+        })
     }
 }
 

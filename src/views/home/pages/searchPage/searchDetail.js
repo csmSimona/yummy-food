@@ -62,7 +62,7 @@ class SearchDetail extends Component {
                                     您的浏览器不支持 video 标签。
                                 </video> : 
                                 <img 
-                                    src={require('@/' + item.album[0].url)} 
+                                    src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
                                     key={index} 
                                     onClick={this.getRecipesDetail(item._id)} 
                                     alt=""/> 
@@ -141,14 +141,15 @@ class SearchDetail extends Component {
 
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }
 
     getRecipesDetail = (recipeId) => () => {
         this.props.history.push({
-            pathname: '/recipesDetail/' + recipeId
+            pathname: '/recipesDetail/' + recipeId,
+            searchInput: this.state.searchContent
         })
     }
 

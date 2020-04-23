@@ -33,7 +33,7 @@ class NewCollectList extends Component {
                     collectList && collectList.map((item, index) => {
                         return (
                             <div className='list' key={index}>
-                                <img src={item.user.img[0].url.substring(0, 4) ? item.user.img[0].url : require('@/' + item.user.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.user)}/>
+                                <img src={item.user.img[0].url.substring(0, 4) === 'http' ? item.user.img[0].url : require('@/' + item.user.img[0].url)} className='avatar' alt="" onClick={() => this.gotoUserDetail(item.user)}/>
                                 <div className='user'>
                                     <p className='name' onClick={() => this.gotoUserDetail(item.user)}>{item.user.name}</p>
                                     <p className='time'>{formatTime(item.createDate)}</p>
@@ -49,7 +49,7 @@ class NewCollectList extends Component {
                                         您的浏览器不支持 video 标签。
                                     </video> : 
                                     <img 
-                                        src={require('@/' + item.recipes.album[0].url)} 
+                                        src={item.recipes.album[0].url.substring(0, 4) === 'http' ? item.recipes.album[0].url : require('@/' + item.recipes.album[0].url)} 
                                         key={index} 
                                         onClick={this.getRecipesDetail(item.recipes._id)} 
                                         alt=""
@@ -65,7 +65,7 @@ class NewCollectList extends Component {
 
     gotoUserDetail(userData) {
         this.props.history.replace({
-          pathname: '/tab/center/myRecipes',
+          pathname: '/center/myRecipes',
           userDetail: userData
         })
     }

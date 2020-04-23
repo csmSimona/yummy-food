@@ -18,6 +18,24 @@ export const TagWrapper = styled.div`{
     overflow-x: auto;
     white-space: nowrap;
     .tag {
-        margin: .5rem;
+        margin: 0 .5rem;
+        padding: .5rem;
+        text-align: center;
+        font-size: .875rem;
+        border: .5px solid #ddd;
+        border-radius: 3px;
+        // color: ${themeColor};
     }
+}`;
+
+export const JoinWrapper = styled.div`{
+    display: inline-block;
+    padding: .5rem 1rem;
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1rem;
+    background: ${themeColor};
+    color: #fff;
 }`;
