@@ -20,7 +20,7 @@ const header2 = {
     title: '编辑动态',
     right: '保存'
 }
-const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
+// const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "其他"];
 
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
@@ -55,7 +55,8 @@ class CreateDynamic extends Component {
             showBigUrl: '',
             animating: false,
             followRecipes: {},
-            dynamicDetail: {}
+            dynamicDetail: {},
+            recommendList: ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜"]
          }
         
         this.handleBackClick = this.handleBackClick.bind(this);
@@ -64,9 +65,9 @@ class CreateDynamic extends Component {
         this.deleteDynamic = this.deleteDynamic.bind(this);
     }
     render() { 
-        const { getFieldProps } = this.props.form;
-        const dynamicId = this.props.location.dynamicId;
-        const dynamicDetail = this.state.dynamicDetail;
+        let { getFieldProps } = this.props.form;
+        let dynamicId = this.props.location.dynamicId;
+        let { dynamicDetail, recommendList } = this.state;
         return ( 
             <div>
                 <Header header={dynamicId ? header2 : header1} leftClick={this.handleBackClick} rightClick={this.handleReleaseClick}></Header>
