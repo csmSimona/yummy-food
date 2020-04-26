@@ -381,4 +381,16 @@ export const SelectContent = styled.div`{
     text-align: center;
     color: #000;
     font-weight: bold;
-}`
+}`;
+
+export const JoinWrapper = styled.div`{
+    display: inline-block;
+    padding: .5rem 1rem;
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1rem;
+    background: ${themeColor};
+    color: #fff;
+}`;

@@ -872,6 +872,13 @@ class CreateRecipes extends Component {
         if (this.props.location.recipeId) {
             this.getRecipesDetail();
         }
+        if (this.props.location.tag) {
+            let recommendSelected = this.state.recommendSelected
+            recommendSelected.push(this.props.location.tag)
+            this.setState({
+                recommendSelected
+            })
+        }
         if (this.props.location.type === 'recipeDraft') {
             let recipesDetail = this.props.location.recipeDraft
             this.setState({

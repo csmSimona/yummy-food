@@ -486,7 +486,12 @@ class RecipesDetail extends Component {
     }
 
     goBack() {
-        if (this.props.location.type === 'create') {
+        if (this.props.location.tag) {
+            this.props.history.replace({
+                pathname: '/tagRecipes',
+                tag: this.props.location.tag
+            })
+        } else if (this.props.location.type === 'create') {
             this.props.history.replace('/tab/release')
         } else if (this.props.location.type === 'situation') {
             this.props.history.replace('/tab/information')

@@ -17,7 +17,7 @@ class Recommend extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: ['activity1', 'activity2', 'activity3'],
+            data: ['夏', '一人食', '饺子'],
             imgHeight: 176,
             recipesList: [],
             leftData:[],//左边的数据
@@ -27,6 +27,7 @@ class Recommend extends Component {
         this.onMenuClick = this.onMenuClick.bind(this);
         this.handleCollectionClick = this.handleCollectionClick.bind(this);
         this.getRecipesDetail = this.getRecipesDetail.bind(this);
+        this.gotoTagRecipes = this.gotoTagRecipes.bind(this);
     }
 
     render() { 
@@ -57,6 +58,7 @@ class Recommend extends Component {
                                 this.setState({ imgHeight: 'auto' });
                             }}
                             key={index}
+                            onClick={() => this.gotoTagRecipes(val)}
                         />
                         // </a>
                     ))}
@@ -170,6 +172,13 @@ class Recommend extends Component {
                 </TitleWrapper>
             </div>
          );
+    }
+
+    gotoTagRecipes(item) {
+        this.props.history.replace({
+            pathname: '/tagRecipes',
+            tag: item
+        })
     }
 
     getRecipesDetail = (recipeId) => () => {

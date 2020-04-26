@@ -34,6 +34,7 @@ import NewCommentList from './views/message/newCommentList';
 import SituationDetail from './views/information/situationDetail';
 import IngredientDetail from './views/information/ingredientDetail';
 import TagDynamic from './views/home/pages/findPage/tagDynamic';
+import TagRecipes from './views/home/pages/recommendPage/tagRecipes';
 
 const routes = [
     {
@@ -186,6 +187,10 @@ const routes = [
     {
         path: '/tagDynamic',
         component: TagDynamic
+    },
+    {
+        path: '/tagRecipes',
+        component: TagRecipes
     },
     {
         path: '/center',
