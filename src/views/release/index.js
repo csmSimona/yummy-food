@@ -15,13 +15,13 @@ class Release extends Component {
           <ReleaseMenu>
             <div className='releaseButton'>
               <Link to='/createName'>
-                <img src={require('@/statics/img/创建菜谱.png')} style={create} alt="创建菜谱" ></img>
+                <img src={require('@/statics/img/createrecipes.png')} style={create} alt="创建菜谱" ></img>
               </Link>
               <div>传菜谱</div>
             </div>
             <div className='releaseButton'>
               <Link to='/createDynamic'>
-                <img src={require('@/statics/img/创建动态.png')} style={create} alt="创建动态" ></img>
+                <img src={require('@/statics/img/createdynamic.png')} style={create} alt="创建动态" ></img>
               </Link>
               <div>晒美食</div>
             </div>

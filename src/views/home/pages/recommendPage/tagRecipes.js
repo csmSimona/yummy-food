@@ -32,7 +32,7 @@ class TagRecipes extends Component {
     render() { 
         const header = {
             left: "<span class='iconfont back'>&#xe61f;</span>",
-            title: this.props.location.tag,
+            title: this.props.location.tag.value,
             right: ''
         };
         let {leftData, rightData, recipesList} = this.state;
@@ -40,7 +40,7 @@ class TagRecipes extends Component {
             <div>
                 <Header header={header} leftClick={this.goBack}></Header>
                 <img
-                    src={require(`@/statics/img/${this.props.location.tag}.jpg`)}
+                    src={require(`@/statics/img/${this.props.location.tag.url}.jpg`)}
                     alt=""
                     style={{ width: '100%' }}
                 />
@@ -169,7 +169,7 @@ class TagRecipes extends Component {
     joinTagRecipes() {
         this.props.history.replace({
             pathname: '/createRecipes',
-            tag: this.props.location.tag
+            tag: this.props.location.tag.value
         })
     }
 
@@ -257,7 +257,7 @@ class TagRecipes extends Component {
 
     getRecipesList() {
         // getRecipes()
-        searchRecipes({searchContent: this.props.location.tag, type: 0}).then(res => {
+        searchRecipes({searchContent: this.props.location.tag.value, type: 0}).then(res => {
             if (res.data.code === 200) {
                 var recipesList = res.data.data;
                 var actionArr = []

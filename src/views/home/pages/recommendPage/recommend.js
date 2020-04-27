@@ -17,7 +17,20 @@ class Recommend extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: ['夏', '一人食', '饺子'],
+            data: [
+                {
+                    url: 'activity1',
+                    value: '夏'
+                },
+                {
+                    url: 'activity2',
+                    value: '一人食'
+                },
+                {
+                    url: 'activity3',
+                    value: '饺子'
+                }
+            ],
             imgHeight: 176,
             recipesList: [],
             leftData:[],//左边的数据
@@ -49,7 +62,7 @@ class Recommend extends Component {
                         //     style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
                         // >
                         <img
-                            src={require(`@/statics/img/${val}.jpg`)}
+                            src={require(`@/statics/img/${val.url}.jpg`)}
                             alt=""
                             style={{ width: '100%', height: '220px', verticalAlign: 'top' }}
                             onLoad={() => {
