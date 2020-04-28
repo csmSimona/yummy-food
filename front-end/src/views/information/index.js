@@ -54,10 +54,20 @@ class Information extends Component {
                             recipesList && recipesList.map((item, index) => {
                                 return (
                                     <div className='recipes' key={index}>
-                                        <LazyLoad offset={100} height={100}>
-                                            <img src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} onClick={this.getRecipesDetail(item._id)}/>
-                                        </LazyLoad>
-                                        <p>{item.recipeName}</p>
+                                        { item.videoUrl ? 
+                                            <video 
+                                                onClick={this.getRecipesDetail(item._id)}
+                                                src={item.videoUrl} 
+                                                controls="controls" 
+                                            >
+                                                您的浏览器不支持 video 标签。
+                                            </video> : 
+                                            <img 
+                                                src={item.album[0].url.substring(0, 4) === 'http' ? item.album[0].url : require('@/' + item.album[0].url)} 
+                                                onClick={this.getRecipesDetail(item._id)} 
+                                                alt=""/> 
+                                        }
+                                        <p onClick={this.getRecipesDetail(item._id)}>{item.recipeName}</p>
                                     </div>
                                 )
                             })
@@ -110,13 +120,10 @@ class Information extends Component {
             if (res.data.code === 200) {
                 let situationDetail = res.data.data;
                 if (situationDetail) {
-                    // let actionArr = [];
-                    // let recipesList = [];
                     let recipesList = [];
 
                     searchRecipes({searchContent: JSON.stringify(situationDetail.ingredients), type: 0}).then(res => {
                         if (res.data.code === 200) {
-                            // recipesList = res.data.data.;
                             recipesList = getArrayItems(res.data.data, 5);
                             recipesList.forEach(item => {
                                 if (item.album[0].url.substring(0, 13) === 'statics/video') {
@@ -132,20 +139,6 @@ class Information extends Component {
                     }).catch(err => {
                         console.log('err', err);
                     })
-                    // situationDetail.recipes.forEach(item => {
-                    //     actionArr.push(getRecipesById({id: item}))
-                    // })
-                    // Promise.all(actionArr).then(function (res) {
-                    //     for (var i = 0; i < res.length; i++) {
-                    //         recipesList.push(res[i].data.data);
-                    //     }
-                    // }).then(() => {
-                    //     this.setState({
-                    //         recipesList: recipesList
-                    //     })
-                    // }).catch(function (err) {
-                    //     Toast.fail('未知错误', 1);
-                    // })
                 }
             }
         }).catch(function (err) {

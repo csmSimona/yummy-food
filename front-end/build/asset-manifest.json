@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/static/css/main.98065d3e.chunk.css",
-    "main.js": "/static/js/main.545f7247.chunk.js",
-    "main.js.map": "/static/js/main.545f7247.chunk.js.map",
+    "main.js": "/static/js/main.d6d6499c.chunk.js",
+    "main.js.map": "/static/js/main.d6d6499c.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.f7001ea2.js",
     "runtime-main.js.map": "/static/js/runtime-main.f7001ea2.js.map",
     "static/css/2.709d2053.chunk.css": "/static/css/2.709d2053.chunk.css",
     "static/js/2.7a29f0c3.chunk.js": "/static/js/2.7a29f0c3.chunk.js",
     "static/js/2.7a29f0c3.chunk.js.map": "/static/js/2.7a29f0c3.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.9c8e8b0dfa75e854343ce89fc4363514.js": "/precache-manifest.9c8e8b0dfa75e854343ce89fc4363514.js",
+    "precache-manifest.c1f38f3930e6e54cb6f0d13fcda0aaf2.js": "/precache-manifest.c1f38f3930e6e54cb6f0d13fcda0aaf2.js",
     "service-worker.js": "/service-worker.js",
     "static/css/2.709d2053.chunk.css.map": "/static/css/2.709d2053.chunk.css.map",
     "static/css/main.98065d3e.chunk.css.map": "/static/css/main.98065d3e.chunk.css.map",
@@ -84,6 +84,7 @@
     "static/media/dongzhi.jpeg": "/static/media/dongzhi.9e2f77de.jpeg",
     "static/media/downfire.jpg": "/static/media/downfire.7dd0b62c.jpg",
     "static/media/eyesight.jpg": "/static/media/eyesight.d1d08f4b.jpg",
+    "static/media/faceup.jpg": "/static/media/faceup.7bcb69cc.jpg",
     "static/media/fitness.jpg": "/static/media/fitness.b92a32c6.jpg",
     "static/media/gout.jpg": "/static/media/gout.a0a5a0ec.jpg",
     "static/media/guyu.jpeg": "/static/media/guyu.c2c8da0d.jpeg",
@@ -111,14 +112,13 @@
     "static/media/xiaoshu.jpeg": "/static/media/xiaoshu.de85cb9f.jpeg",
     "static/media/xiaoxue.jpeg": "/static/media/xiaoxue.8404fb0c.jpeg",
     "static/media/xiazhi.jpeg": "/static/media/xiazhi.11bc8e4c.jpeg",
-    "static/media/yushui.jpeg": "/static/media/yushui.57b3be61.jpeg",
-    "static/media/养颜.jpg": "/static/media/养颜.7bcb69cc.jpg"
+    "static/media/yushui.jpeg": "/static/media/yushui.57b3be61.jpeg"
   },
   "entrypoints": [
     "static/js/runtime-main.f7001ea2.js",
     "static/css/2.709d2053.chunk.css",
     "static/js/2.7a29f0c3.chunk.js",
     "static/css/main.98065d3e.chunk.css",
-    "static/js/main.545f7247.chunk.js"
+    "static/js/main.d6d6499c.chunk.js"
   ]
 }

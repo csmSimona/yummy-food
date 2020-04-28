@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "292cc9cbecee22dd4bd107453eada065",
+    "revision": "8892af0e486ab6431653a46eee3beff2",
     "url": "/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/css/2.709d2053.chunk.css"
   },
   {
-    "revision": "4a99bff3e7051142a0ee",
+    "revision": "3bb1bc329d871fb35b08",
     "url": "/static/css/main.98065d3e.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/js/2.7a29f0c3.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "4a99bff3e7051142a0ee",
-    "url": "/static/js/main.545f7247.chunk.js"
+    "revision": "3bb1bc329d871fb35b08",
+    "url": "/static/js/main.d6d6499c.chunk.js"
   },
   {
     "revision": "d45ca08a6a02a9df8d53",
@@ -324,6 +324,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/eyesight.d1d08f4b.jpg"
   },
   {
+    "revision": "7bcb69cce70306955c79dfce1473c55b",
+    "url": "/static/media/faceup.7bcb69cc.jpg"
+  },
+  {
     "revision": "b92a32c60d1d6a773d865f790317d3aa",
     "url": "/static/media/fitness.b92a32c6.jpg"
   },
@@ -434,9 +438,5 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "57b3be61600cf15ad92bc127fb1dc353",
     "url": "/static/media/yushui.57b3be61.jpeg"
-  },
-  {
-    "revision": "7bcb69cce70306955c79dfce1473c55b",
-    "url": "/static/media/养颜.7bcb69cc.jpg"
   }
 ]);

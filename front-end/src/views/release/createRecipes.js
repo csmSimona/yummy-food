@@ -134,7 +134,7 @@ class CreateRecipes extends Component {
                     </VideoWrapper>
                     <ImagePicker
                         accept='*'
-                        style={{display: this.state.visible ? 'block' : 'none'}}
+                        style={{display: !this.state.videoUrl ? 'block' : 'none'}}
                         files={this.state.files}
                         onChange={this.onChange}
                         onImageClick={(index, fs) => {
@@ -156,17 +156,6 @@ class CreateRecipes extends Component {
                         classModalVisible={this.state.classModalVisible}
                     />
                     )}
-                    {/* <Modal
-                        visible={this.state.showBigModal}
-                        transparent
-                        maskClosable={true}
-                        onClose={this.onClose('showBigModal')}
-                        title="查看图片"
-                        footer={[{ text: '关闭', onPress: () => { this.onClose('showBigModal')(); } }]}
-                        wrapProps={{ onTouchStart: this.onWrapTouchStart }}
-                    >
-                        <img src={this.state.showBigUrl} alt="查看图片" width="100%" height="100%" />
-                    </Modal> */}
                     <ShowBigWrapper style={{display: this.state.showBigModal ? 'block' : 'none'}} onClick={() => {this.setState({showBigModal: false})}}>
                         <img src={this.state.showBigUrl} alt="查看图片" width="100%" />
                     </ShowBigWrapper>
@@ -881,6 +870,10 @@ class CreateRecipes extends Component {
         }
         if (this.props.location.type === 'recipeDraft') {
             let recipesDetail = this.props.location.recipeDraft
+            console.log('recipesDetail.album[0].url.substring(0, 10)', recipesDetail.album[0].url.substring(0, 10));
+            if (recipesDetail.album[0].url.substring(0, 10) === 'data:video') {
+                recipesDetail.videoUrl = recipesDetail.album[0].url
+            }
             this.setState({
                 recipesDetail,
                 files: recipesDetail.album,
@@ -888,7 +881,8 @@ class CreateRecipes extends Component {
                 materialsList: recipesDetail.materials,
                 recommendSelected: recipesDetail.recommend,
                 selected: recipesDetail.selected,
-                recipeTips: recipesDetail.recipeTips
+                recipeTips: recipesDetail.recipeTips,
+                videoUrl: recipesDetail.videoUrl ? recipesDetail.videoUrl : ''
             })
             // console.log('recipeDraft', recipesDetail)
         }

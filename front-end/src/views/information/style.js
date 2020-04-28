@@ -67,7 +67,7 @@ export const TodayInformationWrapper = styled.div`{
             font-size: .75rem;
             text-align: center;
         }
-        img {
+        img, video {
             height: 7rem;
             border-radius: .5rem;
         }
