@@ -26,9 +26,6 @@ var UserSchema = new Schema({
   birthday: {
     type: Date
   },
-  hometown: {
-    type: Array
-  },
   livingPlace: {
     type: Array
   },
@@ -60,6 +57,9 @@ var UserSchema = new Schema({
     type: String
   },
   openid: {
+    type: String
+  },
+  password: {
     type: String
   }
 }, {

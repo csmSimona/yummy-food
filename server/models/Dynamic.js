@@ -25,9 +25,6 @@ var DynamicSchema = new Schema({
   userId: {
     type: String
   },
-  relatedMenu: {
-    type: String
-  },
   likeNumber: {
     type: Number,
     default: 0
