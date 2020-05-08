@@ -272,3 +272,9 @@ export const EditIcon = styled.i`{
     border: 1px solid #fff;
     z-index: 99;
 }`;
+
+export const phoneLogin = {
+    margin: '1rem 1.25rem',
+    background: `${themeColor}`,
+    color: '#FFFFFF'
+}

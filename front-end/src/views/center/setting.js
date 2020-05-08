@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { actionCreators } from './store';
 import { actionCreators as homeActionCreators} from '@/views/home/store';
 import browserCookie from 'browser-cookies';
+import { Link } from 'react-router-dom';
 
 const alert = Modal.alert;
 const header = {
@@ -26,7 +27,9 @@ class Setting extends Component {
                 <Header header={header}></Header>
                 <div className='blank'></div>
                 <div className='text'>账号管理</div>
-                <div className='text'>密码</div>
+                <Link to='/editPassword'>
+                    <div className='text'>密码</div>
+                </Link>
                 <div className='blank'></div>
                 <div className='text'>用户协议</div>
                 <div className='text'>隐私政策</div>
@@ -58,6 +61,7 @@ class Setting extends Component {
  
 const mapStateToProps = (state) => {
     return {
+        userList: state.getIn(['center', 'userList'])
     }
 }
 
@@ -68,6 +72,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         clearHomeReduxData() {
             dispatch(homeActionCreators.clearHomeReduxData());
+        },
+        saveUserList(information) {
+            dispatch(actionCreators.saveUserList(information));
         }
     }
 }

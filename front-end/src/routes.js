@@ -35,6 +35,7 @@ import SituationDetail from './views/information/situationDetail';
 import IngredientDetail from './views/information/ingredientDetail';
 import TagDynamic from './views/home/pages/findPage/tagDynamic';
 import TagRecipes from './views/home/pages/recommendPage/tagRecipes';
+import EditPassword from './views/center/editPassword';
 
 const routes = [
     {
@@ -214,7 +215,11 @@ const routes = [
                 component: MyLike
             }
         ]
-    }
+    },
+    {
+        path: '/editPassword',
+        component: EditPassword
+    },
 ];
  
 export {routes}

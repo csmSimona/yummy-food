@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
+import { Router, Redirect } from 'react-router-dom';
 // import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import { routes } from './routes';
 import { renderRoutes } from 'react-router-config';
@@ -21,7 +21,8 @@ class App extends Component {
         <GrobalIconStyle />
         <Provider store={store}>
           <Router history={history}>
-          {renderRoutes(routes)}
+            <Redirect path="/" to="/tab/home/recommend" />
+            {renderRoutes(routes)}
               {/* <Route
                 render={({ location }) => (
                   <TransitionGroup>
