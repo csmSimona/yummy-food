@@ -125,6 +125,7 @@ router.post('/saveRecipesDraft', function(req, res, next) {
 });
 
 router.get('/getRecipes', function(req, res, next) {
+    let pageNum = 1, pageSize = 10
     Recipes.find({}, {
         _id: 1,
         album: 1,
@@ -132,12 +133,32 @@ router.get('/getRecipes', function(req, res, next) {
         collectionNumber: 1,
         recipeName: 1,
         userId: 1
-    }, function (err, data) {
+    })
+    // .skip((pageNum - 1) * pageSize)
+    // .limit(pageSize)
+    .exec((err, data) => {
         if (err) {
             console.log(err);
             return res.status(500).send('获取菜谱信息失败');
+        } else {
+            var actionArr = []
+            data.forEach(item => {
+                actionArr.push(User.findOne({ _id: item.userId}))
+            })
+            let recipesList = JSON.parse(JSON.stringify(data));
+            Promise.all(actionArr).then(function (res) {
+                for (var i = 0; i < res.length; i++) {
+                    var userData = res[i];
+                    recipesList[i].writer = userData;
+                    recipesList[i].userName = userData.name;
+                    recipesList[i].avatar = userData.img[0].url;
+                }
+            }).then(() => {
+                return res.json({ code: 200, data: recipesList });
+            }).catch(function (err) {
+                console.log('err', err);
+            })
         }
-        return res.json({ code: 200, data: data });
     });
 });
 

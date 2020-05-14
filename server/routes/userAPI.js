@@ -133,7 +133,6 @@ router.post('/getVerificationCode', function(req, res, next) {
 });
 
 router.post('/verifyCode', function(req, res, next) {
-  console.log('req.body', req.body);
   // smsRequest.verifycode(req.body, function(err, data) {
   //   if (err) {
   //     console.log('err:', err)
@@ -332,6 +331,34 @@ router.post('/getFanList', function(req, res) {
   }).catch(function (err) {
       console.log('err', err)
       return res.status(500).send('查询失败');
+  })
+});
+
+// 编辑密码
+router.post('/editPassword', function(req, res) {
+  User.updateOne({phone: req.body.mobile}, {$set: {password: req.body.password}}, function (err) {
+    if (err) {
+      console.log('update err', err)
+    }
+  }).then(() => {
+    res.send({code: 200});
+  })
+});
+
+// 密码登录
+router.post('/loginByPassword', function(req, res) {
+  User.findOne({ phone: req.body.phone, password: req.body.password }, function (err, data) {
+    if (err) {
+      console.log('find err', err)
+      return res.status(500).send('Server error.')
+    } else {
+      if (data) {
+        return res.json({ code: 200, msg: 'find it', userList: data });
+      } else {
+        console.log('can not find')
+        return res.json({ code: 200, msg: 'can not find' });
+      }
+    }
   })
 });
 

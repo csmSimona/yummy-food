@@ -142,7 +142,7 @@ class Center extends Component {
                     {
                         this.props.location.userDetail ? 
                         <div className='userDesc'>
-                            <span className='descContent'>{userList.gender}</span>
+                            <span className='descContent'>{userList.gender ? '女' : '男'}</span>
                             <span className='descContent'>{userList.birthday ? ` · ${getAge(formatDate(userList.birthday))}岁` : ''}</span>
                             <span className='descContent'> · {formatDate(userList.createDate)} 加入</span>
                             <div className='place'>

@@ -1,7 +1,7 @@
 import { finishLoading } from '@/utils/loading';
 
 export default function getHW(data, list, that){
-    let heightDate = [0, 0];//接收累计高度的容器数组
+    let heightData = [0, 0];//接收累计高度的容器数组
     let rightData = []//渲染右侧盒子的数组
     let leftData = []//渲染左侧盒子的数组
 
@@ -49,9 +49,9 @@ export default function getHW(data, list, that){
     async function test(item) {
         await loadImg(item).then(function(img) {
             let height = img.height;
-            let minNum = Math.min.apply(null, heightDate)// 从heighetData筛选最小项
-            let minIndex = heightDate.indexOf(minNum);// 获取 最小项的小标 准备开始进行累加
-            heightDate[minIndex] = heightDate[minIndex] + height;//从 heightData 中找到最小的项后进行累加， 
+            let minNum = Math.min.apply(null, heightData)// 从heighetData筛选最小项
+            let minIndex = heightData.indexOf(minNum);// 获取 最小项的小标 准备开始进行累加
+            heightData[minIndex] = heightData[minIndex] + height;//从 heightData 中找到最小的项后进行累加， 
             if(minIndex===0){//[0]加到left [1]加到 right
                 leftData.push(item)
             }else{

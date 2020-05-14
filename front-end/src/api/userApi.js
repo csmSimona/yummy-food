@@ -22,3 +22,6 @@ export const getFanList = (data) => http.post('/user/getFanList', data);
 
 export const checkWechatUser = (data) => http.post('/user/checkWechatUser', data);
 
+export const editPassword = (data) => http.post('/user/editPassword', data);
+
+export const loginByPassword = (data) => http.post('/user/loginByPassword', data);

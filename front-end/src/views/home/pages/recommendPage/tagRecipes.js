@@ -256,7 +256,6 @@ class TagRecipes extends Component {
     }
 
     getRecipesList() {
-        // getRecipes()
         searchRecipes({searchContent: this.props.location.tag.value, type: 0}).then(res => {
             if (res.data.code === 200) {
                 var recipesList = res.data.data;

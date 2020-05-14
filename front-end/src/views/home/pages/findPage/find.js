@@ -240,7 +240,6 @@ class Find extends Component {
         getDynamic().then(res => {
             if (res.data.code === 200) {
                 var dynamicList = res.data.data;
-                var actionArr = [];
                 dynamicList.forEach(item => {
                     if (!item.likeNumber) {
                         item.likeNumber = 0;
@@ -248,7 +247,6 @@ class Find extends Component {
                     if (!item.likeList) {
                         item.likeList = [];
                     }
-
                     if (this.props.userList.likeDynamic instanceof Array) {
                         if (this.props.userList.likeDynamic.length !== 0) {
                             var liked = this.props.userList.likeDynamic.some(val => {
@@ -267,29 +265,13 @@ class Find extends Component {
                     } else {
                         item.like = UNLIKE
                     }
-
-                    actionArr.push(getUserInfo({userId: item.userId}))
                 })
-
-                Promise.all(actionArr).then(function (res) {
-                    for (var i = 0; i < res.length; i++) {
-                        var userData = res[i].data.data[0];
-                        dynamicList[i].writer = userData;
-                        dynamicList[i].userName = userData.name;
-                        dynamicList[i].avatar = userData.img[0].url;
-                    }
-                }).then(() => {
-                    // console.log('dynamicList', dynamicList)
-                    this.setState({
-                        dynamicList: dynamicList
-                    })
-                    // 瀑布流分左右布局
-                    getHW(dynamicList, 'dynamicList', this) //调用
-                    finishLoading(this)
-
-                }).catch(function (err) {
-                    Toast.fail('布局未知错误', 1);
+                this.setState({
+                    dynamicList: dynamicList
                 })
+                // 瀑布流分左右布局
+                getHW(dynamicList, 'dynamicList', this) //调用
+                finishLoading(this)
             } else {
                 Toast.fail('未知错误', 1);
             }

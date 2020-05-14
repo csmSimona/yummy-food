@@ -28,6 +28,15 @@ export const phoneLogin = {
   color: '#FFFFFF'
 }
 
+export const PhoneRegisterWrapper = styled.div`{
+  position: relative;
+  .phoneLogin {
+    margin: 1rem 1.25rem;
+    background: ${themeColor};
+    color: #FFFFFF;
+  }
+}`
+
 export const logo = {
   margin: 'auto',
   position: 'absolute',

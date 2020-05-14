@@ -52,8 +52,25 @@ router.get('/getDynamic', function(req, res, next) {
         if (err) {
             console.log(err);
             return res.status(500).send('获取动态信息失败');
+        } else {
+            var actionArr = []
+            data.forEach(item => {
+                actionArr.push(User.findOne({ _id: item.userId}))
+            })
+            let dynamicList = JSON.parse(JSON.stringify(data));
+            Promise.all(actionArr).then(function (res) {
+                for (var i = 0; i < res.length; i++) {
+                    var userData = res[i];
+                    dynamicList[i].writer = userData;
+                    dynamicList[i].userName = userData.name;
+                    dynamicList[i].avatar = userData.img[0].url;
+                }
+            }).then(() => {
+                return res.json({ code: 200, data: dynamicList });
+            }).catch(function (err) {
+                console.log('err', err);
+            })
         }
-        return res.json({ code: 200, data: data });
     });
 });
 
