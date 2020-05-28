@@ -4,7 +4,7 @@ export const createRecipes = (recipesList) => http.post('/recipes/createRecipes'
 
 export const saveRecipesDraft = (recipesList) => http.post('/recipes/saveRecipesDraft', recipesList);
 
-export const getRecipes = () => http.get('/recipes/getRecipes');
+export const getRecipes = (initPage) => http.post('/recipes/getRecipes', initPage);
 
 export const getRecipesById = (id) => http.post('/recipes/getRecipesById', id);
 

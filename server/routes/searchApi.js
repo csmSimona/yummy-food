@@ -5,6 +5,27 @@ var Recipes = require('../models/Recipes');
 var Situation = require('../models/Situation');
 var Recommend = require('../models/Recommend');
 var Ingredient = require('../models/Ingredient');
+var User = require('../models/User');
+
+function getWriter(data, res) {
+    var actionArr = []
+    data.forEach(item => {
+        actionArr.push(User.findOne({ _id: item.userId}))
+    })
+    let recipesList = JSON.parse(JSON.stringify(data));
+    Promise.all(actionArr).then(function (res) {
+        for (var i = 0; i < res.length; i++) {
+            var userData = res[i];
+            recipesList[i].writer = userData;
+            recipesList[i].userName = userData.name;
+            recipesList[i].avatar = userData.img[0].url;
+        }
+    }).then(() => {
+        return res.json({ code: 200, data: recipesList });
+    }).catch(function (err) {
+        console.log('err', err);
+    })
+}
 
 router.get('/getClassification', function(req, res, next) {
     Classification.find({}, function (err, data) {
@@ -53,8 +74,7 @@ router.post('/searchRecipes', function(req, res) {
             if (err) {
                 return res.status(500).send('查询失败');
             } else {
-                console.log('recipes data', data)
-                return res.json({ code: 200, data: data });
+                getWriter(data, res)
             }
         })
     } else if (type === 1) {
@@ -82,8 +102,7 @@ router.post('/searchRecipes', function(req, res) {
             if (err) {
                 return res.status(500).send('查询失败');
             } else {
-                console.log('recipes data', data)
-                return res.json({ code: 200, data: data });
+                getWriter(data, res)
             }
         })
     } else if (type === 2) {
@@ -111,8 +130,7 @@ router.post('/searchRecipes', function(req, res) {
             if (err) {
                 return res.status(500).send('查询失败');
             } else {
-                console.log('recipes data', data)
-                return res.json({ code: 200, data: data });
+                getWriter(data, res)
             }
         })
     } else if (type === 3) {
@@ -142,8 +160,7 @@ router.post('/searchRecipes', function(req, res) {
             if (err) {
                 return res.status(500).send('查询失败');
             } else {
-                console.log('recipes data', data)
-                return res.json({ code: 200, data: data });
+                getWriter(data, res)
             }
         })
     }

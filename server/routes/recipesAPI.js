@@ -124,8 +124,8 @@ router.post('/saveRecipesDraft', function(req, res, next) {
 
 });
 
-router.get('/getRecipes', function(req, res, next) {
-    let pageNum = 1, pageSize = 10
+router.post('/getRecipes', function(req, res, next) {
+    let pageSize = 10
     Recipes.find({}, {
         _id: 1,
         album: 1,
@@ -134,8 +134,9 @@ router.get('/getRecipes', function(req, res, next) {
         recipeName: 1,
         userId: 1
     })
-    // .skip((pageNum - 1) * pageSize)
-    // .limit(pageSize)
+    .sort({collectionNumber: -1, followNumber: -1})
+    .skip((req.body.initPage - 1) * pageSize)
+    .limit(pageSize)
     .exec((err, data) => {
         if (err) {
             console.log(err);

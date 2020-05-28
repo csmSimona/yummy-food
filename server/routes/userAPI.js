@@ -115,32 +115,32 @@ router.post('/checkUser', (req, res)=>{
 
 router.post('/getVerificationCode', function(req, res, next) {
   console.log('req.body', req.body.mobile);
-  // var data = {
-  //   deviceId: '14828999',
-  //   mobile: req.body.mobile
-  // }
-  // smsRequest.sendSmsCode(data, function(err, data) {
-  //   if (err) {
-  //     console.log('err:', err)
-  //     return res.status(500).send('Server error.')
-  //   } else {
-  //     console.log(data)
-  //     var verificationCode = data.obj
-  //     console.log('verificationCode', verificationCode)
+  var data = {
+    deviceId: '14828999',
+    mobile: req.body.mobile
+  }
+  smsRequest.sendSmsCode(data, function(err, data) {
+    if (err) {
+      console.log('err:', err)
+      return res.status(500).send('Server error.')
+    } else {
+      console.log(data)
+      var verificationCode = data.obj
+      console.log('verificationCode', verificationCode)
       return res.json({ success: true })
-  //   }
-  // })
+    }
+  })
 });
 
 router.post('/verifyCode', function(req, res, next) {
-  // smsRequest.verifycode(req.body, function(err, data) {
-  //   if (err) {
-  //     console.log('err:', err)
-  //     return res.status(500).send('Server error.')
-  //   }  else {
-  //     return res.json({ code: data.code, msg: data.msg });
+  smsRequest.verifycode(req.body, function(err, data) {
+    if (err) {
+      console.log('err:', err)
+      return res.status(500).send('Server error.')
+    }  else {
+      // return res.json({ code: data.code, msg: data.msg });
   
-          if (req.body.code === '1111') {
+          // if (req.body.code === '1111') {
             User.findOne({ phone: req.body.mobile }, function (err, data) {
               if (err) {
                 console.log('find err', err)
@@ -165,11 +165,11 @@ router.post('/verifyCode', function(req, res, next) {
                 }
               }
             })
-          } else {
-            return res.json({ code: 413 });
-          }
-  //   }
-  // })
+          // } else {
+          //   return res.json({ code: 413 });
+          // }
+    }
+  })
 });
 
 // 查找是否有微信授权的这个人

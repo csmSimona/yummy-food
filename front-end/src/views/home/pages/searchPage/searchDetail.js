@@ -194,7 +194,6 @@ class SearchDetail extends Component {
         searchRecipes({searchContent: this.state.searchContent, type: index}).then(res => {
             if (res.data.code === 200) {
                 var searchRecipesList = res.data.data;
-                var actionArr = []
                 searchRecipesList.forEach(item => {
                     if (item.album[0].url.substring(0, 13) === 'statics/video') {
                         item.videoUrl = require('@/' + item.album[0].url)
@@ -208,26 +207,11 @@ class SearchDetail extends Component {
                     if (!item.collectionList) {
                         item.collectionList = [];
                     }
-                    actionArr.push(getUserInfo({userId: item.userId}))
                 })
-
-                Promise.all(actionArr).then(function (res) {
-                    for (var i = 0; i < res.length; i++) {
-                        var userData = res[i].data.data[0];
-                        searchRecipesList[i].writer = userData;
-                        searchRecipesList[i].userName = userData.name;
-                        searchRecipesList[i].avatar = userData.img[0].url;
-                    }
-                }).then(() => {
-                    this.setState({
-                        searchRecipesList: searchRecipesList
-                    })
-                    console.log('searchRecipesList', searchRecipesList);
-                    finishLoading(this);
-                }).catch(function (err) {
-                    Toast.fail('未知错误', 1);
+                this.setState({
+                    searchRecipesList: searchRecipesList
                 })
-
+                finishLoading(this);
             } else {
                 Toast.fail('未知错误', 1);
             }

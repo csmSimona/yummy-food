@@ -259,7 +259,6 @@ class TagRecipes extends Component {
         searchRecipes({searchContent: this.props.location.tag.value, type: 0}).then(res => {
             if (res.data.code === 200) {
                 var recipesList = res.data.data;
-                var actionArr = []
                 recipesList.forEach(item => {
                     if (item.album[0].url.substring(0, 13) === 'statics/video') {
                         item.videoUrl = require('@/' + item.album[0].url)
@@ -288,29 +287,13 @@ class TagRecipes extends Component {
                     } else {
                         item.collect = UNCOLLECT
                     }
-
-                    actionArr.push(getUserInfo({userId: item.userId}))
                 })
-
-                Promise.all(actionArr).then(function (res) {
-                    for (var i = 0; i < res.length; i++) {
-                        var userData = res[i].data.data[0];
-                        recipesList[i].writer = userData;
-                        recipesList[i].userName = userData.name;
-                        recipesList[i].avatar = userData.img[0].url;
-                    }
-                }).then(() => {
-                    this.setState({
-                        recipesList: recipesList
-                    })
-                    // 瀑布流分左右布局
-                    getHW(recipesList, 'recipesList', this) //调用
-                    finishLoading(this)
-
-                }).catch(function (err) {
-                    Toast.fail('未知错误', 1);
+                this.setState({
+                    recipesList: recipesList
                 })
-
+                // 瀑布流分左右布局
+                getHW(recipesList, 'recipesList', this) //调用
+                finishLoading(this)
             } else {
                 Toast.fail('未知错误', 1);
             }

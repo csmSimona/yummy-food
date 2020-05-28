@@ -32,9 +32,10 @@ class Recommend extends Component {
             ],
             imgHeight: 176,
             recipesList: [],
-            leftData:[],//左边的数据
-            rightData:[],//右边的数据
-            animating: true
+            leftData: [],    //左边的数据
+            rightData: [],   //右边的数据
+            animating: true,
+            initPage: 1 // 当前页
         }
         this.onMenuClick = this.onMenuClick.bind(this);
         this.handleCollectionClick = this.handleCollectionClick.bind(this);
@@ -55,24 +56,17 @@ class Recommend extends Component {
                     cellSpacing={10}
                     >
                     {this.state.data.map((val, index) => (
-                        // <a
-                        //     key={val}
-                        //     href="http://www.baidu.com"
-                        //     style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
-                        // >
                         <img
                             src={require(`@/statics/img/${val.url}.jpg`)}
                             alt=""
                             style={{ width: '100%', height: '220px', verticalAlign: 'top' }}
                             onLoad={() => {
-                            // fire window resize event to change height
                             window.dispatchEvent(new Event('resize'));
                                 this.setState({ imgHeight: 'auto' });
                             }}
                             key={index}
                             onClick={() => this.gotoTagRecipes(val)}
                         />
-                        // </a>
                     ))}
                 </Carousel>
                 <TitleWrapper>
@@ -282,8 +276,8 @@ class Recommend extends Component {
         this.props.history.replace('/menuClass')
     }
 
-    getRecipesList() {
-        getRecipes().then(res => {
+    getRecipesList(initPage) {
+        getRecipes({initPage}).then(res => {
             if (res.data.code === 200) {
                 var recipesList = res.data.data;
                 recipesList.forEach(item => {
@@ -315,11 +309,15 @@ class Recommend extends Component {
                         item.collect = UNCOLLECT
                     }
                 })
-                this.setState({
-                    recipesList: recipesList
-                })
+
                 // 瀑布流分左右布局
                 getHW(recipesList, 'recipesList', this) //调用
+                recipesList = this.state.recipesList.concat(recipesList);
+                this.setState({
+                    recipesList: recipesList,
+                    initPage
+                })
+
                 finishLoading(this)
             } else {
                 Toast.fail('未知错误', 1);
@@ -329,24 +327,25 @@ class Recommend extends Component {
         })
     }
     
+    onscroll() {
+        let clientHeight = document.documentElement.clientHeight || document.body.clientHeight || window.clientHeight; //可视区域高度
+        let scrollTop  = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset;  //滚动条滚动高度
+        let scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || window.scrollHeight; //滚动内容高度
+
+        const scrollDistance = scrollHeight - scrollTop - clientHeight;
+
+        if (scrollDistance <= 30) {
+            let initPage = this.state.initPage + 1
+            this.getRecipesList(initPage)
+        }
+    };
+
     componentDidMount() {
         document.documentElement.scrollTop = document.body.scrollTop = 0;
-        
-        // console.log('this.props.recipesList', this.props.recipesList);
-        // console.log('this.props.leftData', this.props.leftData);
-        // console.log('this.props.rightData', this.props.rightData);
+
+        window.addEventListener('scroll', this.onscroll.bind(this));
 
         if (this.props.recipesList instanceof Array) {
-            
-            // let collectNum = 0;
-            // this.props.recipesList.forEach(item => {
-            //     if (!item.collectionNumber) {
-            //         item.collectionNumber = 0
-            //     }
-            //     collectNum += item.collectionNumber
-            // })
-
-            // if (collectNum === this.props.userList.collectRecipes.length) {
             if (this.props.recipesList.length !== 0) {
                 this.setState({
                     recipesList: this.props.recipesList,
@@ -355,10 +354,10 @@ class Recommend extends Component {
                 })
                 finishLoading(this)
             } else {
-                this.getRecipesList();
+                this.getRecipesList(this.state.initPage);
             }
         } else {
-            this.getRecipesList();
+            this.getRecipesList(this.state.initPage);
         }
     }
     
