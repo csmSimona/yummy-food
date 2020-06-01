@@ -91,6 +91,9 @@ export const RecipesDetailWrapper = styled.div`{
     .am-button-active {
         background: ${themeColor};
     }
+    .am-list-item .am-input-control input:disabled {
+        background-color: #efeff4;
+    }
     .recipesDetailContent {
         margin-bottom: 3.5rem;
         .showBig {

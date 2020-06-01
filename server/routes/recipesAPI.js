@@ -325,7 +325,8 @@ router.post('/updateRecipes', function(req, res, next) {
             recipeStory: recipesList.recipeStory,
             recipeTips: recipesList.recipeTips,
             recommend: recipesList.recommend,
-            selected: recipesList.selected
+            selected: recipesList.selected,
+            closeComment: recipesList.closeComment
           }}, function (err, data) {
             if (err) {
               return res.status(500).send('更新菜谱失败');

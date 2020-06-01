@@ -7,9 +7,9 @@ export default function getHW(data, list, that){
 
     data.forEach((item, index) => {
         if (index % 2 === 0) {
-            rightData.push(item)
-        } else {
             leftData.push(item)
+        } else {
+            rightData.push(item)
         }
     })
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Header from '@/components/header';
-import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon, ActivityIndicator } from 'antd-mobile';
+import { Modal, List, InputItem, Button, ImagePicker, TextareaItem, Tag, Toast, Icon, ActivityIndicator, Switch } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { CreateRecipesWrapper, ButtonWrapper, recipeTitle, Tip, TagContainer, MaterialsWrapper, AddMore, IconWrapper, CookStepsWrapper, NoBorder, VideoWrapper, DeleteIcon, ShowBigWrapper } from './style';
 import { connect } from 'react-redux';
@@ -49,7 +49,7 @@ const tagList = [
     }
 ]
 
-const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜"];
+const recommendList = ["家常菜", "烘焙", "快手菜", "肉类", "蔬菜", "汤粥主食", "早餐", "午餐", "晚餐", "一人食", "便当", "小吃", "甜品", "零食", "懒人食谱", "下酒菜", "宵夜", "春", "夏", "秋", "冬"];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 文件最大限制为5M
 
@@ -99,7 +99,8 @@ class CreateRecipes extends Component {
             videoUrl: '',
             animating: false,
             recipesDetail: {},
-            visible: true
+            visible: true,
+            closeComment: false
          };
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSaveClick = this.handleSaveClick.bind(this);
@@ -446,6 +447,19 @@ class CreateRecipes extends Component {
                                 )}
                             </TagContainer>
                         </List.Item>
+                        <List.Item
+                            {...getFieldProps('closeComment', {
+                                initialValue: this.state.closeComment
+                            })}
+                            extra={<Switch
+                                checked={this.state.closeComment}
+                                onChange={() => {
+                                this.setState({
+                                    closeComment: !this.state.closeComment,
+                                });
+                            }}
+                        />}
+                        >关闭评论</List.Item>
                     </List>
                 </form>
                 <ButtonWrapper>
@@ -838,6 +852,7 @@ class CreateRecipes extends Component {
                         addRecommendList = [...addRecommendList, item];
                     }
                 })
+                console.log('recipesDetail', recipesDetail);
                 this.setState({
                     recipesDetail,
                     files: [{url: url}],
@@ -848,7 +863,8 @@ class CreateRecipes extends Component {
                     recipeTips: recipesDetail.recipeTips,
                     visible: recipesDetail.videoUrl ? false : true,
                     videoUrl: recipesDetail.videoUrl ? recipesDetail.videoUrl : '',
-                    addRecommendList
+                    addRecommendList,
+                    closeComment: recipesDetail.closeComment
                 })
                 // console.log('recipesDetail', recipesDetail)
             }

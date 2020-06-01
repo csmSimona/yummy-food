@@ -51,6 +51,10 @@ var RecipesSchema = new Schema({
   },
   followList:{
     type: Array
+  },
+  closeComment: {
+    type: Boolean,
+    default: false
   }
 }, {
   versionKey:false

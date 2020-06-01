@@ -210,7 +210,6 @@ class RecipesDetail extends Component {
                                                 <p>{item.content}</p>
                                                 <div className='name'>{formatTime(item.createDate)}</div>
                                             </div>
-                                            {/* <span className='iconfont' style={{fontSize: '1.25rem', alignItem: 'center'}}>&#xe63a;</span> */}
                                         </div>
                                         {
                                             item.reply ? 
@@ -238,7 +237,8 @@ class RecipesDetail extends Component {
                           <Input 
                             ref={ref => this.searchInput = ref} 
                             placeholder={this.state.placeholder} 
-                            value={this.state.commentInput}  
+                            value={this.state.commentInput}
+                            disabled={recipesDetail.closeComment}  
                             onChange={(value) => {
                                 this.setState({
                                     commentInput: value
@@ -719,7 +719,8 @@ class RecipesDetail extends Component {
                     recipesDetail.collect = UNCOLLECT
                 }
                 this.setState({
-                    recipesDetail: recipesDetail
+                    recipesDetail: recipesDetail,
+                    placeholder: recipesDetail.closeComment ? '作者已关闭评论，您现在无法评论' : '评论'
                 })
                 this.getUserInfo(recipesDetail.userId);
                 if (recipesDetail.followNumber) {                
