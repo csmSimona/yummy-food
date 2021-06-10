@@ -1,6 +1,6 @@
 # yummy-food
 
-# React技术栈+antd-mobile+express+mongodb  实现 仿下厨房的美食食谱类webapp（毕设）
+# React技术栈+antd-mobile+express+mongodb  实现 美食食谱类webapp（毕设）
 
 ## 研究背景及意义
 
