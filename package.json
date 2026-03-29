@@ -17,7 +17,7 @@
     "fastclick": "^1.0.6",
     "history": "^4.10.1",
     "http-proxy-middleware": "^1.0.1",
-    "immutable": "^4.0.0-rc.12",
+    "immutable": "^4.3.8",
     "jsonp": "^0.2.1",
     "md5": "^2.2.1",
     "rc-form": "^2.4.11",
